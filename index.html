@@ -24,8 +24,11 @@
   --radius-frame:24px;
   --shadow-frame:0 24px 60px rgba(35,26,22,.14);
 
-  --frame-w:1552px;
+  --frame-w:1640px;
   --frame-h:2016px;
+  --frame-gap:48px;
+  --stage-left:calc(var(--frame-w) / 3);
+  --stage-right:48px;
 
   --fs-title:96px;
   --fs-body:64px;
@@ -58,10 +61,10 @@ body{
 /* ========== 舞台 ========== */
 .stage{
   display:flex;
-  justify-content:space-between;
-  gap:0;
-  padding:72px 48px;
-  width:9984px;
+  justify-content:flex-start;
+  gap:var(--frame-gap);
+  padding:72px var(--stage-right) 72px var(--stage-left);
+  width:max-content;
   min-height:2160px;
   align-items:center;
 }
@@ -1011,7 +1014,7 @@ frameShell(document.getElementById('p1'), '成就回顾', '你的这一天', `
   <figure class="report-figure">
     <figcaption>${iconSVG('pin','caption-icon')} 今日行动路线</figcaption>
     <div class="report-media">
-      <img src="生图素材/route-map.svg" alt="故宫研学今日行动路线图">
+      <img src="public/route-map.svg" alt="故宫研学今日行动路线图">
     </div>
   </figure>
 `);
@@ -1046,7 +1049,7 @@ frameShell(document.getElementById('p2'), '成就回顾', '青龙队的这一天
   <figure class="report-figure">
     <figcaption>你们今日的推演结果</figcaption>
     <div class="report-media">
-      <img src="生图素材/s10-map.svg" alt="青龙队今日故宫水系推演结果">
+      <img src="public/s10-map.svg" alt="青龙队今日故宫水系推演结果">
     </div>
   </figure>
 `);
@@ -1055,7 +1058,7 @@ frameShell(document.getElementById('p2'), '成就回顾', '青龙队的这一天
 frameShell(document.getElementById('p3'), '能力发展', '点亮的学科版图', `
   <figure class="report-figure tree-figure">
     <div class="report-media">
-      <img src="生图素材/tree-pic.svg" alt="本次研学点亮的学科知识树">
+      <img src="public/tree-pic.svg" alt="本次研学点亮的学科知识树">
     </div>
   </figure>
 `);
@@ -1101,7 +1104,7 @@ frameShell(document.getElementById('p4'), '能力发展', '综合素质评价过
         <div class="suzhi-art-kicker">建筑审美 · 影像观察</div>
       </div>
       <div class="suzhi-art-photo">
-        <img src="生图素材/s05-p3.jpeg" onerror="this.style.display='none'" alt="故宫千龙吐水建筑装饰摄影">
+        <img src="public/s05-p3.jpeg" onerror="this.style.display='none'" alt="故宫千龙吐水建筑装饰摄影">
       </div>
       <div class="suzhi-art-caption">
         <strong>你发现的美</strong>

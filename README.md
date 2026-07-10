@@ -14,8 +14,9 @@ python3 -m http.server 3000
 
 ## 修改线上内容
 
-1. 编辑 `index.html`（或替换素材文件夹中的图片）
-2. 提交并推送：
+1. 编辑 `index.html`（或替换 `public/` 中的图片）
+2. 运行 `node build-standalone.mjs` 更新单文件演示版
+3. 提交并推送：
 
 ```bash
 git add .
@@ -37,5 +38,6 @@ Vercel 会自动重新部署。
 | 路径 | 说明 |
 |------|------|
 | `index.html` | 主页面（线上入口） |
-| `生图素材/` | 报告插图 |
-| `1 素材图/` | 螭首等实景素材 |
+| `public/` | 页面使用的报告插图与实景素材 |
+| `stu_report_demo_standalone.html` | 已内嵌全部在用图片的单文件演示版 |
+| `build-standalone.mjs` | 重新生成 standalone 文件的脚本 |
