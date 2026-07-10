@@ -97,6 +97,42 @@ body{
   color:var(--red);
   letter-spacing:.2em;
 }
+.achievement-frame .frame-header{
+  justify-content:flex-start;
+  gap:20px;
+  padding-bottom:0;
+  border-bottom:0;
+  margin-bottom:24px;
+}
+.achievement-frame .frame-header .kicker{letter-spacing:.08em;}
+.achievement-frame .header-logo{
+  width:84px;
+  height:84px;
+  color:var(--red);
+  flex:0 0 84px;
+}
+.ui-icon{
+  width:100%;
+  height:100%;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.flow-loc .pin-icon{
+  width:34px;
+  height:34px;
+  color:var(--red);
+  flex:0 0 34px;
+}
+.report-figure figcaption .caption-icon{
+  width:56px;
+  height:56px;
+  color:var(--red);
+  flex:0 0 56px;
+}
 
 /* ========== 标题 ========== */
 .frame-title{
@@ -172,9 +208,8 @@ body{
   display:flex;
   align-items:stretch;
   gap:0;
-  background:var(--wash);
-  border-radius:16px;
-  padding:24px 12px;
+  background:transparent;
+  padding:56px 0 0;
   position:relative;
 }
 .flow-step{
@@ -182,12 +217,16 @@ body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:10px;
   position:relative;
+  min-width:0;
 }
 .flow-num{
-  width:76px;
-  height:76px;
+  position:absolute;
+  top:-50px;
+  left:50%;
+  transform:translateX(-50%);
+  width:72px;
+  height:72px;
   border-radius:50%;
   background:var(--red);
   color:#fff;
@@ -197,15 +236,23 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
+  z-index:3;
 }
 .flow-card{
   background:var(--paper);
   border:1px solid var(--line);
-  border-radius:12px;
-  padding:14px 6px;
+  border-right:0;
+  border-radius:0;
+  min-height:190px;
+  padding:24px 6px 18px;
   text-align:center;
   width:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 }
+.flow-step:first-child .flow-card{border-radius:16px 0 0 16px;}
+.flow-step:last-child .flow-card{border-right:1px solid var(--line);border-radius:0 16px 16px 0;}
 .flow-loc{
   font-size:var(--fs-hint);
   color:var(--light);
@@ -219,15 +266,27 @@ body{
   line-height:1.15;
   font-weight:900;
   color:var(--ink);
-  margin-top:10px;
+  margin-top:14px;
+  white-space:nowrap;
 }
 .flow-arrow{
   position:absolute;
-  right:-24px;
-  top:34px;
-  color:var(--red);
-  font-size:var(--fs-body);
-  z-index:1;
+  right:-105px;
+  top:-17px;
+  width:210px;
+  border-top:3px dashed var(--red);
+  z-index:2;
+}
+.flow-arrow::after{
+  content:"";
+  position:absolute;
+  right:0;
+  top:-8px;
+  width:14px;
+  height:14px;
+  border-top:3px solid var(--red);
+  border-right:3px solid var(--red);
+  transform:rotate(45deg);
 }
 
 /* ========== 数据大卡 ========== */
@@ -238,18 +297,33 @@ body{
   align-items:stretch;
 }
 .stat-card{
-  background:var(--page);
-  border-radius:12px;
-  min-height:210px;
-  padding:22px 28px;
+  background:var(--wash);
+  border:1px solid transparent;
+  border-radius:16px;
+  min-height:240px;
+  padding:28px 34px;
   display:grid;
-  grid-template-columns:80px 1fr;
+  grid-template-columns:156px 1fr;
   grid-template-areas:"icon label" "icon value";
-  column-gap:20px;
+  column-gap:26px;
   align-items:center;
   text-align:left;
 }
-.stat-card .icon{grid-area:icon;font-size:var(--fs-icon);line-height:1;}
+.stat-card .icon{
+  grid-area:icon;
+  width:140px;
+  height:140px;
+  border:4px solid #d9b170;
+  border-radius:50%;
+  padding:18px;
+  color:#b97820;
+}
+.stat-card:nth-child(2) .icon,
+.stat-card:nth-child(3) .icon,
+.stat-card:nth-child(4) .icon{border-color:transparent;padding:20px;}
+.stat-card .ui-icon,
+.team-icon .ui-icon,
+.header-logo .ui-icon{stroke-width:2.4;}
 .stat-card .label{
   grid-area:label;
   color:var(--muted);
@@ -278,11 +352,24 @@ body{
   flex:1;
   background:var(--wash);
   border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:24px;
-  text-align:center;
+  border-radius:16px;
+  min-height:230px;
+  padding:28px 26px;
+  display:grid;
+  grid-template-columns:124px 1fr;
+  grid-template-areas:"icon label" "icon value";
+  column-gap:20px;
+  align-items:center;
+  text-align:left;
+}
+.team-mini .team-icon{
+  grid-area:icon;
+  width:116px;
+  height:116px;
+  color:#b97820;
 }
 .team-mini .tk{
+  grid-area:label;
   font-size:var(--fs-body);
   line-height:1.2;
   font-weight:800;
@@ -290,6 +377,7 @@ body{
   margin-bottom:8px;
 }
 .team-mini .tv{
+  grid-area:value;
   font-family:var(--font-display);
   font-size:var(--fs-kpi);
   font-weight:900;
@@ -300,17 +388,17 @@ body{
 .role-grid{
   display:grid;
   grid-template-columns:repeat(6,1fr);
-  gap:14px;
-  margin-bottom:32px;
+  gap:10px;
+  margin-bottom:28px;
 }
 .role-card{
   min-width:0;
-  min-height:188px;
+  min-height:180px;
   background:var(--wash);
   border:1px solid var(--line-dark);
-  border-top:6px solid var(--red);
+  border-top:5px solid var(--red);
   border-radius:var(--radius);
-  padding:18px 6px;
+  padding:16px 4px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -318,8 +406,8 @@ body{
   text-align:center;
 }
 .role-check{
-  width:58px;
-  height:58px;
+  width:54px;
+  height:54px;
   border-radius:50%;
   background:var(--red);
   color:#fff;
@@ -328,7 +416,7 @@ body{
   justify-content:center;
   flex-shrink:0;
 }
-.role-check svg{width:34px;height:34px;display:block;}
+.role-check svg{width:32px;height:32px;display:block;}
 .role-name{
   font-size:var(--fs-body);
   line-height:1.1;
@@ -337,6 +425,34 @@ body{
   margin-top:12px;
   white-space:nowrap;
 }
+
+/* P2 · 新版横向推演图：把图片的多余纵向留白让给上方信息区 */
+#p2 .role-grid{
+  gap:14px;
+  padding:18px;
+  margin-bottom:38px;
+  background:var(--wash);
+  border-radius:16px;
+}
+#p2 .role-card{
+  min-height:196px;
+  padding:20px 6px;
+  background:var(--paper);
+  border:0;
+  border-top:5px solid var(--red);
+  border-radius:12px;
+}
+#p2 .role-name{margin-top:16px;}
+#p2 .team-row{
+  gap:24px;
+  margin-bottom:40px !important;
+}
+#p2 .team-mini{
+  min-height:252px;
+  padding:32px 30px;
+  border:0;
+}
+#p2 .report-figure figcaption{margin-bottom:24px;}
 /* ========== 报告图片 ========== */
 .report-figure{
   flex:1;
@@ -552,108 +668,212 @@ body{
 
 /* ========== 雷达详情卡 ========== */
 .radar-detail{
-  background:var(--paper);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:40px 48px;
   flex:1;
   min-height:0;
-  transition:all .25s;
+  display:grid;
+  grid-template-rows:auto auto 1fr;
+  gap:20px;
 }
-.radar-detail.active{border-left:6px solid var(--red);}
-.radar-detail .rd-head{
+.rd-kpi-area{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.rd-kpis{
+  display:grid;
+  grid-template-columns:1.25fr 1fr 1fr;
+  gap:20px;
+}
+.rd-kpi{
+  min-height:310px;
+  border:1px solid var(--line-dark);
+  border-radius:18px;
+  background:var(--paper);
+  padding:32px 36px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0;
+}
+.rd-kpi-main{
+  background:var(--red);
+  color:#fff;
+  border-color:var(--red);
+  justify-content:space-between;
+}
+.rd-kpi-top{
   display:flex;
   align-items:center;
-  gap:24px;
-  margin-bottom:28px;
+  justify-content:space-between;
+  gap:20px;
 }
-.radar-detail .rd-dim{
-  font-size:var(--fs-radar-dim);
+.rd-kpi-label{
+  font-size:var(--fs-hint);
   line-height:1.2;
+  font-weight:900;
+  letter-spacing:.08em;
+  color:var(--muted);
+}
+.rd-kpi-main .rd-kpi-label{color:rgba(255,255,255,.78);}
+.rd-kpi-main .rd-dim{
+  font-family:var(--font-display);
+  font-size:var(--fs-body);
+  line-height:1.1;
+  font-weight:900;
+  color:#fff;
+  margin-top:14px;
+}
+.rd-kpi-value-row{
+  display:flex;
+  align-items:flex-end;
+  gap:12px;
+}
+.rd-kpi-value{
+  font-family:var(--font-display);
+  font-size:138px;
+  line-height:.9;
   font-weight:900;
   color:var(--ink);
 }
-.radar-detail .rd-score{
+.rd-kpi-main .rd-kpi-value{font-size:160px;color:#fff;}
+.rd-kpi-scale{
+  font-size:var(--fs-hint);
+  line-height:1;
+  color:var(--light);
+  padding-bottom:14px;
+}
+.rd-kpi-main .rd-kpi-scale{color:rgba(255,255,255,.72);}
+.rd-rating{
   display:inline-flex;
   align-items:center;
-  background:linear-gradient(135deg,var(--red),#b5342f);
+  justify-content:center;
+  height:58px;
+  padding:0 20px;
+  border:2px solid rgba(255,255,255,.68);
+  border-radius:999px;
+  font-size:var(--fs-hint);
+  line-height:1;
+  font-weight:900;
   color:#fff;
-  font-size:var(--fs-radar-score);
-  line-height:1.2;
-  font-weight:800;
-  padding:8px 24px;
-  border-radius:28px;
 }
-.radar-detail .rd-rating{
+.rd-kpi-note{
+  margin-top:14px;
   font-size:var(--fs-hint);
-  color:var(--red);
-  font-weight:700;
-  border:1.5px solid var(--red);
-  padding:8px 18px;
-  border-radius:16px;
-}
-.radar-detail .rd-def{
-  font-size:var(--fs-body);
-  color:var(--muted);
-  line-height:1.35;
-  margin-bottom:28px;
-}
-.radar-detail .rd-ref{margin-bottom:28px;}
-.radar-detail .rd-ref-title{
-  font-size:var(--fs-hint);
+  line-height:1.3;
   color:var(--light);
-  font-weight:700;
-  margin-bottom:12px;
 }
-.radar-detail .rd-ref ul{
+.rd-kpi.positive{
+  background:var(--wash);
+}
+.rd-kpi.positive .rd-kpi-value{color:var(--red);}
+.rd-def-mini{
+  min-height:54px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:0 6px;
+  font-size:var(--fs-hint);
+  line-height:1.35;
+  color:var(--light);
+}
+.rd-def-mini strong{color:var(--muted);font-weight:900;white-space:nowrap;}
+.rd-evidence,
+.rd-conclusion{
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:32px 38px;
+  min-height:0;
+}
+.rd-evidence{background:var(--wash);}
+.rd-section-kicker{
+  font-size:var(--fs-hint);
+  line-height:1.2;
+  font-weight:900;
+  letter-spacing:.08em;
+  color:var(--red);
+}
+.rd-section-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:24px;
+  margin-bottom:20px;
+}
+.rd-section-head h3{
+  margin:0;
+  font-family:var(--font-display);
+  font-size:72px;
+  line-height:1.15;
+  color:var(--ink);
+}
+.rd-evidence ul{
   list-style:none;
   padding:0;
   margin:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+.rd-evidence.count-4 ul{grid-template-columns:repeat(2,1fr);}
+.rd-evidence li{
+  min-height:174px;
   display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-.radar-detail .rd-ref li{
-  font-size:var(--fs-hint);
-  color:var(--muted);
-  background:var(--wash);
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:10px;
+  padding:22px 28px;
+  font-size:var(--fs-body);
+  line-height:1.25;
+  font-weight:900;
+  color:var(--ink);
+  background:var(--paper);
   border:1px solid var(--line);
-  padding:10px 18px;
-  border-radius:16px;
+  border-radius:14px;
 }
-.radar-detail .rd-avg{
-  font-size:var(--fs-body);
-  line-height:1.3;
-  color:var(--light);
-  margin-bottom:28px;
-}
-.radar-detail .rd-avg b{color:var(--ink);font-weight:800;}
-.radar-detail .rd-why-title{
-  font-size:var(--fs-body);
+.rd-evidence-index{
+  font-family:var(--font-display);
   color:var(--red);
-  font-weight:800;
-  margin-bottom:10px;
+  font-size:48px;
+  line-height:1;
+  font-weight:900;
 }
-.radar-detail .rd-why{
+.rd-conclusion{
+  border:0;
+  border-left:8px solid var(--red);
+  background:var(--ink);
+  padding:38px 48px;
+  display:flex;
+  flex-direction:column;
+}
+.rd-conclusion .rd-section-head{
+  margin-bottom:24px;
+}
+.rd-conclusion .rd-section-head h3{color:var(--paper);}
+.rd-conclusion .rd-section-kicker{color:#d7b0a0;}
+.rd-conclusion .rd-why{
   font-size:var(--fs-body);
   line-height:1.4;
-  color:var(--ink);
+  color:var(--paper);
+  font-weight:700;
 }
 
 /* ========== 维度切换按钮 ========== */
 .dim-tabs{
-  display:flex;
-  gap:12px;
-  margin-top:24px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+  margin-bottom:24px;
   flex-shrink:0;
 }
 .dim-tab{
-  flex:1;
-  height:110px;
+  appearance:none;
+  height:112px;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:var(--fs-body);
+  line-height:1;
   font-weight:900;
   color:var(--muted);
   background:var(--wash);
@@ -663,11 +883,11 @@ body{
   transition:all .2s;
 }
 .dim-tab.active{
-  color:var(--red);
+  color:#fff;
   border-color:var(--red);
-  background:var(--paper);
+  background:var(--red);
 }
-.dim-tab:hover{color:var(--ink);}
+.dim-tab:not(.active):hover{color:var(--ink);border-color:var(--line-dark);}
 </style>
 </head>
 <body>
@@ -728,12 +948,27 @@ const D = {
   }
 };
 
-const PIN = '<svg width="36" height="36" viewBox="0 0 24 24" fill="var(--red)" stroke="none" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>';
+const ICON_PATHS = {
+  trophy:'<path d="M8 4h8v4a4 4 0 0 1-8 0V4Z"/><path d="M8 6H5v1a4 4 0 0 0 4 4"/><path d="M16 6h3v1a4 4 0 0 1-4 4"/><path d="M12 12v5"/><path d="M8.5 21h7"/><path d="M10 17h4l1.5 4h-7L10 17Z"/>',
+  pin:'<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/>',
+  walk:'<circle cx="13" cy="4.5" r="2"/><path d="m9 21 2-7 2-4 3 3 3 1"/><path d="m11 14-3 3-2 4"/><path d="m13 10-3-2-3 3"/>',
+  camera:'<path d="M4 8h3l1.5-2h7L17 8h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><circle cx="12" cy="14" r="4"/>',
+  pencil:'<path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"/><path d="m13.5 7.5 3 3"/><path d="m5.5 16 3 3"/>',
+  users:'<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2"/><circle cx="17" cy="10" r="2.5"/><path d="M16 15a5 5 0 0 1 5 5"/>',
+  id:'<rect x="3" y="5" width="18" height="15" rx="2"/><path d="M8 5V3h8v2"/><circle cx="9" cy="11" r="2"/><path d="M6.5 16c.7-1.5 1.5-2 2.5-2s1.8.5 2.5 2"/><path d="M14 10h3M14 14h3"/>',
+  shield:'<path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-3Z"/><path d="m8.5 12 2 2 4-5"/>'
+};
+function iconSVG(name, className=''){
+  return `<svg class="ui-icon ${className}" viewBox="0 0 24 24" aria-hidden="true">${ICON_PATHS[name]}</svg>`;
+}
 const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 9.5 17 19 7.5"/></svg>';
 
 function frameShell(el, kicker, title, bodyHTML){
+  const achievementFrame = el.id==='p1' || el.id==='p2';
+  el.classList.toggle('achievement-frame', achievementFrame);
   el.innerHTML = `
-    <div class="frame-header"><span class="kicker">${kicker}</span></div>
+    <div class="frame-header">${achievementFrame?`<span class="header-logo">${iconSVG('trophy')}</span>`:''}<span class="kicker">${kicker}</span></div>
     <h1 class="frame-title">${title}</h1>
     <div class="hero">${bodyHTML}</div>
   `;
@@ -741,7 +976,7 @@ function frameShell(el, kicker, title, bodyHTML){
 
 // ============= P1 · 你的这一天（上） =============
 frameShell(document.getElementById('p1'), '成就回顾', '你的这一天', `
-  <div class="flow-track" style="margin-bottom:24px;">
+  <div class="flow-track" style="margin-bottom:28px;">
     ${[
       {n:1,loc:'沉浸空间',name:'任务领取'},
       {n:2,loc:'故宫',name:'观其形'},
@@ -752,31 +987,31 @@ frameShell(document.getElementById('p1'), '成就回顾', '你的这一天', `
       <div class="flow-step">
         <div class="flow-num">${s.n}</div>
         <div class="flow-card">
-          <div class="flow-loc">${PIN} ${s.loc}</div>
+          <div class="flow-loc">${iconSVG('pin','pin-icon')} ${s.loc}</div>
           <div class="flow-name">${s.name}</div>
         </div>
-        ${i<a.length-1?'<div class="flow-arrow">→</div>':''}
+        ${i<a.length-1?'<div class="flow-arrow" aria-hidden="true"></div>':''}
       </div>
     `).join('')}
   </div>
-  <div class="stat-grid" style="margin-bottom:24px;">
+  <div class="stat-grid" style="margin-bottom:28px;">
     ${[
-      {icon:'🕐',label:'探索时长',val:D.achieve.duration,unit:''},
-      {icon:'🚶',label:'步行步数',val:D.achieve.steps.toLocaleString(),unit:''},
-      {icon:'📷',label:'拍摄照片',val:D.achieve.photos,unit:' 张'},
-      {icon:'✏️',label:'反思文字',val:D.achieve.reflectWords,unit:' 字'}
+      {icon:'clock',label:'探索时长',val:D.achieve.duration,unit:''},
+      {icon:'walk',label:'步行步数',val:D.achieve.steps.toLocaleString(),unit:''},
+      {icon:'camera',label:'拍摄照片',val:D.achieve.photos,unit:' 张'},
+      {icon:'pencil',label:'反思文字',val:D.achieve.reflectWords,unit:' 字'}
     ].map(k=>`
       <div class="stat-card">
-        <div class="icon">${k.icon}</div>
+        <div class="icon">${iconSVG(k.icon)}</div>
         <div class="label">${k.label}</div>
         <div class="val">${k.val}<span class="u">${k.unit}</span></div>
       </div>
     `).join('')}
   </div>
   <figure class="report-figure">
-    <figcaption>${PIN} 今日行动路线</figcaption>
+    <figcaption>${iconSVG('pin','caption-icon')} 今日行动路线</figcaption>
     <div class="report-media">
-      <img src="生图素材/route-map.png" alt="故宫研学今日行动路线图">
+      <img src="生图素材/route-map.svg" alt="故宫研学今日行动路线图">
     </div>
   </figure>
 `);
@@ -791,16 +1026,19 @@ frameShell(document.getElementById('p2'), '成就回顾', '青龙队的这一天
       </div>
     `).join('')}
   </div>
-  <div class="team-row" style="margin-bottom:32px;">
+  <div class="team-row" style="margin-bottom:28px;">
     <div class="team-mini">
+      <div class="team-icon">${iconSVG('users')}</div>
       <div class="tk">队伍规模</div>
       <div class="tv">${D.team.size}<span style="font-size:var(--fs-body);font-family:var(--font-body);"> 人</span></div>
     </div>
     <div class="team-mini">
+      <div class="team-icon">${iconSVG('id')}</div>
       <div class="tk">身份令牌</div>
       <div class="tv">${D.team.tokens}<span style="font-size:var(--fs-body);font-family:var(--font-body);">/6</span></div>
     </div>
     <div class="team-mini">
+      <div class="team-icon">${iconSVG('shield')}</div>
       <div class="tk">全队关卡</div>
       <div class="tv">${D.team.finished}</div>
     </div>
@@ -808,7 +1046,7 @@ frameShell(document.getElementById('p2'), '成就回顾', '青龙队的这一天
   <figure class="report-figure">
     <figcaption>你们今日的推演结果</figcaption>
     <div class="report-media">
-      <img src="生图素材/s10-map.png" alt="青龙队今日故宫水系推演结果">
+      <img src="生图素材/s10-map.svg" alt="青龙队今日故宫水系推演结果">
     </div>
   </figure>
 `);
@@ -945,10 +1183,10 @@ frameShell(document.getElementById('p5'), '活动参与过程评价', '活动参
 
 // ============= P6 · 活动参与过程评价 · 详情 =============
 frameShell(document.getElementById('p6'), '活动参与过程评价', '活动参与过程评价 · 详情', `
-  <div class="radar-detail active" id="radarDetail"></div>
   <div class="dim-tabs" id="dimTabs">
-    ${Object.keys(D.radar).map((k,i)=>`<div class="dim-tab${i===0?' active':''}" data-k="${k}">${k}</div>`).join('')}
+    ${Object.keys(D.radar).map((k,i)=>`<button type="button" class="dim-tab${i===0?' active':''}" data-k="${k}" aria-pressed="${i===0?'true':'false'}">${k}</button>`).join('')}
   </div>
+  <div class="radar-detail" id="radarDetail"></div>
 `);
 
 // ============= 交互：P6 维度切换 =============
@@ -963,22 +1201,42 @@ frameShell(document.getElementById('p6'), '活动参与过程评价', '活动参
     const info = D.radarExplain[k];
     const v = D.radar[k];
     const diff = v - info.avg;
-    const diffStr = diff>0?`高于班均 ${diff} 分`:(diff<0?`低于班均 ${Math.abs(diff)} 分`:'与班均持平');
-    tabs.forEach(t=>t.classList.toggle('active', t.dataset.k===k));
+    const diffLabel = diff>0?'领先班均':(diff<0?'低于班均':'对比班均');
+    const diffValue = diff>0?`+${diff}`:`${diff}`;
+    tabs.forEach(t=>{
+      const isActive = t.dataset.k===k;
+      t.classList.toggle('active', isActive);
+      t.setAttribute('aria-pressed', isActive?'true':'false');
+    });
     $box.innerHTML = `
-      <div class="rd-head">
-        <span class="rd-dim">${k}</span>
-        <span class="rd-score">${v}</span>
-        <span class="rd-rating">${info.rating}</span>
+      <div class="rd-kpi-area">
+        <div class="rd-kpis">
+          <section class="rd-kpi rd-kpi-main">
+            <div class="rd-kpi-top"><span class="rd-kpi-label">当前维度</span><span class="rd-rating">${info.rating}</span></div>
+            <div class="rd-dim">${k}</div>
+            <div class="rd-kpi-value-row"><strong class="rd-kpi-value">${v}</strong><span class="rd-kpi-scale">/ 100</span></div>
+          </section>
+          <section class="rd-kpi">
+            <span class="rd-kpi-label">班级均分</span>
+            <div class="rd-kpi-value-row"><strong class="rd-kpi-value">${info.avg}</strong></div>
+            <span class="rd-kpi-note">本次班级平均表现</span>
+          </section>
+          <section class="rd-kpi${diff>=0?' positive':''}">
+            <span class="rd-kpi-label">${diffLabel}</span>
+            <div class="rd-kpi-value-row"><strong class="rd-kpi-value">${diffValue}</strong></div>
+            <span class="rd-kpi-note">同维度横向比较</span>
+          </section>
+        </div>
+        <div class="rd-def-mini"><strong>指标说明</strong><span>${info.def}</span></div>
       </div>
-      <div class="rd-def">${info.def}</div>
-      <div class="rd-ref">
-        <div class="rd-ref-title">参考数据</div>
-        <ul>${info.ref.map(r=>`<li>${r}</li>`).join('')}</ul>
-      </div>
-      <div class="rd-avg">班级均分 <b>${info.avg}</b>　${diffStr}</div>
-      <div class="rd-why-title">AI 总结</div>
-      <div class="rd-why">${info.why}</div>
+      <section class="rd-evidence count-${info.ref.length}">
+        <div class="rd-section-head"><h3>过程证据</h3><span class="rd-section-kicker">${info.ref.length} 项有效证据</span></div>
+        <ul>${info.ref.map((r,i)=>`<li><span class="rd-evidence-index">0${i+1}</span><span>${r}</span></li>`).join('')}</ul>
+      </section>
+      <section class="rd-conclusion">
+        <div class="rd-section-head"><h3>评价结论</h3><span class="rd-section-kicker">AI 总结</span></div>
+        <div class="rd-why">${info.why}</div>
+      </section>
     `;
   }
 
