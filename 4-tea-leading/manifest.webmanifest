@@ -1,0 +1,9 @@
+{
+  "name": "铸魂研学·教师带队",
+  "short_name": "教师带队",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f0e7",
+  "theme_color": "#6f211b",
+  "icons": [{ "src": "./icons/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

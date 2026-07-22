@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <rect width="720" height="520" rx="22" fill="#f7f0df"/>
+  <text x="32" y="46" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="24" font-weight="700" fill="#4d4437">方案比较与复核矩阵</text>
+  <text x="32" y="70" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="#756852">保留原判断；新证据出现后记录保留、修改、放弃和责任安排</text>
+  <g font-family="PingFang SC, Microsoft YaHei, sans-serif" stroke="#9f8867" stroke-width="2">
+    <rect x="30" y="98" width="660" height="328" rx="14" fill="#fffaf0"/>
+    <path d="M30 154H690M170 98V426M274 98V426M378 98V426M482 98V426M586 98V426M30 290H690"/>
+    <g fill="#6f1f1b" font-size="14" font-weight="700" stroke="none" text-anchor="middle">
+      <text x="100" y="132">方案</text><text x="222" y="132">目标一致</text><text x="326" y="132">证据可靠</text><text x="430" y="132">成功收益</text><text x="534" y="132">失败代价</text><text x="638" y="132">可逆性</text>
+    </g>
+    <g fill="#4d4437" font-size="17" font-weight="700" stroke="none"><text x="74" y="225">A</text><text x="74" y="361">B</text></g>
+  </g>
+  <g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#4d4437">
+    <rect x="30" y="446" width="205" height="48" rx="10" fill="#efe5d3"/><rect x="254" y="446" width="205" height="48" rx="10" fill="#efe5d3"/><rect x="478" y="446" width="212" height="48" rx="10" fill="#efe5d3"/>
+    <text x="44" y="465" font-size="12">复核点</text><text x="44" y="484" font-size="13">________________</text>
+    <text x="268" y="465" font-size="12">退出/重议条件</text><text x="268" y="484" font-size="13">________________</text>
+    <text x="492" y="465" font-size="12">责任安排</text><text x="492" y="484" font-size="13">________________</text>
+  </g>
+</svg>

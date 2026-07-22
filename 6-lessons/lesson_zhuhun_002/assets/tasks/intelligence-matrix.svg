@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <rect width="720" height="520" rx="22" fill="#f7f0df"/>
+  <text x="32" y="46" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="24" font-weight="700" fill="#4d4437">信息差四象限</text>
+  <text x="32" y="70" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="#756852">每张信息卡同时保留来源、可靠度和核验办法</text>
+  <g stroke="#9f8867" stroke-width="2">
+    <rect x="30" y="96" width="322" height="174" rx="14" fill="#edf4eb"/><rect x="368" y="96" width="322" height="174" rx="14" fill="#edf1f6"/>
+    <rect x="30" y="286" width="322" height="174" rx="14" fill="#f3eee6"/><rect x="368" y="286" width="322" height="174" rx="14" fill="#f7e9e6"/>
+  </g>
+  <g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#4d4437">
+    <text x="52" y="130" font-size="19" font-weight="700">我方已知</text><text x="390" y="130" font-size="19" font-weight="700">敌方可能已知</text>
+    <text x="52" y="320" font-size="19" font-weight="700">双方未知</text><text x="390" y="320" font-size="19" font-weight="700">敌方可能误判</text>
+    <text x="52" y="154" font-size="12">证据来源：________　可靠度：___</text><text x="390" y="154" font-size="12">观察渠道：________　可靠度：___</text>
+    <text x="52" y="344" font-size="12">缺失信息：________　怎样核验：___</text><text x="390" y="344" font-size="12">替代解释：________　成立条件：___</text>
+  </g>
+</svg>

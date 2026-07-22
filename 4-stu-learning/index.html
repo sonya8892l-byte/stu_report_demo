@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>研学智能体学生端</title>
+    <style>
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        background: #2b2420;
+        font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      }
+
+      .app-boot {
+        display: grid;
+        min-height: 100dvh;
+        place-items: center;
+        color: #f5ead6;
+      }
+
+      .app-boot__panel {
+        width: min(100%, 480px);
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        background: #8d2018;
+      }
+
+      .app-boot__text {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+    </style>
+</head>
+<body>
+    <div id="app">
+      <div class="app-boot" role="status" aria-live="polite">
+        <div class="app-boot__panel">
+          <span class="app-boot__text">正在进入课程…</span>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

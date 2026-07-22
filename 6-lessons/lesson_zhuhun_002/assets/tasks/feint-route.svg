@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <rect width="720" height="520" rx="22" fill="#f7f0df"/>
+  <text x="32" y="48" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="24" font-weight="700" fill="#4d4437">虚实行动链工作底图</text>
+  <text x="32" y="73" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="#756852">先依据现场材料排序；工作底图不提供正确顺序</text>
+  <g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#fffaf0" stroke="#8e7657" stroke-width="2">
+    <rect x="54" y="116" width="276" height="112" rx="14"/><rect x="390" y="116" width="276" height="112" rx="14"/>
+    <rect x="54" y="258" width="276" height="112" rx="14"/><rect x="390" y="258" width="276" height="112" rx="14"/>
+    <rect x="140" y="405" width="440" height="72" rx="14" fill="#f4e5e2" stroke="#8d211f" stroke-dasharray="7 6"/>
+  </g>
+  <g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#4d4437" text-anchor="middle">
+    <text x="192" y="154" font-size="17" font-weight="700">待排序卡 A</text><text x="528" y="154" font-size="17" font-weight="700">待排序卡 B</text>
+    <text x="192" y="296" font-size="17" font-weight="700">待排序卡 C</text><text x="528" y="296" font-size="17" font-weight="700">待排序卡 D</text>
+    <text x="192" y="190" font-size="12">依据：日期 / 先后词 / 图例</text><text x="528" y="190" font-size="12">依据：日期 / 先后词 / 图例</text>
+    <text x="192" y="332" font-size="12">依据：日期 / 先后词 / 图例</text><text x="528" y="332" font-size="12">依据：日期 / 先后词 / 图例</text>
+    <text x="360" y="435" font-size="17" font-weight="700" fill="#8d211f">替代解释与退出条件</text>
+    <text x="360" y="460" font-size="12">排序完成后再记录：另一种可能是什么？什么条件下需要改判？</text>
+  </g>
+</svg>

@@ -1,3 +1,27 @@
-.vercel
+# macOS metadata
 .DS_Store
-*.local
+**/.DS_Store
+
+# Local settings and secrets
+.env
+.env.*
+!.env.example
+**/*.local
+.claude/settings.local.json
+
+# Dependencies, generated output, and runtime data
+**/node_modules/
+**/dist/
+**/.runtime/
+**/test-artifacts/
+**/uploads/
+
+# Temporary assets, references, and backups
+0-temp-asset/
+**/_temp_ref/
+**/_backups/
+*.zip
+
+# Large local media
+*.mov
+*.mp4

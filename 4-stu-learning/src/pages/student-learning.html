@@ -1,0 +1,240 @@
+<div class="student-app" id="studentApp">
+  <section class="launch-screen app-screen is-active" id="launchScreen" aria-labelledby="courseTitle">
+    <div class="launch-media">
+      <img id="launchImage" alt="课程封面" />
+      <div class="launch-media-shade"></div>
+      <div class="launch-brand" id="launchBrand">
+        <span class="brand-seal" id="brandSeal"></span>
+        <span id="brandName"></span>
+      </div>
+      <button class="icon-button launch-help" type="button" data-action="show-course-info" aria-label="查看课程信息">
+        <i data-lucide="info"></i>
+      </button>
+      <div class="launch-copy">
+        <p class="eyebrow" id="courseSeries"></p>
+        <h1 id="courseTitle"></h1>
+        <p class="launch-question" id="coreQuestion"></p>
+      </div>
+    </div>
+
+    <div class="launch-action-panel">
+      <div class="launch-meta" id="launchMeta"></div>
+      <button class="primary-button primary-button--wide" type="button" data-action="start-course">
+        <span>进入课程导入</span>
+        <i data-lucide="arrow-right"></i>
+      </button>
+      <p class="launch-note">导入期间请观看现场内容，身份领取由老师统一开启</p>
+    </div>
+  </section>
+
+  <section class="immersive-screen app-screen" id="immersiveScreen" aria-labelledby="immersiveTitle">
+    <header class="simple-header simple-header--overlay import-header">
+      <span>课程导入 · 教师控制</span>
+      <span class="import-live-indicator"><i data-lucide="radio"></i>进行中</span>
+    </header>
+    <div class="immersive-media">
+      <img id="immersiveImage" alt="课程导入占位画面" />
+      <div class="immersive-caption">
+        <span class="media-duration">全班共同学习</span>
+        <h2 id="immersiveTitle">课程导入</h2>
+        <p>请观看现场导入内容，学生端将在老师发出指令后进入身份领取。</p>
+      </div>
+    </div>
+    <div class="teacher-wait-panel" aria-live="polite">
+      <div class="teacher-wait-icon"><i data-lucide="radio"></i></div>
+      <div>
+        <p class="eyebrow">等待教师指令</p>
+        <h3>导入进行中</h3>
+        <p>当前页面无需操作。老师开启身份领取后，系统会自动进入下一步。</p>
+      </div>
+      <button class="primary-button primary-button--wide" id="teacherGateButton" type="button" disabled>
+        <span>等待老师开始</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="role-screen app-screen" id="roleScreen" aria-labelledby="roleScreenTitle">
+    <header class="simple-header">
+      <span aria-hidden="true"></span>
+      <span id="rolePickerHeader">领取角色卡</span>
+      <span class="group-code" id="groupCode">当前小组</span>
+    </header>
+    <div class="role-intro">
+      <p class="eyebrow" id="rolePickerEyebrow"></p>
+      <h2 id="roleScreenTitle"></h2>
+      <p id="rolePickerDescription"></p>
+    </div>
+    <div class="role-list" id="roleList"></div>
+  </section>
+
+  <section class="learning-shell app-screen" id="learningShell" aria-label="学生学习主界面">
+    <header class="learning-header">
+      <div class="learning-header__top">
+        <button class="role-switch-button" type="button" data-action="open-role-switch" aria-label="切换演示角色">
+          <img id="headerRoleBadge" alt="当前角色徽章" />
+        </button>
+        <div class="header-course-copy">
+          <span id="headerPhase">课程任务</span>
+          <strong id="headerRoleName"></strong>
+        </div>
+        <button class="icon-button icon-button--header" type="button" data-action="call-teacher" aria-label="呼叫老师">
+          <i data-lucide="radio"></i>
+        </button>
+      </div>
+      <div class="phase-progress" aria-label="课程阶段进度">
+        <span class="phase-progress__fill" id="phaseProgressFill"></span>
+      </div>
+      <div class="task-status-line">
+        <span id="taskStatusText">任务进度</span>
+        <span class="timer-status"><i data-lucide="clock-3"></i><span id="phaseTimer">--:--:--</span></span>
+      </div>
+    </header>
+
+    <nav class="primary-tabs" aria-label="学习视图切换">
+      <button class="primary-tab is-active" type="button" data-tab="task">
+        <i data-lucide="message-circle-more"></i>
+        <span>我的任务</span>
+      </button>
+      <button class="primary-tab" type="button" data-tab="team">
+        <i data-lucide="users"></i>
+        <span>小组</span>
+        <span class="tab-status-dot" aria-label="小组有新进展"></span>
+      </button>
+    </nav>
+
+    <main class="learning-content">
+      <section class="tab-panel is-active chat-panel" id="taskTab" aria-label="我的任务">
+        <div class="chat-scroll" id="chatScroll">
+          <div class="chat-day-label" id="chatDayLabel">今天 · 课程现场</div>
+          <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+        </div>
+        <div class="composer" id="composer">
+          <button class="composer-icon-button" type="button" data-action="voice-input" aria-label="语音输入">
+            <i data-lucide="mic"></i>
+          </button>
+          <label class="composer-field">
+            <span class="sr-only" id="chatInputLabel">给AI学习同伴发送消息</span>
+            <input id="chatInput" type="text" placeholder="说说你的发现…" autocomplete="off" />
+          </label>
+          <button class="composer-icon-button" type="button" data-action="open-quick-tools" aria-label="更多工具">
+            <i data-lucide="plus"></i>
+          </button>
+          <button class="send-button" type="button" data-action="send-message" aria-label="发送消息">
+            <i data-lucide="arrow-up"></i>
+          </button>
+        </div>
+      </section>
+
+      <section class="tab-panel team-panel" id="teamTab" aria-label="小组协作">
+        <div class="team-map-card">
+          <img id="teamMap" alt="课程任务导航地图" />
+          <div class="team-map-overlay">
+            <span id="teamSessionStatus"><i data-lucide="navigation"></i> 当前小组</span>
+            <button type="button" data-action="send-rally">发起集合</button>
+          </div>
+        </div>
+
+        <section class="team-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">最终任务解锁条件</p>
+              <h2 id="collectionPanelName">小组成果</h2>
+            </div>
+            <span id="tokenProgress">0 / 6</span>
+          </div>
+          <div class="token-row" id="teamTokens"></div>
+        </section>
+
+        <section class="team-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">实时状态</p>
+              <h2>组员进度</h2>
+            </div>
+            <button class="text-button time-bank-entry" type="button" data-action="open-time-bank">时间银行</button>
+          </div>
+          <div class="member-list" id="memberList"></div>
+        </section>
+      </section>
+    </main>
+
+    <nav class="utility-bar" aria-label="快捷面板">
+      <button type="button" data-action="open-progress">
+        <i data-lucide="list-checks"></i>
+        <span>进度</span>
+      </button>
+      <button class="utility-bank time-bank-entry" type="button" data-action="open-time-bank">
+        <i data-lucide="timer-reset"></i>
+        <span>时间银行</span>
+        <strong id="timeBalance">0 min</strong>
+      </button>
+      <button type="button" data-action="call-teacher">
+        <i data-lucide="hand-helping"></i>
+        <span>呼叫老师</span>
+      </button>
+    </nav>
+  </section>
+
+  <div class="sheet-backdrop" id="sheetBackdrop" data-action="close-sheet"></div>
+
+  <aside class="bottom-sheet" id="progressSheet" aria-labelledby="progressSheetTitle" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div>
+        <p class="eyebrow">当前角色</p>
+        <h2 id="progressSheetTitle">任务进度</h2>
+      </div>
+      <button class="icon-button" type="button" data-action="close-sheet" aria-label="关闭任务进度">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div id="progressContent"></div>
+  </aside>
+
+  <aside class="bottom-sheet bottom-sheet--tall" id="timeBankSheet" aria-labelledby="timeBankTitle" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div>
+        <p class="eyebrow">独立课程机制</p>
+        <h2 id="timeBankTitle">时间银行</h2>
+      </div>
+      <button class="icon-button" type="button" data-action="close-sheet" aria-label="关闭时间银行">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="bank-summary">
+      <div><span>可用余额</span><strong id="bankBalance">0</strong><small id="bankCurrencyUnit">分钟</small></div>
+      <p>完成独立小任务赚取时间，再赠送给需要帮助的组员。</p>
+    </div>
+    <div class="sheet-segmented">
+      <button class="is-active" type="button" data-bank-tab="earn">赚取时间</button>
+      <button type="button" data-bank-tab="gift">赠送组员</button>
+    </div>
+    <div id="timeBankContent"></div>
+  </aside>
+
+  <aside class="bottom-sheet bottom-sheet--tall" id="roleSwitchSheet" aria-labelledby="roleSwitchTitle" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div>
+        <p class="eyebrow">课程内容渲染预览</p>
+        <h2 id="roleSwitchTitle">切换角色</h2>
+      </div>
+      <button class="icon-button" type="button" data-action="close-sheet" aria-label="关闭角色切换">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <p class="sheet-description" id="roleSwitchDescription"></p>
+    <div class="compact-role-list" id="compactRoleList"></div>
+  </aside>
+
+  <section class="teacher-directive" id="teacherDirectiveOverlay" hidden role="alertdialog" aria-modal="true" aria-labelledby="teacherDirectiveTitle">
+    <div class="teacher-directive__seal">师</div>
+    <p class="eyebrow">教师高优先级指令</p>
+    <h2 id="teacherDirectiveTitle">教师指令</h2>
+    <p id="teacherDirectiveText"></p>
+    <button class="primary-button primary-button--wide" id="teacherDirectiveConfirm" type="button" data-action="confirm-teacher-command">我已知道</button>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>

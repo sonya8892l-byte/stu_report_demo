@@ -1,0 +1,16 @@
+:root[data-theme="zhizhi"] {
+  --ink: #141820;
+  --ink-soft: #454d60;
+  --ink-faint: #6b7388;
+  --paper: #eef1f7;
+  --surface: #f8f9fc;
+  --surface-muted: #dde2ec;
+  --line: #bfc7d6;
+  --brand: #2c4a8a;
+  --brand-strong: #1c3268;
+  --brand-soft: #dce4f5;
+  --gold: #8a7542;
+  --gold-soft: #ece4ce;
+  --teal: #3d7a9e;
+  --teal-soft: #d6eaf4;
+}

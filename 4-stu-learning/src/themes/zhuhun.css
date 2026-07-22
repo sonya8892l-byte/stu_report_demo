@@ -1,0 +1,16 @@
+:root[data-theme="zhuhun"] {
+  --ink: #251c18;
+  --ink-soft: #65564f;
+  --ink-faint: #887871;
+  --paper: #f7f2e9;
+  --surface: #fffdf8;
+  --surface-muted: #eee7dc;
+  --line: #d9cdbf;
+  --brand: #8d2018;
+  --brand-strong: #6f1712;
+  --brand-soft: #f4e4df;
+  --gold: #a7772f;
+  --gold-soft: #efe0bd;
+  --teal: #1f6159;
+  --teal-soft: #deece8;
+}

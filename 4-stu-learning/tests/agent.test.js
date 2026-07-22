@@ -1,0 +1,488 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
+import { compileCourse, clearCourseCache } from '../server/course/compiler.js';
+import { createAgentService } from '../server/agent/service.js';
+
+const lessonsRoot = fileURLToPath(new URL('../../6-lessons/', import.meta.url));
+
+function memoryStore() {
+  const sessions = new Map();
+  return {
+    async create(values) {
+      const session = {
+        id: 'ses_test', courseId: values.courseId, roleId: values.roleId,
+        studentId: values.studentId, groupId: values.groupId, phaseId: values.phaseId,
+        phaseNumber: 2, currentTaskIndex: 0, scaffoldLevel: 0, completedTaskIds: [],
+        events: [], messages: [], pendingTools: {}, handledRequestIds: [],
+        timeBalance: 0, timeEarned: 0, completedBankTaskIds: [], gifts: [],
+      };
+      sessions.set(session.id, session);
+      return session;
+    },
+    async get(id) { return sessions.get(id) || null; },
+    async save(session) { sessions.set(session.id, session); return session; },
+  };
+}
+
+async function enterFirstStage(agent, session, prefix = 'entry') {
+  const result = await agent.runTurn({
+    sessionId: session.id,
+    requestId: `${prefix}-ready`,
+    input: { type: 'user_text', text: '我已经到位，也准备好了' },
+  });
+  return {
+    result,
+    taskRequest: result.events.find((event) => event.type === 'tool.requested' && event.data.payload.renderer !== 'navigation'),
+  };
+}
+
+async function completeCurrentTaskSteps(agent, session, task, prefix = 'step') {
+  for (let stepIndex = 0; stepIndex < task.guidanceSteps.length; stepIndex += 1) {
+    await agent.runTurn({
+      sessionId: session.id,
+      requestId: `${prefix}-${stepIndex}`,
+      input: {
+        type: 'lifecycle_event',
+        event: 'task_step_completed',
+        data: { taskId: task.id, stepIndex, stepText: task.guidanceSteps[stepIndex] },
+      },
+    });
+  }
+}
+
+test('状态机只接受当前工具调用，并在证据提交后推进任务', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  const outputs = [
+    { text: '证据已记录，继续下一项。', toolCalls: [{ id: 'task-2-call', name: 'open_task_tool', arguments: { toolInstanceId: 'dragon-counter:task-2:primary', reason: '继续采证' } }] },
+  ];
+  const llm = {
+    capabilities: () => ({ nativeTools: true }),
+    generate: async () => outputs.shift(),
+  };
+  const agent = createAgentService({ llm, store: memoryStore(), getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  const first = await agent.runTurn({ sessionId: session.id, requestId: 'r1', input: { type: 'lifecycle_event', event: 'role_assigned' } });
+  assert.equal(first.events.some((event) => event.type === 'tool.requested'), false);
+  const entryMessage = first.events.find((event) => event.type === 'assistant.completed').data.text;
+  assert.match(entryMessage, /到|到达/);
+  assert.doesNotMatch(entryMessage, /准备好/);
+  const { result: arrived, taskRequest } = await enterFirstStage(agent, session, 'r2');
+  assert.equal(taskRequest.data.payload.taskIndex, 0);
+  assert.equal(arrived.events.some((event) => event.type === 'stage.started'), true);
+  assert.equal(arrived.session.locationState.status, 'arrived');
+  assert.equal(arrived.session.locationState.verifiedBy, 'manual');
+  await completeCurrentTaskSteps(agent, session, course.roles.find((role) => role.id === 'dragon-counter').tasks[0], 'r2-step');
+  const submitted = await agent.runTurn({
+    sessionId: session.id, requestId: 'r3',
+    input: {
+      type: 'tool_result', toolCallId: taskRequest.data.callId,
+      result: {
+        status: 'completed', values: { text: '拍到了五张不同角度的照片' },
+        evidence: Array.from({ length: 5 }, (_, index) => ({ id: `ev-${index}`, url: `/uploads/${index}.jpg` })),
+      },
+    },
+  });
+  assert.equal(submitted.session.currentTaskIndex, 1);
+  assert.deepEqual(submitted.session.completedTaskIds, ['dragon-counter:task-1']);
+  assert.equal(submitted.events.find((event) => event.type === 'tool.requested').data.payload.taskIndex, 1);
+});
+
+test('照片数量不足返回课程校验原因，不伪装成模型连接失败', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  const llm = {
+    capabilities: () => ({ nativeTools: true, vision: false }),
+    generate: async () => ({ text: '已检查。', toolCalls: [] }),
+  };
+  const agent = createAgentService({ llm, store: memoryStore(), getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  const assigned = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'photo-min-1',
+    input: { type: 'lifecycle_event', event: 'role_assigned' },
+  });
+  assert.equal(assigned.events.some((event) => event.type === 'tool.requested'), false);
+  const { taskRequest: taskCall } = await enterFirstStage(agent, session, 'photo-min-2');
+  await completeCurrentTaskSteps(agent, session, course.roles.find((role) => role.id === 'dragon-counter').tasks[0], 'photo-step');
+  await assert.rejects(
+    agent.runTurn({
+      sessionId: session.id,
+      requestId: 'photo-min-3',
+      input: {
+        type: 'tool_result',
+        toolCallId: taskCall.data.callId,
+        result: {
+          status: 'completed',
+          values: { text: '' },
+          evidence: [{ id: 'ev-one', url: '/uploads/one.png' }],
+        },
+      },
+    }),
+    (error) => error.code === 'EVIDENCE_MINIMUM' && /已提交 1 张.*还需要 4 张/.test(error.message),
+  );
+  assert.equal(session.currentTaskIndex, 0);
+  assert.deepEqual(session.completedTaskIds, []);
+  assert.ok(session.pendingTools[taskCall.data.callId], '数量不足后应保留原任务调用，允许继续补照片再提交');
+  const retried = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'photo-min-4',
+    input: {
+      type: 'tool_result',
+      toolCallId: taskCall.data.callId,
+      result: {
+        status: 'completed',
+        values: { text: '' },
+        evidence: Array.from({ length: 5 }, (_, index) => ({ id: `ev-${index}`, url: `/uploads/${index}.png` })),
+      },
+    },
+  });
+  assert.equal(retried.session.currentTaskIndex, 1);
+});
+
+test('简短问候即时回应，不检索课程或调用模型', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  let modelCalls = 0;
+  const llm = {
+    capabilities: () => ({ nativeTools: true, vision: false }),
+    generate: async () => { modelCalls += 1; throw new Error('问候不应调用模型'); },
+  };
+  const agent = createAgentService({ llm, store: memoryStore(), getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  const result = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'hello-1',
+    input: { type: 'user_text', text: '你好' },
+  });
+  const message = result.events.find((event) => event.type === 'assistant.completed');
+  assert.match(message.data.text, /你好呀.*絮絮/);
+  assert.equal(message.data.source.label, '');
+  assert.equal(message.data.intent, 'greeting');
+  assert.equal(modelCalls, 0);
+});
+
+test('静默状态心跳不打扰学生，达到课程阈值后由规则层生成一次提醒', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  let modelCalls = 0;
+  const llm = {
+    capabilities: () => ({ nativeTools: true, vision: false }),
+    generate: async () => {
+      modelCalls += 1;
+      return { text: '还顺利吗？如果找不到观察点，我可以再打开位置卡。', toolCalls: [] };
+    },
+  };
+  const store = memoryStore();
+  const agent = createAgentService({ llm, store, getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  const quiet = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'tick-1',
+    input: { type: 'lifecycle_event', event: 'context_tick', data: { pageVisible: true, hasDraft: false } },
+  });
+  assert.equal(quiet.events.some((event) => event.type === 'assistant.completed'), false);
+  assert.equal(modelCalls, 0);
+
+  session.taskState.lastMeaningfulActionAt = new Date(Date.now() - 4 * 60_000).toISOString();
+  await store.save(session);
+  const nudged = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'tick-2',
+    input: { type: 'lifecycle_event', event: 'context_tick', data: { pageVisible: true, hasDraft: false } },
+  });
+  assert.equal(nudged.events.some((event) => event.type === 'assistant.completed'), true);
+  assert.equal(nudged.session.conversationState.nudgeCount, 1);
+  assert.equal(modelCalls, 0);
+});
+
+test('学生口头说完成不会推进任务，只有通过工具提交才更新状态', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  const llm = {
+    capabilities: () => ({ nativeTools: true, vision: false }),
+    generate: async () => ({ text: '收到。请在任务卡里提交证据，我才能帮你检查。', toolCalls: [] }),
+  };
+  const agent = createAgentService({ llm, store: memoryStore(), getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  await enterFirstStage(agent, session, 'done-entry');
+  const result = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'done-1',
+    input: { type: 'user_text', text: '我做完了' },
+  });
+  assert.equal(result.session.currentTaskIndex, 0);
+  assert.deepEqual(result.session.completedTaskIds, []);
+});
+
+test('明确位置问题由流程层即时打开导航，不等待模型选择工具', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  let modelCalls = 0;
+  const llm = {
+    capabilities: () => ({ nativeTools: true, vision: false }),
+    generate: async () => { modelCalls += 1; throw new Error('位置问题不应调用模型'); },
+  };
+  const agent = createAgentService({ llm, store: memoryStore(), getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  const result = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'navigation-1',
+    input: { type: 'user_text', text: '我现在刚到午门，太和殿在哪儿？' },
+  });
+  assert.equal(modelCalls, 0);
+  assert.match(result.events.find((event) => event.type === 'assistant.completed').data.text, /高德地图/);
+  assert.equal(result.events.find((event) => event.type === 'tool.requested').data.payload.renderer, 'navigation');
+});
+
+test('模型连接失败时返回同伴式降级消息，不抛出整轮错误', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  const llm = {
+    capabilities: () => ({ nativeTools: true, vision: false }),
+    generate: async () => { throw new Error('上游超时'); },
+  };
+  const agent = createAgentService({ llm, store: memoryStore(), getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  await enterFirstStage(agent, session, 'degraded-entry');
+  const result = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'degraded-1',
+    input: { type: 'user_text', text: '我想先跟你聊聊天' },
+  });
+  const message = result.events.find((event) => event.type === 'assistant.completed');
+  assert.equal(message.data.degraded, true);
+  assert.match(message.data.text, /我在|连接/);
+});
+
+test('任务求助直接使用课程脚手架即时回应，不占用模型调用', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  let modelCalls = 0;
+  const llm = {
+    capabilities: () => ({ nativeTools: true, vision: false }),
+    generate: async () => { modelCalls += 1; throw new Error('课程脚手架不应等待模型'); },
+  };
+  const agent = createAgentService({ llm, store: memoryStore(), getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  await enterFirstStage(agent, session, 'help-entry');
+  const result = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'task-help-1',
+    input: { type: 'user_text', text: '我不知道这个任务怎么做，给我一点提示' },
+    onTextDelta: () => {},
+  });
+  assert.equal(modelCalls, 0);
+  const message = result.events.find((event) => event.type === 'assistant.completed');
+  assert.match(message.data.text, /先试一个小步骤/);
+  assert.equal(message.data.source.mode, 'course-config');
+});
+
+test('受保护内容在流式分片中被拦截，整轮只调用一次模型', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_001' });
+  let modelCalls = 0;
+  const deltas = [];
+  const llm = {
+    capabilities: () => ({ nativeTools: true, vision: false }),
+    generate: async ({ onTextDelta }) => {
+      modelCalls += 1;
+      onTextDelta?.('答案可能是1');
+      onTextDelta?.('142个。');
+      return { text: '答案可能是1142个。', toolCalls: [] };
+    },
+  };
+  const agent = createAgentService({ llm, store: memoryStore(), getCourse: async () => course });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'dragon-counter', studentId: 's1', groupId: 'g1' });
+  await enterFirstStage(agent, session, 'stream-guard-entry');
+  const result = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'stream-guard-1',
+    input: { type: 'user_text', text: '我们随便聊聊吧' },
+    onTextDelta: (text) => deltas.push(text),
+  });
+  const message = result.events.find((event) => event.type === 'assistant.completed');
+  assert.equal(modelCalls, 1);
+  assert.equal(deltas.join('').includes('1142'), false);
+  assert.match(message.data.text, /仍在探索区/);
+});
+
+test('时间银行拍照任务必须上传真实证据，不能再用完成按钮直接通过', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_002' });
+  const agent = createAgentService({
+    llm: { capabilities: () => ({ nativeTools: true }), generate: async () => ({ text: '', toolCalls: [] }) },
+    store: memoryStore(),
+    getCourse: async () => course,
+  });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'map-strategist', studentId: 's-bank-photo', groupId: 'g1' });
+  const missing = await agent.answerTimeBank({ sessionId: session.id, taskId: 'tb-05', evidence: [] });
+  assert.equal(missing.correct, false);
+  const passed = await agent.answerTimeBank({
+    sessionId: session.id,
+    taskId: 'tb-05',
+    evidence: [{ id: 'ev-bank-photo', url: '/uploads/photo.jpg', mimeType: 'image/jpeg' }],
+  });
+  assert.equal(passed.correct, true);
+  assert.equal(session.learningState.evidenceIds.includes('ev-bank-photo'), true);
+});
+
+test('时间银行定位签到按课程坐标和半径校验', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_002' });
+  const agent = createAgentService({
+    llm: { capabilities: () => ({ nativeTools: true }), generate: async () => ({ text: '', toolCalls: [] }) },
+    store: memoryStore(),
+    getCourse: async () => course,
+  });
+  const { session } = await agent.createSession({ courseId: course.id, roleId: 'map-strategist', studentId: 's-bank-location', groupId: 'g1' });
+  const outside = await agent.answerTimeBank({
+    sessionId: session.id, taskId: 'tb-08', location: { lng: 116.1, lat: 39.7, accuracyMeters: 10 },
+  });
+  assert.equal(outside.correct, false);
+  const inside = await agent.answerTimeBank({
+    sessionId: session.id, taskId: 'tb-08', location: { lng: 116.3953, lat: 40.0071, accuracyMeters: 10 },
+  });
+  assert.equal(inside.correct, true);
+});
+
+test('结构化小步由服务端校验当前工具结果，空结果不能绕过扫码步骤', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_002' });
+  const agent = createAgentService({
+    llm: {
+      capabilities: () => ({ nativeTools: true, vision: true }),
+      generate: async () => ({ text: '{"passed":true,"feedback":"展项主体与标题可核对。","missing":[]}', toolCalls: [] }),
+    },
+    store: memoryStore(),
+    getCourse: async () => course,
+  });
+  const { session } = await agent.createSession({
+    courseId: course.id,
+    roleId: 'map-strategist',
+    studentId: 's-step-validation',
+    groupId: 'g1',
+  });
+  await enterFirstStage(agent, session, 'scanner-step-entry');
+  await assert.rejects(
+    agent.runTurn({
+      sessionId: session.id,
+      requestId: 'scanner-step-empty',
+      input: {
+        type: 'lifecycle_event',
+        event: 'task_step_completed',
+        data: { taskId: 'task-1', stepIndex: 0, toolValues: {} },
+      },
+    }),
+    (error) => error.code === 'STEP_SCAN_REQUIRED',
+  );
+  assert.equal(session.taskState.guidanceStepIndex, 0);
+  const completed = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'scanner-step-valid',
+    input: {
+      type: 'lifecycle_event',
+      event: 'task_step_completed',
+      data: {
+        taskId: 'task-1',
+        stepIndex: 0,
+        toolValues: {
+          'map-locate-exhibit': {
+            scanner: { result: '已采集待AI核验的实物图像' },
+          },
+        },
+        stepImages: ['data:image/jpeg;base64,AA=='],
+      },
+    },
+  });
+  assert.equal(completed.session.taskState.guidanceStepIndex, 1);
+});
+
+test('ai_evaluation 小步只有模型验收通过后才推进，并接收画板图像', async () => {
+  clearCourseCache();
+  const course = await compileCourse({ lessonsRoot, courseId: 'lesson_zhuhun_002' });
+  const evaluationCalls = [];
+  const outputs = [
+    { text: '{"passed":true,"feedback":"展项主体与标题可核对。","missing":[]}', toolCalls: [] },
+    { text: '{"passed":true,"feedback":"全景和局部证据能够互相核对。","missing":[]}', toolCalls: [] },
+    { text: '{"passed":false,"feedback":"方向关系还不清楚。","missing":["补一组相对方向箭头"]}', toolCalls: [] },
+    { text: '{"passed":true,"feedback":"水系与方向已经可以互相核对。","missing":[]}', toolCalls: [] },
+  ];
+  const agent = createAgentService({
+    llm: {
+      capabilities: () => ({ nativeTools: true, vision: true }),
+      generate: async (request) => {
+        evaluationCalls.push(request);
+        return outputs.shift();
+      },
+    },
+    store: memoryStore(),
+    getCourse: async () => course,
+  });
+  const { session } = await agent.createSession({
+    courseId: course.id,
+    roleId: 'map-strategist',
+    studentId: 's-ai-evaluation',
+    groupId: 'g1',
+  });
+  await enterFirstStage(agent, session, 'ai-step-entry');
+  await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'ai-step-scanner',
+    input: {
+      type: 'lifecycle_event', event: 'task_step_completed',
+      data: {
+        taskId: 'task-1', stepIndex: 0,
+        toolValues: { 'map-locate-exhibit': { scanner: { result: '已采集待AI核验的实物图像' } } },
+        stepImages: ['data:image/jpeg;base64,AA=='],
+      },
+    },
+  });
+  await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'ai-step-photo',
+    input: {
+      type: 'lifecycle_event', event: 'task_step_completed',
+      data: {
+        taskId: 'task-1', stepIndex: 1,
+        toolValues: { 'map-capture-water-system': { photo: { count: 2 } } },
+        stepImages: ['data:image/jpeg;base64,AA=='],
+      },
+    },
+  });
+  const image = 'data:image/jpeg;base64,AA==';
+  const retry = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'ai-step-retry',
+    input: {
+      type: 'lifecycle_event', event: 'task_step_completed',
+      data: {
+        taskId: 'task-1', stepIndex: 2,
+        toolValues: { 'map-annotate-water-system': { sketch: { completed: true } } },
+        stepImages: [image],
+      },
+    },
+  });
+  assert.equal(retry.session.taskState.guidanceStepIndex, 2);
+  assert.match(retry.events.find((event) => event.type === 'assistant.completed').data.text, /方向关系还不清楚/);
+
+  const passed = await agent.runTurn({
+    sessionId: session.id,
+    requestId: 'ai-step-pass',
+    input: {
+      type: 'lifecycle_event', event: 'task_step_completed',
+      data: {
+        taskId: 'task-1', stepIndex: 2,
+        toolValues: { 'map-annotate-water-system': { sketch: { completed: true } } },
+        stepImages: [image],
+      },
+    },
+  });
+  assert.equal(passed.session.taskState.guidanceStepIndex, 3);
+  assert.equal(evaluationCalls.length, 4);
+  assert.deepEqual(evaluationCalls[2].images, [image]);
+  assert.equal(evaluationCalls[2].jsonMode, true);
+  assert.match(evaluationCalls[0].messages[0].content, /当前小步限制：[\s\S]*一渡完整方案/);
+  assert.match(evaluationCalls[1].messages[0].content, /当前小步限制：[\s\S]*不生成毛泽东/);
+});

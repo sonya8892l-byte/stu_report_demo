@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI研学课程智能体平台：学生端、教师端与课程配置底座整体产品方案">
+  <title>AI研学课程智能体平台｜整体产品设计方案</title>
+  <style>
+    :root {
+      --ink: #162235;
+      --ink-2: #344257;
+      --muted: #68758a;
+      --paper: #f4f1e9;
+      --surface: #fffdf8;
+      --surface-2: #ebe7dc;
+      --line: #d6d1c5;
+      --blue: #2456d6;
+      --blue-deep: #173b98;
+      --teal: #087f78;
+      --amber: #a96500;
+      --red: #a83232;
+      --green-soft: #dceee8;
+      --blue-soft: #e2e9fb;
+      --amber-soft: #f5e8cf;
+      --red-soft: #f2dddd;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow: 0 12px 36px rgba(22, 34, 53, .08);
+      --page: 1220px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 22px; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+      line-height: 1.68;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    a { color: inherit; }
+    code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    .skip-link {
+      position: fixed; left: 16px; top: -80px; z-index: 100;
+      background: var(--surface); color: var(--ink); padding: 10px 14px;
+      border: 2px solid var(--ink); border-radius: var(--radius-sm);
+    }
+    .skip-link:focus { top: 16px; }
+
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      align-items: end;
+      background: #152237;
+      color: #fff;
+      padding: 80px 28px 72px;
+    }
+    .hero-inner { width: min(var(--page), 100%); margin: 0 auto; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 30px; color: #cbd5e7; font-size: 13px;
+      font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 38px; height: 2px; background: #73d3ca; }
+    .hero h1 {
+      max-width: 920px; margin: 0; font-size: clamp(44px, 7vw, 86px);
+      line-height: 1.04; letter-spacing: -.04em; font-weight: 760;
+    }
+    .hero h1 span { color: #85ded4; }
+    .hero-lead {
+      max-width: 850px; margin: 34px 0 0; color: #e3e9f2;
+      font-size: clamp(18px, 2vw, 24px); line-height: 1.7;
+    }
+    .hero-statement {
+      margin-top: 68px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.24);
+      display: grid; grid-template-columns: 1.2fr repeat(3, 1fr); gap: 24px;
+    }
+    .hero-statement strong { display: block; font-size: 20px; color: #fff; }
+    .hero-statement span { display: block; margin-top: 7px; color: #b9c4d4; font-size: 14px; }
+    .hero-conclusion { padding-right: 24px; border-right: 1px solid rgba(255,255,255,.24); }
+
+    .page-shell {
+      width: min(1480px, 100%); margin: 0 auto; padding: 0 24px;
+      display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 64px;
+    }
+    .side-nav {
+      position: sticky; top: 0; align-self: start; height: 100vh;
+      padding: 54px 0 32px; overflow: auto;
+    }
+    .side-nav-label { margin-bottom: 15px; color: var(--muted); font-size: 12px; font-weight: 750; letter-spacing: .12em; }
+    .side-nav a {
+      display: grid; grid-template-columns: 28px 1fr; align-items: center;
+      min-height: 42px; padding: 7px 10px; text-decoration: none;
+      border-left: 2px solid var(--line); color: var(--muted); font-size: 13px;
+    }
+    .side-nav a span { font-variant-numeric: tabular-nums; color: #98a0ad; }
+    .side-nav a:hover, .side-nav a.active { color: var(--ink); background: rgba(255,255,255,.55); border-left-color: var(--blue); }
+    .side-nav .print-button {
+      width: calc(100% - 8px); margin-top: 24px; padding: 10px 12px;
+      border: 1px solid var(--line); border-radius: var(--radius-sm);
+      color: var(--ink); background: transparent; cursor: pointer; text-align: left;
+    }
+    .side-nav .print-button:hover { background: var(--surface); }
+
+    main { min-width: 0; }
+    .section { padding: 112px 0; border-bottom: 1px solid var(--line); }
+    .section:last-child { border-bottom: 0; padding-bottom: 160px; }
+    .section-kicker { color: var(--blue); font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .section h2 {
+      max-width: 900px; margin: 14px 0 24px;
+      font-size: clamp(32px, 4vw, 50px); line-height: 1.18; letter-spacing: -.035em;
+    }
+    .section-intro { max-width: 850px; margin: 0; color: var(--ink-2); font-size: 19px; }
+    .lead-note {
+      margin: 46px 0 0; padding: 28px 30px; border-left: 5px solid var(--teal);
+      background: var(--surface); box-shadow: var(--shadow); font-size: 18px;
+    }
+    .lead-note strong { color: var(--teal); }
+
+    .ownership-board { margin-top: 54px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .ownership-lane { padding: 30px; border-radius: var(--radius-lg); border: 2px solid var(--line); background: var(--surface); }
+    .ownership-lane.platform { border-color: var(--blue); }
+    .ownership-lane.course { border-color: var(--teal); }
+    .ownership-label { display: inline-block; padding: 5px 9px; border-radius: var(--radius-sm); color: #fff; background: var(--blue-deep); font-size: 11px; font-weight: 850; letter-spacing: .08em; }
+    .ownership-lane.course .ownership-label { background: var(--teal); }
+    .ownership-lane h3 { margin: 18px 0 8px; font-size: 27px; line-height: 1.25; }
+    .ownership-lane > p { margin: 0; color: var(--muted); }
+    .ownership-list { margin-top: 24px; display: grid; gap: 10px; }
+    .ownership-item { padding: 14px 15px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+    .ownership-item strong { display: block; font-size: 14px; }
+    .ownership-item span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .contract-bridge { margin-top: 18px; padding: 25px 28px; color: #fff; background: var(--ink); border-radius: var(--radius-lg); display: grid; grid-template-columns: 180px 1fr; gap: 24px; }
+    .contract-bridge strong { color: #8fe0d7; font-size: 18px; }
+    .contract-bridge p { margin: 0; color: #d1d9e5; }
+    .owner-mark { display: inline-block; min-width: 34px; padding: 3px 7px; border-radius: 6px; color: #fff; background: var(--blue-deep); text-align: center; font-size: 10px; font-weight: 850; }
+    .owner-mark.course { background: var(--teal); }
+    .owner-mark.both { color: var(--ink); background: #e0c27e; }
+    .definition-strip { margin-top: 28px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .definition-item { padding: 16px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+    .definition-item strong { display: block; color: var(--blue-deep); font-size: 14px; }
+    .definition-item span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
+
+    .problem-grid { margin-top: 52px; display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 18px; }
+    .problem-card { min-height: 230px; padding: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+    .problem-card.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .problem-card .index { color: var(--blue); font-size: 13px; font-weight: 800; }
+    .problem-card.primary .index { color: #85ded4; }
+    .problem-card h3 { margin: 30px 0 12px; font-size: 23px; line-height: 1.25; }
+    .problem-card p { margin: 0; color: var(--muted); }
+    .problem-card.primary p { color: #cbd5e1; }
+
+    .formula {
+      margin-top: 64px; display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: stretch; gap: 16px;
+    }
+    .formula-item { padding: 30px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); }
+    .formula-item small { color: var(--muted); font-weight: 700; }
+    .formula-item strong { display: block; margin-top: 10px; font-size: 23px; line-height: 1.3; }
+    .formula-plus { align-self: center; color: var(--blue); font-size: 32px; font-weight: 400; }
+
+    .architecture { margin-top: 58px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+    .arch-row { display: grid; grid-template-columns: 170px 1fr; border-bottom: 1px solid var(--line); }
+    .arch-row:last-child { border-bottom: 0; }
+    .arch-label { padding: 24px; color: var(--muted); font-size: 13px; font-weight: 800; background: #f0ede5; border-right: 1px solid var(--line); }
+    .arch-content { padding: 20px; display: grid; gap: 12px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .arch-chip { min-height: 72px; padding: 15px 16px; display: flex; flex-direction: column; justify-content: center; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; }
+    .arch-chip strong { font-size: 15px; }
+    .arch-chip span { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .arch-row.runtime .arch-label { color: #fff; background: var(--blue-deep); }
+    .arch-row.runtime .arch-content { background: var(--blue-soft); }
+
+    .object-chain { margin-top: 54px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .object-chain .node { padding: 10px 14px; color: #fff; background: var(--ink); border-radius: var(--radius-sm); font-weight: 700; font-size: 14px; }
+    .object-chain .arrow { color: var(--muted); }
+    .object-table-wrap { margin-top: 28px; overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { padding: 15px 16px; color: var(--muted); background: #eeebe3; text-align: left; font-size: 12px; letter-spacing: .05em; }
+    td { padding: 17px 16px; vertical-align: top; border-top: 1px solid var(--line); }
+    td:first-child { font-weight: 750; color: var(--blue-deep); white-space: nowrap; }
+    td code { color: var(--red); font-size: 12px; }
+
+    .catalog-tools { margin-top: 46px; display: flex; flex-wrap: wrap; gap: 9px; }
+    .filter-button {
+      padding: 9px 14px; border: 1px solid var(--line); border-radius: var(--radius-full, 999px);
+      background: transparent; color: var(--ink-2); cursor: pointer;
+    }
+    .filter-button:hover, .filter-button.active { color: #fff; background: var(--blue-deep); border-color: var(--blue-deep); }
+    .capability-grid { margin-top: 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .capability-card { padding: 23px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); }
+    .capability-card[hidden] { display: none; }
+    .capability-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+    .capability-id { color: var(--blue); font-size: 11px; font-weight: 850; letter-spacing: .08em; }
+    .capability-card h3 { margin: 5px 0 10px; font-size: 20px; }
+    .capability-tag { padding: 4px 8px; color: var(--teal); background: var(--green-soft); border-radius: var(--radius-sm); font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .capability-card p { margin: 0; color: var(--ink-2); font-size: 14px; }
+    .capability-meta { margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 84px 1fr; gap: 7px 12px; font-size: 12px; }
+    .capability-meta dt { color: var(--muted); }
+    .capability-meta dd { margin: 0; color: var(--ink); }
+
+    .two-panel { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .experience-panel { padding: 30px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+    .experience-panel.student { border-top: 6px solid var(--blue); }
+    .experience-panel.teacher { border-top: 6px solid var(--teal); }
+    .experience-panel h3 { margin: 0; font-size: 27px; }
+    .experience-panel > p { color: var(--muted); }
+    .screen-list { margin-top: 24px; display: grid; gap: 10px; }
+    .screen-item { padding: 15px 17px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; }
+    .screen-item strong { display: block; }
+    .screen-item span { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
+
+    .journey-switch { margin-top: 50px; display: inline-flex; padding: 4px; background: var(--surface-2); border-radius: var(--radius-md); }
+    .journey-switch button { padding: 10px 18px; border: 0; border-radius: 9px; color: var(--muted); background: transparent; cursor: pointer; }
+    .journey-switch button.active { color: #fff; background: var(--ink); }
+    .journey-view { margin-top: 18px; display: grid; gap: 12px; }
+    .journey-view[hidden] { display: none; }
+    .journey-step { display: grid; grid-template-columns: 70px 210px 1fr; gap: 22px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); }
+    .journey-step .phase { color: var(--blue); font-size: 12px; font-weight: 850; }
+    .journey-step h4 { margin: 0; font-size: 18px; }
+    .journey-step p { margin: 0; color: var(--ink-2); font-size: 14px; }
+
+    .kb-stack { margin-top: 54px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .kb-card { padding: 25px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+    .kb-card h3 { margin: 6px 0 9px; font-size: 20px; }
+    .kb-card p { margin: 0; color: var(--muted); font-size: 14px; }
+    .kb-card .badge { color: var(--blue); font-size: 11px; font-weight: 850; }
+    .source-policy { margin-top: 26px; padding: 28px; color: #fff; background: var(--ink); border-radius: var(--radius-lg); }
+    .source-policy h3 { margin: 0 0 22px; font-size: 24px; }
+    .policy-step { display: grid; grid-template-columns: 38px 1fr auto; gap: 14px; padding: 14px 0; border-top: 1px solid rgba(255,255,255,.15); }
+    .policy-step:first-of-type { border-top: 0; }
+    .policy-step .order { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.45); border-radius: 50%; }
+    .policy-step strong { display: block; }
+    .policy-step span { color: #bfc9d8; font-size: 13px; }
+    .policy-label { align-self: center; color: #9ce6dd; font-size: 12px; font-weight: 800; }
+
+    .runtime-flow { margin-top: 48px; display: grid; grid-template-columns: 1fr 48px 1fr 48px 1fr; align-items: stretch; }
+    .runtime-box { padding: 24px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+    .runtime-box strong { display: block; font-size: 20px; }
+    .runtime-box span { display: block; margin-top: 7px; color: var(--muted); font-size: 13px; }
+    .runtime-arrow { display: grid; place-items: center; color: var(--blue); font-size: 24px; }
+    .warning {
+      margin-top: 24px; padding: 22px 24px; color: #6a3100; background: var(--amber-soft);
+      border: 1px solid #dfc18a; border-radius: var(--radius-md);
+    }
+
+    .intervention-ladder { margin-top: 48px; display: grid; gap: 9px; }
+    .intervention-row { display: grid; grid-template-columns: 72px 170px 1fr 180px; gap: 18px; align-items: center; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+    .intervention-level { font-weight: 850; color: var(--blue); }
+    .intervention-row strong { font-size: 15px; }
+    .intervention-row span { color: var(--ink-2); font-size: 13px; }
+    .intervention-row .trigger { color: var(--muted); }
+    .intervention-row.critical { border-color: #d49d9d; background: var(--red-soft); }
+    .intervention-row.critical .intervention-level { color: var(--red); }
+
+    .data-groups { margin-top: 48px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .data-card { padding: 23px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); }
+    .data-card h3 { margin: 0 0 12px; font-size: 19px; }
+    .data-card ul { margin: 0; padding-left: 19px; color: var(--ink-2); font-size: 13px; }
+    .data-card li + li { margin-top: 6px; }
+    .data-principles { margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .principle { padding: 24px; border-radius: var(--radius-md); background: var(--blue-soft); }
+    .principle:last-child { background: var(--green-soft); }
+    .principle h3 { margin: 0 0 8px; font-size: 18px; }
+    .principle p { margin: 0; color: var(--ink-2); font-size: 14px; }
+
+    .config-package { margin-top: 54px; display: grid; grid-template-columns: 1fr .95fr; gap: 20px; }
+    .config-list { display: grid; gap: 10px; }
+    details { border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); overflow: hidden; }
+    summary { padding: 18px 20px; cursor: pointer; font-weight: 750; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; float: right; color: var(--blue); font-size: 20px; }
+    details[open] summary::after { content: "−"; }
+    .detail-body { padding: 0 20px 20px; color: var(--ink-2); font-size: 14px; }
+    .detail-body strong { color: var(--ink); }
+    .config-preview { position: sticky; top: 30px; align-self: start; padding: 26px; color: #e9eef8; background: #101a2b; border-radius: var(--radius-lg); overflow: hidden; }
+    .config-preview h3 { margin: 0 0 14px; color: #fff; }
+    .config-preview pre { margin: 0; overflow: auto; color: #c5d8ff; font-size: 12px; line-height: 1.65; white-space: pre-wrap; }
+    .config-preview .key { color: #88e1d6; }
+    .config-preview .value { color: #f1cf8a; }
+
+    .forbidden-example { margin-top: 52px; padding: 32px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+    .forbidden-example h3 { margin: 0; font-size: 27px; }
+    .course-phases { margin-top: 26px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .course-phase { min-height: 126px; padding: 16px; color: #fff; background: var(--ink); border-radius: var(--radius-sm); }
+    .course-phase:nth-child(3) { background: var(--blue-deep); }
+    .course-phase small { color: #9ce6dd; font-weight: 800; }
+    .course-phase strong { display: block; margin-top: 10px; }
+    .course-phase span { display: block; margin-top: 7px; color: #c9d2df; font-size: 12px; }
+    .role-table { margin-top: 22px; }
+    .unlock-rule { margin-top: 20px; padding: 20px; color: var(--blue-deep); background: var(--blue-soft); border-radius: var(--radius-sm); font-weight: 700; }
+
+    .workflow { margin-top: 50px; counter-reset: workflow; }
+    .workflow-step { counter-increment: workflow; display: grid; grid-template-columns: 74px 230px 1fr; gap: 24px; padding: 25px 0; border-top: 1px solid var(--line); }
+    .workflow-step::before { content: counter(workflow, decimal-leading-zero); color: var(--blue); font-size: 25px; font-weight: 820; }
+    .workflow-step h3 { margin: 0; font-size: 20px; }
+    .workflow-step p { margin: 0; color: var(--ink-2); }
+    .deliverables { margin-top: 34px; padding: 28px; background: var(--ink); color: #fff; border-radius: var(--radius-lg); }
+    .deliverables h3 { margin: 0 0 20px; }
+    .deliverable-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .deliverable { padding: 15px; border: 1px solid rgba(255,255,255,.22); border-radius: var(--radius-sm); }
+    .deliverable strong { display: block; }
+    .deliverable span { color: #bdc7d5; font-size: 12px; }
+
+    .roadmap { margin-top: 54px; display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 16px; }
+    .roadmap-card { padding: 27px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+    .roadmap-card.recommended { color: #fff; background: var(--blue-deep); border-color: var(--blue-deep); }
+    .roadmap-card .stage-label { font-size: 11px; font-weight: 850; letter-spacing: .1em; }
+    .roadmap-card h3 { margin: 12px 0; font-size: 23px; }
+    .roadmap-card ul { padding-left: 18px; color: var(--ink-2); font-size: 13px; }
+    .roadmap-card.recommended ul { color: #d5dff2; }
+    .roadmap-card li + li { margin-top: 7px; }
+    .decision-box { margin-top: 28px; padding: 30px; border: 2px solid var(--teal); border-radius: var(--radius-lg); background: var(--surface); }
+    .decision-box h3 { margin: 0 0 10px; font-size: 24px; }
+    .decision-box p { margin: 0; color: var(--ink-2); }
+
+    .footer { padding: 44px 24px; color: #c2cad6; background: var(--ink); }
+    .footer-inner { width: min(var(--page), 100%); margin: 0 auto; display: flex; justify-content: space-between; gap: 24px; }
+    .footer strong { color: #fff; }
+    .footer span { font-size: 13px; }
+
+    @media (max-width: 1100px) {
+      .page-shell { grid-template-columns: 1fr; }
+      .side-nav { display: none; }
+      .hero-statement { grid-template-columns: 1fr 1fr; }
+      .hero-conclusion { grid-column: 1 / -1; border-right: 0; }
+      .arch-content { grid-template-columns: repeat(2, 1fr); }
+      .course-phases { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .hero { min-height: auto; padding: 72px 20px 54px; }
+      .hero-statement, .problem-grid, .two-panel, .kb-stack, .data-groups, .data-principles, .config-package, .roadmap, .ownership-board { grid-template-columns: 1fr; }
+      .page-shell { padding: 0 18px; }
+      .section { padding: 76px 0; }
+      .formula { grid-template-columns: 1fr; }
+      .formula-plus { text-align: center; }
+      .arch-row { grid-template-columns: 1fr; }
+      .contract-bridge { grid-template-columns: 1fr; }
+      .definition-strip { grid-template-columns: 1fr; }
+      .arch-label { border-right: 0; border-bottom: 1px solid var(--line); }
+      .arch-content, .capability-grid { grid-template-columns: 1fr; }
+      .journey-step, .workflow-step { grid-template-columns: 1fr; gap: 8px; }
+      .runtime-flow { grid-template-columns: 1fr; gap: 10px; }
+      .runtime-arrow { transform: rotate(90deg); }
+      .intervention-row { grid-template-columns: 1fr; gap: 5px; }
+      .course-phases, .deliverable-grid { grid-template-columns: 1fr; }
+      .config-preview { position: static; }
+      .footer-inner { flex-direction: column; }
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .hero { min-height: auto; color: #000; background: #fff; padding: 30px 0 40px; border-bottom: 2px solid #000; }
+      .hero h1 span, .eyebrow, .hero-lead, .hero-statement span { color: #000; }
+      .hero-statement { margin-top: 28px; }
+      .page-shell { display: block; width: 100%; padding: 0; }
+      .side-nav, .catalog-tools, .journey-switch, .footer { display: none; }
+      .section { padding: 36px 0; break-inside: auto; }
+      .problem-card, .capability-card, .kb-card, .data-card, .roadmap-card, details { break-inside: avoid; box-shadow: none; }
+      .capability-card[hidden], .journey-view[hidden] { display: block; }
+      .source-policy, .deliverables, .roadmap-card.recommended, .course-phase, .config-preview { color: #000; background: #eee; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#content">跳到正文</a>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Product architecture · v1.0</div>
+      <h1>把一门课程，配置成一个<span>独立智能体</span></h1>
+      <p class="hero-lead">学生端和教师端保持一套通用产品；课程设计者只配置角色、任务、活动、知识、AI边界、教师干预和数据规则。故宫六官作为第一份课程配置运行，不进入产品底层。</p>
+      <div class="hero-statement">
+        <div class="hero-conclusion"><strong>核心产品决策</strong><span>平台团队一次性开发通用底座；课程团队逐门定义内容；运行时依据配置组装体验。</span></div>
+        <div><strong>平台底层</strong><span>AI对话、活动渲染、流程、协作、教师控制、AI工具和数据服务。</span></div>
+        <div><strong>课程配置</strong><span>目标、阶段、N个角色、任务、知识、限制、评价、点位与媒体。</span></div>
+        <div><strong>配置协议</strong><span>明确每项功能哪些参数由课程填写，以及如何影响双端运行。</span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-shell">
+    <nav class="side-nav" aria-label="方案目录">
+      <div class="side-nav-label">目录</div>
+      <a href="#decision"><span>01</span>产品判断</a>
+      <a href="#ownership"><span>02</span>谁开发、谁配置</a>
+      <a href="#architecture"><span>03</span>底层架构</a>
+      <a href="#ontology"><span>04</span>课程对象模型</a>
+      <a href="#capabilities"><span>05</span>活动组件</a>
+      <a href="#experiences"><span>06</span>学生端与教师端</a>
+      <a href="#agent"><span>07</span>智能体与知识库</a>
+      <a href="#intervention"><span>08</span>教师干预</a>
+      <a href="#data"><span>09</span>数据采集</a>
+      <a href="#configuration"><span>10</span>课程配置包</a>
+      <a href="#example"><span>11</span>故宫课程映射</a>
+      <a href="#workflow"><span>12</span>课程生产流程</a>
+      <a href="#roadmap"><span>13</span>建设路线</a>
+      <button class="print-button" type="button" onclick="window.print()">打印 / 导出 PDF</button>
+    </nav>
+
+    <main id="content">
+      <section class="section" id="decision">
+        <div class="section-kicker">01 / Product decision</div>
+        <h2>不要做“每门课程一个小程序”，要做“同一个运行器加载不同课程”</h2>
+        <p class="section-intro">当前故宫学生端和教师端已经证明了体验方向，但角色、页面、任务与判断逻辑仍然写死。继续按课程复制，会同时制造内容、产品、AI与数据四套债务。</p>
+        <div class="problem-grid">
+          <article class="problem-card primary"><div class="index">核心问题</div><h3>课程内容与产品逻辑耦合</h3><p>“数龙官”“测坡官”和页面流程直接进入代码，新增角色就等于新增开发。</p></article>
+          <article class="problem-card"><div class="index">问题 02</div><h3>AI只是播报层</h3><p>AI没有拿到课程状态、学生证据、教师指令和知识出处，无法真正编排学习。</p></article>
+          <article class="problem-card"><div class="index">问题 03</div><h3>数据只够展示进度</h3><p>完成与否、位置、倒计时可以看见，但无法回答学生如何观察、推理、协作和修正。</p></article>
+        </div>
+        <div class="lead-note"><strong>目标形态：</strong>每门课程看起来拥有不同名称、角色、剧情、知识与AI人格，但底层始终运行同一套活动渲染、流程状态、智能体、教师控制与数据协议。</div>
+        <div class="formula" aria-label="课程智能体生成公式">
+          <div class="formula-item"><small>可配置课程内容</small><strong>阶段 · 角色 · 任务 · 知识 · 评价</strong></div>
+          <div class="formula-plus">＋</div>
+          <div class="formula-item"><small>平台通用能力</small><strong>活动组件 · AI运行时 · 协作 · 数据</strong></div>
+          <div class="formula-plus">＝</div>
+          <div class="formula-item"><small>学生感知到的产品</small><strong>一门“独立”的课程智能体</strong></div>
+        </div>
+      </section>
+
+      <section class="section" id="ownership">
+        <div class="section-kicker">02 / Responsibility boundary</div>
+        <h2>先分清两张清单：平台开发清单与课程设计清单</h2>
+        <p class="section-intro">平台团队负责生产稳定能力，并为每项能力定义可配置参数。课程团队使用这些参数设计具体课程。课程上线时，运行时把两部分组装成学生看到的智能体体验。</p>
+
+        <div class="ownership-board">
+          <article class="ownership-lane platform">
+            <span class="ownership-label">PLATFORM · 一次开发，多课复用</span>
+            <h3>产品与技术团队开发</h3>
+            <p>这些能力写入学生端、教师端和服务端，课程团队无需重复制作。</p>
+            <div class="ownership-list">
+              <div class="ownership-item"><strong>AI主对话与课程状态</strong><span>每门课程必有；支持主动引导、等待、静默、总结和工具调用</span></div>
+              <div class="ownership-item"><strong>学生端通用外壳</strong><span>小组、角色、当前任务、证据库、通知、离线与安全入口</span></div>
+              <div class="ownership-item"><strong>教师端通用外壳</strong><span>全班态势、干预队列、小组详情、教学遥控和课后回看</span></div>
+              <div class="ownership-item"><strong>活动组件与渲染器</strong><span>拍照、输入、录音、讨论、测量、标注、推演等通用界面</span></div>
+              <div class="ownership-item"><strong>流程与协作引擎</strong><span>阶段、分支、并行、解锁、角色同步、同伴确认和教师覆盖</span></div>
+              <div class="ownership-item"><strong>AI工具服务</strong><span>知识检索、图片理解、语音转写、语义分析、总结、网络检索和护栏</span></div>
+              <div class="ownership-item"><strong>全局常驻能力</strong><span>呼叫老师、紧急集合、消息广播、同步状态、权限与数据审计</span></div>
+            </div>
+          </article>
+
+          <article class="ownership-lane course">
+            <span class="ownership-label">COURSE · 每门课程单独定义</span>
+            <h3>课程设计团队配置</h3>
+            <p>这些内容决定课程智能体教什么、怎么引导、调用什么功能以及如何完成。</p>
+            <div class="ownership-list">
+              <div class="ownership-item"><strong>学习目标与最终产物</strong><span>学生完成课程后要理解、解释、制作、展示或迁移什么</span></div>
+              <div class="ownership-item"><strong>阶段与主流程</strong><span>什么时候对话、什么时候活动、何时等待教师、如何进入下一阶段</span></div>
+              <div class="ownership-item"><strong>N个角色与任务</strong><span>角色职责、任务视角、人数、共享信息、活动组合和产物要求</span></div>
+              <div class="ownership-item"><strong>活动组件参数</strong><span>拍什么、填什么、讨论什么、测几次、到哪个点位、提交什么证据</span></div>
+              <div class="ownership-item"><strong>课程知识与来源</strong><span>知识、史料、方法、出处、可信度、可见阶段和适用角色</span></div>
+              <div class="ownership-item"><strong>AI引导与限制</strong><span>阶段目标、追问方向、提示层级、禁答内容、网络策略和误区</span></div>
+              <div class="ownership-item"><strong>完成、评价与数据规则</strong><span>解锁条件、量规、教师确认点、采集字段、保存与使用目的</span></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="contract-bridge"><strong>CONFIG CONTRACT<br>配置协议</strong><p>平台为每项能力公布固定接口，例如“拍照组件支持最少张数、相册权限、拍摄说明、标注模板、AI分析器和完成条件”。课程团队只填写这些参数。参数超出接口范围时，先判断是否值得升级平台通用能力，再决定是否开发。</p></div>
+
+        <div class="definition-strip" aria-label="五类元素归属定义">
+          <div class="definition-item"><strong>固定底座</strong><span>所有课程始终存在，例如AI主对话和教师通道</span></div>
+          <div class="definition-item"><strong>活动组件</strong><span>学生可操作的任务界面，例如拍照和讨论</span></div>
+          <div class="definition-item"><strong>AI工具</strong><span>平台内部服务，例如图像理解和知识检索</span></div>
+          <div class="definition-item"><strong>流程规则</strong><span>引擎能力由平台提供，具体条件由课程填写</span></div>
+          <div class="definition-item"><strong>课程内容</strong><span>目标、知识、任务、提示、限制、评价和素材</span></div>
+        </div>
+
+        <div class="object-table-wrap">
+          <table>
+            <thead><tr><th>元素</th><th>归属判断</th><th>平台团队开发什么</th><th>课程团队定义什么</th></tr></thead>
+            <tbody>
+              <tr><td>AI主对话</td><td><span class="owner-mark">平台必备</span></td><td>对话界面、上下文、流式输出、工具调用、状态推进、引用和安全</td><td>人格、阶段目标、开场、追问策略、可用工具、禁答、结束条件</td></tr>
+              <tr><td>拍照 / 连拍</td><td><span class="owner-mark both">底座+配置</span></td><td>相机、权限、压缩、上传、预览、重拍、离线队列和产物存储</td><td>拍摄对象、角度、数量、相册权限、标注要求、完成条件</td></tr>
+              <tr><td>多模态分析</td><td><span class="owner-mark">平台必备</span></td><td>图片/音频/视频分析服务、模型路由、结构化输出、置信度与降级</td><td>本任务分析什么、使用什么量规、如何反馈、低置信度是否交教师</td></tr>
+              <tr><td>组内讨论</td><td><span class="owner-mark both">底座+配置</span></td><td>讨论房间、成员同步、轮次、录音转写、观点记录和AI主持能力</td><td>讨论问题、参与角色、时长、发言规则、共识条件和最终产物</td></tr>
+              <tr><td>呼叫老师</td><td><span class="owner-mark">平台常驻</span></td><td>全局入口、请求队列、上下文打包、位置授权、响应和升级机制</td><td>课程特有求助原因、优先级、AI是否先诊断和教师服务约定</td></tr>
+              <tr><td>位置能力</td><td><span class="owner-mark both">底座+配置</span></td><td>定位、地图、地理围栏、授权、频率控制、离线和安全告警</td><td>课程点位、半径、到点任务、是否必需、证据是否记录位置</td></tr>
+              <tr><td>解锁与分支</td><td><span class="owner-mark both">底座+配置</span></td><td>状态机、条件表达式、并行、等待、回退、教师覆盖和审计</td><td>具体前置任务、所需产物、成员确认、时间条件和失败路径</td></tr>
+              <tr><td>数据采集</td><td><span class="owner-mark both">底座+配置</span></td><td>统一事件协议、存储、权限、导出、脱敏、保存周期和审计机制</td><td>本课程采哪些字段、为什么采、是否评价、谁可见、保存多久</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-kicker">03 / Platform architecture</div>
+        <h2>五层架构：体验可以变，运行规则必须稳定</h2>
+        <p class="section-intro">AI对话是学生看见的主入口，但它不能同时承担状态机、权限、数据校验和课程安全。关键流程必须由确定性系统控制，AI负责理解、生成、追问与适配。</p>
+        <div class="architecture" role="img" aria-label="五层平台架构">
+          <div class="arch-row">
+            <div class="arch-label">双端体验层</div>
+            <div class="arch-content"><div class="arch-chip"><strong>学生小程序</strong><span>对话、任务、协作、作品</span></div><div class="arch-chip"><strong>教师小程序</strong><span>监控、干预、审核、总结</span></div><div class="arch-chip"><strong>分享展示</strong><span>小组证据与成果模式</span></div><div class="arch-chip"><strong>安全通道</strong><span>呼叫、集合、异常提示</span></div></div>
+          </div>
+          <div class="arch-row">
+            <div class="arch-label">课程配置层</div>
+            <div class="arch-content"><div class="arch-chip"><strong>课程与阶段</strong><span>流程图、解锁与时间</span></div><div class="arch-chip"><strong>N个角色</strong><span>职责、任务、协作关系</span></div><div class="arch-chip"><strong>活动编排</strong><span>通用组件组合</span></div><div class="arch-chip"><strong>主题与素材</strong><span>文案、视觉、音视频</span></div></div>
+          </div>
+          <div class="arch-row runtime">
+            <div class="arch-label">学习运行时</div>
+            <div class="arch-content"><div class="arch-chip"><strong>流程状态机</strong><span>确定当前能做什么</span></div><div class="arch-chip"><strong>活动渲染器</strong><span>把配置变成界面</span></div><div class="arch-chip"><strong>小组协作引擎</strong><span>成员、角色与共享状态</span></div><div class="arch-chip"><strong>证据与作品引擎</strong><span>采集、关联、版本与展示</span></div></div>
+          </div>
+          <div class="arch-row">
+            <div class="arch-label">AI运行时</div>
+            <div class="arch-content"><div class="arch-chip"><strong>智能体编排</strong><span>人格、阶段与对话策略</span></div><div class="arch-chip"><strong>课程RAG</strong><span>按权限检索知识</span></div><div class="arch-chip"><strong>多模态能力</strong><span>图像、语音、文本、结构图</span></div><div class="arch-chip"><strong>护栏与出处</strong><span>限制、标注与降级</span></div></div>
+          </div>
+          <div class="arch-row">
+            <div class="arch-label">数据治理层</div>
+            <div class="arch-content"><div class="arch-chip"><strong>课程数据</strong><span>版本、配置与发布</span></div><div class="arch-chip"><strong>学习事件</strong><span>行为、证据与认知变化</span></div><div class="arch-chip"><strong>教师干预</strong><span>原因、动作与结果</span></div><div class="arch-chip"><strong>隐私与审计</strong><span>未成年人、位置、模型日志</span></div></div>
+          </div>
+        </div>
+        <div class="object-table-wrap">
+          <table>
+            <thead><tr><th>平台底层模块</th><th>研发需要交付的通用能力</th><th>课程团队连接方式</th><th>首版优先级</th></tr></thead>
+            <tbody>
+              <tr><td>学生端核心外壳</td><td>登录/入课、小组与角色、AI主对话、任务区、证据库、全局求助、消息和离线状态</td><td>主题、角色数组、阶段、任务和展示内容</td><td>P0</td></tr>
+              <tr><td>教师端核心外壳</td><td>开课、分组、态势、干预队列、小组详情、广播、加时、解锁、暂停和集合</td><td>教师动作权限、告警规则和课程阶段控制点</td><td>P0</td></tr>
+              <tr><td>AI对话编排器</td><td>上下文组装、工具调用、流式输出、引用、对话状态、教师指令注入和安全策略</td><td>人格、阶段目标、引导、限制、结束条件和输出样式</td><td>P0</td></tr>
+              <tr><td>流程状态机</td><td>阶段、任务、并行、分支、等待、重试、回退、解锁、人工覆盖和版本迁移</td><td>阶段图、前置、完成条件、失败路径和教师确认点</td><td>P0</td></tr>
+              <tr><td>活动渲染器</td><td>组件注册、参数校验、动态插入对话、提交、草稿、错误与无障碍</td><td>组件ID、学生指令、字段、素材、产物和完成规则</td><td>P0</td></tr>
+              <tr><td>知识检索与出处</td><td>课程知识入库、切片、权限过滤、检索、引用、来源优先级与网络标注</td><td>知识单元、来源、标签、可见阶段、角色和网络策略</td><td>P0</td></tr>
+              <tr><td>多模态AI工具</td><td>图片理解、OCR、语音转写、音视频处理、语义分析、结构化结果、置信度和降级</td><td>分析任务、课程量规、阈值、反馈策略和教师复核条件</td><td>P0（基础）</td></tr>
+              <tr><td>小组协作服务</td><td>实时成员、角色状态、讨论、投票、同伴确认、共享画布和冲突处理</td><td>参与者、讨论题、共识规则、共享范围和产物模板</td><td>P0/P1</td></tr>
+              <tr><td>证据与作品服务</td><td>媒体/文本存储、元数据、版本、证据关系、AI版本区分、展示和导出</td><td>产物类型、必填字段、证据关系、可见范围和评价绑定</td><td>P0</td></tr>
+              <tr><td>教师干预服务</td><td>请求队列、告警、远程指令、状态覆盖、学生可见标记和干预效果记录</td><td>求助原因、告警阈值、教师权限和课程替代任务</td><td>P0</td></tr>
+              <tr><td>位置与安全服务</td><td>授权、定位、围栏、偏离告警、集合、确认、低频采集和离线处理</td><td>点位、半径、路线、集合点、采集频率和替代方案</td><td>P0（研学）</td></tr>
+              <tr><td>学习事件与治理</td><td>事件协议、存储、查询、权限、脱敏、保存周期、审计与导出</td><td>需要采集的字段、使用目的、评价映射和可见角色</td><td>P0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warning"><strong>关键边界：</strong>“完成任务”“是否解锁”“教师是否允许跳过”“哪些答案尚不可透露”必须由流程与规则判断。AI可以提出建议，但不能私自改变课程状态。</div>
+      </section>
+
+      <section class="section" id="ontology">
+        <div class="section-kicker">04 / Course ontology</div>
+        <h2>课程要先被拆成对象，才能被配置、运行和复用</h2>
+        <p class="section-intro">建议统一使用下面的对象层级。角色数是数组长度，任务形式是活动组件组合，课程流程是一张阶段图，因此六个官、三个官或没有角色的课程都可以运行。</p>
+        <div class="object-chain" aria-label="课程对象链">
+          <span class="node">Course 课程</span><span class="arrow">→</span>
+          <span class="node">Phase 阶段</span><span class="arrow">→</span>
+          <span class="node">Role 角色</span><span class="arrow">→</span>
+          <span class="node">Mission 总任务</span><span class="arrow">→</span>
+          <span class="node">Task 子任务</span><span class="arrow">→</span>
+          <span class="node">Activity 活动</span><span class="arrow">→</span>
+          <span class="node">Artifact 学习产物</span>
+        </div>
+        <div class="object-table-wrap">
+          <table>
+            <thead><tr><th>配置对象</th><th>主要配置内容</th><th>运行时如何使用</th><th>解决的问题</th></tr></thead>
+            <tbody>
+              <tr><td>Course</td><td>课程名称、目标、适龄、场域、总时长、主题、版本</td><td>创建一次课程会话并加载完整配置包</td><td>区分不同课程与版本</td></tr>
+              <tr><td>Phase</td><td>课前、集合、现场、推演、展示等阶段；进入条件与退出条件</td><td>决定学生端当下可见内容与AI可透露范围</td><td>控制主流程和教学节奏</td></tr>
+              <tr><td>Role</td><td>N个角色的人格、职责、能力梯度、人数、关系</td><td>为成员生成不同任务视角和智能体上下文</td><td>支持多角色与跨课程复用</td></tr>
+              <tr><td>Mission</td><td>角色任务或小组总任务、核心问题、完成证据</td><td>作为任务容器与解锁判断单元</td><td>区分角色任务和全组任务</td></tr>
+              <tr><td>Task</td><td>目标、步骤、地点、时间、前置、分支、失败策略</td><td>流程引擎按状态选择下一步</td><td>支持线性、并行与分支任务</td></tr>
+              <tr><td>Activity</td><td>拍照、输入、讨论、定位等组件及其参数</td><td>活动渲染器生成学生实际操作界面</td><td>课程设计不再依赖开发页面</td></tr>
+              <tr><td>Artifact</td><td>照片、观察记录、测量、证据卡、图谱、结论等</td><td>进入小组证据库、评价与展示</td><td>让任务结果成为可复用学习产物</td></tr>
+              <tr><td>Gate</td><td>解锁条件、教师确认、同伴确认、时间与位置条件</td><td>确定性判断下一阶段是否开放</td><td>避免AI主观决定通关</td></tr>
+              <tr><td>Rubric</td><td>完成标准、质量维度、观察点、评价主体</td><td>AI反馈、教师评价和学生自评共同引用</td><td>统一学习目标与数据解释</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="capabilities">
+        <div class="section-kicker">05 / Configurable activities</div>
+        <h2>活动组件库只收录“学生需要操作的任务界面”</h2>
+        <p class="section-intro">AI主对话、多模态分析、流程解锁和安全通道已经归入平台底层。这里保留课程可以调用的学生操作组件。平台团队开发组件本身，课程团队配置组件在具体任务中的内容和完成要求。</p>
+        <div class="catalog-tools" role="group" aria-label="活动组件筛选">
+          <button class="filter-button active" data-filter="all" type="button">全部</button>
+          <button class="filter-button" data-filter="capture" type="button">采集与输入</button>
+          <button class="filter-button" data-filter="collab" type="button">协作</button>
+          <button class="filter-button" data-filter="field" type="button">现场与工具</button>
+        </div>
+        <div class="capability-grid" id="capabilityGrid">
+          <article class="capability-card" data-category="capture"><div class="capability-top"><div><div class="capability-id">ACT-PHOTO</div><h3>拍照 / 连拍</h3></div><span class="capability-tag">采集</span></div><p>采集现场对象，可要求角度、数量、参照物和清晰度；支持AI质量检查与学生标注。</p><dl class="capability-meta"><dt>配置</dt><dd>最少张数、拍摄要求、是否允许相册、标注模板</dd><dt>产物</dt><dd>照片、位置、时间、标注、学生说明</dd><dt>教师</dt><dd>查看原图、退回补拍、人工确认</dd></dl></article>
+          <article class="capability-card" data-category="capture"><div class="capability-top"><div><div class="capability-id">ACT-INPUT</div><h3>文字 / 数字输入</h3></div><span class="capability-tag">采集</span></div><p>记录观察、测量、假设和反思；可设置格式、单位、范围和必填结构。</p><dl class="capability-meta"><dt>配置</dt><dd>字段、提示、单位、字符数、校验与示例</dd><dt>产物</dt><dd>结构化字段、草稿版本、修改记录</dd><dt>教师</dt><dd>批注、退回、锁定答案公布</dd></dl></article>
+          <article class="capability-card" data-category="capture"><div class="capability-top"><div><div class="capability-id">ACT-AUDIO</div><h3>录音 / 语音转写</h3></div><span class="capability-tag">采集</span></div><p>适合现场口述、低龄输入和小组汇报；AI可整理但必须保留原音与原始转写。</p><dl class="capability-meta"><dt>配置</dt><dd>时长、语言、是否转写、提取字段</dd><dt>产物</dt><dd>音频、转写、摘要、说话人</dd><dt>教师</dt><dd>回听、纠正转写、标记关键片段</dd></dl></article>
+          <article class="capability-card" data-category="capture"><div class="capability-top"><div><div class="capability-id">ACT-VIDEO</div><h3>视频采证</h3></div><span class="capability-tag">采集</span></div><p>记录实验过程、动态现象或完整路线，支持抽帧、关键时刻标记与口述说明。</p><dl class="capability-meta"><dt>配置</dt><dd>时长、镜头要求、压缩、是否分段</dd><dt>产物</dt><dd>视频、关键帧、学生说明</dd><dt>教师</dt><dd>查看、标记片段、允许替代材料</dd></dl></article>
+          <article class="capability-card" data-category="collab"><div class="capability-top"><div><div class="capability-id">ACT-DISCUSS</div><h3>组内讨论</h3></div><span class="capability-tag">协作</span></div><p>AI提出讨论问题、计时和轮次，引导成员提交观点、理由与证据；最终总结由小组确认。</p><dl class="capability-meta"><dt>配置</dt><dd>问题、时长、发言规则、是否匿名、共识条件</dd><dt>产物</dt><dd>观点、证据引用、分歧、共识版本</dd><dt>教师</dt><dd>旁听摘要、加入讨论、延长时间</dd></dl></article>
+          <article class="capability-card" data-category="collab"><div class="capability-top"><div><div class="capability-id">ACT-VOTE</div><h3>投票 / 共识确认</h3></div><span class="capability-tag">协作</span></div><p>适合方案选择、证据可信度判断和小组结论确认，保留少数意见。</p><dl class="capability-meta"><dt>配置</dt><dd>选项、是否多选、通过比例、是否展示结果</dd><dt>产物</dt><dd>选择、理由、共识度、少数意见</dd><dt>教师</dt><dd>重开投票、要求补充理由</dd></dl></article>
+          <article class="capability-card" data-category="collab"><div class="capability-top"><div><div class="capability-id">ACT-PEER</div><h3>同伴确认 / 互评</h3></div><span class="capability-tag">协作</span></div><p>让另一成员确认照片、测量或解释是否符合任务要求，避免AI成为唯一裁判。</p><dl class="capability-meta"><dt>配置</dt><dd>确认人数、评价维度、是否可退回</dd><dt>产物</dt><dd>确认、评语、修订记录</dd><dt>教师</dt><dd>抽查、处理争议、人工通过</dd></dl></article>
+          <article class="capability-card" data-category="collab"><div class="capability-top"><div><div class="capability-id">ACT-CANVAS</div><h3>证据图谱 / 推演画布</h3></div><span class="capability-tag">协作</span></div><p>把多角色产物拖入共享画布，建立关系、因果、顺序或系统模型，支持版本比较。</p><dl class="capability-meta"><dt>配置</dt><dd>节点类型、关系类型、模板、必需证据</dd><dt>产物</dt><dd>模型、连线、证据依据、版本差异</dd><dt>教师</dt><dd>投屏、批注、冻结版本、公布参考模型</dd></dl></article>
+          <article class="capability-card" data-category="field"><div class="capability-top"><div><div class="capability-id">ACT-LOCATION</div><h3>位置采集 / 地理围栏</h3></div><span class="capability-tag">现场</span></div><p>用于现场安全、到点提示和证据来源，不应把定位作为学习结论的唯一依据。</p><dl class="capability-meta"><dt>配置</dt><dd>点位、范围、精度、采集频率、离线策略</dd><dt>产物</dt><dd>到达事件、证据位置、异常偏离</dd><dt>教师</dt><dd>查看组别位置、远离提醒、紧急集合</dd></dl></article>
+          <article class="capability-card" data-category="field"><div class="capability-top"><div><div class="capability-id">ACT-SCAN</div><h3>扫码 / 身份卡激活</h3></div><span class="capability-tag">现场</span></div><p>绑定实体身份卡、展项或点位，激活角色与任务；二维码只是触发方式，不承载业务逻辑。</p><dl class="capability-meta"><dt>配置</dt><dd>码值、绑定对象、有效阶段、重复规则</dd><dt>产物</dt><dd>激活人、时间、角色与设备</dd><dt>教师</dt><dd>补发、解绑、手动激活</dd></dl></article>
+          <article class="capability-card" data-category="field"><div class="capability-top"><div><div class="capability-id">ACT-MEASURE</div><h3>测量 / 传感器</h3></div><span class="capability-tag">现场</span></div><p>统一承载坡度、方向、计数、距离、温度等数据，支持多次测量与异常值提醒。</p><dl class="capability-meta"><dt>配置</dt><dd>类型、单位、次数、合理范围、设备来源</dd><dt>产物</dt><dd>原始值、汇总值、异常、方法说明</dd><dt>教师</dt><dd>查看分布、标记无效、允许人工录入</dd></dl></article>
+          <article class="capability-card" data-category="field"><div class="capability-top"><div><div class="capability-id">ACT-ANNOTATE</div><h3>图片 / 地图标注</h3></div><span class="capability-tag">现场</span></div><p>让学生圈选结构、画方向、标位置，AI据此理解学生“看到了什么”。</p><dl class="capability-meta"><dt>配置</dt><dd>底图、标注工具、标签、最少标注数</dd><dt>产物</dt><dd>坐标、标签、箭头、说明</dd><dt>教师</dt><dd>叠加比较、批注、展示优秀样例</dd></dl></article>
+        </div>
+        <div class="lead-note"><strong>以“拍照”为例：</strong>课程团队不会重新设计相机功能。平台先提供完整拍照组件和图片分析接口，课程团队再填写任务说明、张数、角度、分析标准、反馈方式和完成规则。</div>
+        <div class="object-table-wrap">
+          <table>
+            <thead><tr><th>拍照任务组成</th><th>平台团队一次开发</th><th>课程团队逐任务配置</th></tr></thead>
+            <tbody>
+              <tr><td>学生界面</td><td>相机权限、连拍、预览、重拍、压缩、上传、离线队列</td><td>按钮名称、拍摄说明、示例图、允许相册、最少/最多张数</td></tr>
+              <tr><td>AI处理</td><td>图片理解工具、分析接口、置信度、结构化结果、失败降级</td><td>识别目标、观察维度、课程量规、反馈语气、禁答内容</td></tr>
+              <tr><td>学习产物</td><td>媒体存储、元数据、版本、证据库关联、教师查看</td><td>产物名称、是否记录位置、学生说明字段、是否需要标注</td></tr>
+              <tr><td>流程推进</td><td>完成条件引擎、重试、教师覆盖、审计记录</td><td>何时算完成、缺少什么需补拍、低置信时是否呼叫教师</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="experiences">
+        <div class="section-kicker">06 / Two mini-programs</div>
+        <h2>双端共享同一课程状态，各自承担不同工作</h2>
+        <p class="section-intro">学生端围绕“下一步学习行动”，教师端围绕“哪里需要干预”。两端都读取同一个课程会话、任务状态、证据与智能体运行记录。</p>
+        <div class="two-panel">
+          <article class="experience-panel student"><h3>学生小程序</h3><p>对话是主导航，活动卡片是学习行为，证据库是长期上下文。</p><div class="screen-list">
+            <div class="screen-item"><strong>课程大厅</strong><span>加入课程、查看阶段与安全说明</span></div>
+            <div class="screen-item"><strong>小组驾驶舱</strong><span>成员、N个角色、任务状态、呼叫老师</span></div>
+            <div class="screen-item"><strong>AI主对话</strong><span>围绕当前任务推进，动态插入活动组件</span></div>
+            <div class="screen-item"><strong>任务工作区</strong><span>拍照、测量、输入、标注、讨论</span></div>
+            <div class="screen-item"><strong>小组证据库</strong><span>按角色、问题、位置整理学习产物</span></div>
+            <div class="screen-item"><strong>推演与展示</strong><span>共同建模、形成结论、分享与反思</span></div>
+          </div></article>
+          <article class="experience-panel teacher"><h3>教师小程序</h3><p>默认安静观察，异常与请求进入干预队列，教师动作可追踪。</p><div class="screen-list">
+            <div class="screen-item"><strong>开课控制台</strong><span>建班、分组、发布角色、设备与权限检查</span></div>
+            <div class="screen-item"><strong>全班态势</strong><span>阶段、位置、在线、任务与安全状态</span></div>
+            <div class="screen-item"><strong>干预收件箱</strong><span>学生呼叫、AI低置信、超时、偏离与争议</span></div>
+            <div class="screen-item"><strong>小组详情</strong><span>成员、对话摘要、证据、分歧与提示使用</span></div>
+            <div class="screen-item"><strong>教学遥控器</strong><span>广播、推送知识、加时、暂停、解锁、集合</span></div>
+            <div class="screen-item"><strong>课后回看</strong><span>作品、认知变化、协作与AI干预效果</span></div>
+          </div></article>
+        </div>
+
+        <div class="journey-switch" role="tablist" aria-label="双端流程切换">
+          <button class="active" type="button" role="tab" aria-selected="true" data-journey="student">学生端主流程</button>
+          <button type="button" role="tab" aria-selected="false" data-journey="teacher">教师端主流程</button>
+        </div>
+        <div class="journey-view" data-journey-view="student">
+          <div class="journey-step"><span class="phase">阶段 01</span><h4>AI说明当下目标</h4><p>智能体依据阶段状态发起对话，并将课程目标转成学生可行动的问题。</p></div>
+          <div class="journey-step"><span class="phase">阶段 02</span><h4>动态出现活动卡</h4><p>需要拍照时出现相机组件，需要讨论时进入小组房间；学生不必在功能菜单中寻找工具。</p></div>
+          <div class="journey-step"><span class="phase">阶段 03</span><h4>证据进入共享上下文</h4><p>活动产物进入证据库，AI的下一次对话同时读取真实产物与聊天记录，并优先依据学习证据。</p></div>
+          <div class="journey-step"><span class="phase">阶段 04</span><h4>规则判断是否推进</h4><p>系统检查配置的完成条件；缺少内容时由AI解释缺口，教师可人工覆盖。</p></div>
+        </div>
+        <div class="journey-view" data-journey-view="teacher" hidden>
+          <div class="journey-step"><span class="phase">阶段 01</span><h4>开课前确认</h4><p>教师确认分组、角色数量、路线、安全授权和课程版本，发布本次会话。</p></div>
+          <div class="journey-step"><span class="phase">阶段 02</span><h4>优先观察异常</h4><p>系统汇总“需要关注”的小组：失联、超时、位置偏离、AI低置信或学生主动求助。</p></div>
+          <div class="journey-step"><span class="phase">阶段 03</span><h4>选择干预强度</h4><p>教师可以只发一个追问，也可以加时、解锁、加入讨论或发布全班指令。</p></div>
+          <div class="journey-step"><span class="phase">阶段 04</span><h4>查看干预效果</h4><p>系统记录干预前后小组是否恢复推进，为课程改版和教师复盘提供依据。</p></div>
+        </div>
+      </section>
+
+      <section class="section" id="agent">
+        <div class="section-kicker">07 / Agent &amp; knowledge</div>
+        <h2>智能体由一组可配置课程资产共同构成</h2>
+        <p class="section-intro">每门课程的“独立智能体感”来自课程人格、知识、角色视角、阶段策略和视觉表达；底层模型、检索、工具调用与安全规则由平台统一提供。</p>
+        <div class="lead-note"><strong>平台团队交付：</strong>AI对话编排器、课程知识检索、多模态工具、网络检索与来源标注、输出护栏和教师指令通道。<br><strong>课程团队交付：</strong>下面八类课程资产，决定当前智能体在这门课里知道什么、引导什么、限制什么以及如何评价。</div>
+        <div class="kb-stack">
+          <article class="kb-card"><span class="badge">KB-01</span><h3>知识类</h3><p>事实、概念、史料、方法、地点与数据。每条知识都要带来源、可信等级、适用年龄和可见阶段。</p></article>
+          <article class="kb-card"><span class="badge">KB-02</span><h3>引导与限制类</h3><p>本课程希望学生发现什么、AI应追问什么、哪些答案不能提前说、哪些价值判断必须保留开放性。</p></article>
+          <article class="kb-card"><span class="badge">KB-03</span><h3>流程策略类</h3><p>每个阶段的对话目标、进入条件、活动调用、失败分支与结束条件。应结构化配置，不只写成自然语言。</p></article>
+          <article class="kb-card"><span class="badge">KB-04</span><h3>角色人格类</h3><p>称呼、语气、身份、角色视角和表达难度。人格影响表达，不得改变事实、流程和权限。</p></article>
+          <article class="kb-card"><span class="badge">KB-05</span><h3>误区与诊断类</h3><p>常见错误、容易混淆的概念、错误证据模式和相应追问，帮助AI识别学习困难并给出针对性引导。</p></article>
+          <article class="kb-card"><span class="badge">KB-06</span><h3>评价与示例类</h3><p>评价量规、合格产物示例、反例、反馈句式和不同年龄表现，用于稳定AI反馈标准。</p></article>
+          <article class="kb-card"><span class="badge">KB-07</span><h3>场域与应急类</h3><p>点位、路线、开放限制、替代任务、离线材料和安全要求，支持真实研学中的现场变化。</p></article>
+          <article class="kb-card"><span class="badge">KB-08</span><h3>教师策略类</h3><p>什么情况只让AI继续，什么情况提醒教师，教师可发送哪些指令，以及指令对智能体行为的影响。</p></article>
+        </div>
+
+        <div class="source-policy">
+          <h3>学生知识回答的来源优先级</h3>
+          <div class="policy-step"><span class="order">1</span><div><strong>课程知识库</strong><span>使用课程设计者审定内容，展示课程来源或知识卡编号。</span></div><span class="policy-label">默认</span></div>
+          <div class="policy-step"><span class="order">2</span><div><strong>机构批准的扩展资料</strong><span>跨课程公共知识库、场馆资料和教师补充材料。</span></div><span class="policy-label">可追溯</span></div>
+          <div class="policy-step"><span class="order">3</span><div><strong>模型通用认知</strong><span>只有课程允许时使用，明确提示“以下为AI通用知识，未在本课程资料中核验”。</span></div><span class="policy-label">需标注</span></div>
+          <div class="policy-step"><span class="order">4</span><div><strong>网络检索</strong><span>必须获得课程策略允许；明确显示“根据网络信息”、来源链接、发布日期与检索时间。</span></div><span class="policy-label">强标注</span></div>
+          <div class="policy-step"><span class="order">5</span><div><strong>无法可靠回答</strong><span>说明缺少可靠资料，可建议呼叫老师或记录为待研究问题，不编造答案。</span></div><span class="policy-label">安全降级</span></div>
+        </div>
+
+        <div class="runtime-flow" aria-label="智能体运行时组装流程">
+          <div class="runtime-box"><strong>确定性上下文</strong><span>课程版本、阶段、角色、任务、权限、教师指令、已有证据</span></div>
+          <div class="runtime-arrow">→</div>
+          <div class="runtime-box"><strong>检索与策略组装</strong><span>检索可见知识，加载引导、限制、误区、评价与工具策略</span></div>
+          <div class="runtime-arrow">→</div>
+          <div class="runtime-box"><strong>结构化输出</strong><span>对话文本 + 活动调用 + 引用 + 状态建议 + 风险标记</span></div>
+        </div>
+        <div class="warning"><strong>不要把“主流程提示词”理解成一段超长 System Prompt。</strong>应拆成阶段策略、状态规则、知识权限、活动调用和输出协议。这样才能版本化、测试、审计和让教师临时干预。</div>
+      </section>
+
+      <section class="section" id="intervention">
+        <div class="section-kicker">08 / Teacher intervention</div>
+        <h2>教师干预需要一套正式产品协议</h2>
+        <p class="section-intro">干预包含触发原因、强度、作用范围、学生可见方式和解除条件。教师的指令进入智能体上下文，但不能悄悄篡改学生作品或伪装成AI自主判断。</p>
+        <div class="intervention-ladder">
+          <div class="intervention-row"><span class="intervention-level">L0</span><strong>静默观察</strong><span>AI正常引导，教师只看状态与摘要。</span><span class="trigger">正常推进</span></div>
+          <div class="intervention-row"><span class="intervention-level">L1</span><strong>AI自动提醒</strong><span>提示遗漏、超时、证据不足或成员尚未确认。</span><span class="trigger">规则自动触发</span></div>
+          <div class="intervention-row"><span class="intervention-level">L2</span><strong>教师远程轻推</strong><span>发送问题、知识卡、鼓励、提示或延长时间。</span><span class="trigger">教师选择小组</span></div>
+          <div class="intervention-row"><span class="intervention-level">L3</span><strong>教师进入任务</strong><span>加入讨论、人工审核、解锁、退回、切换替代任务。</span><span class="trigger">学习或现场阻塞</span></div>
+          <div class="intervention-row critical"><span class="intervention-level">L4</span><strong>安全接管</strong><span>暂停课程、紧急集合、逐人确认或关闭位置任务。</span><span class="trigger">安全优先</span></div>
+        </div>
+        <div class="object-table-wrap">
+          <table>
+            <thead><tr><th>教师动作</th><th>作用对象</th><th>学生端表现</th><th>系统记录</th></tr></thead>
+            <tbody>
+              <tr><td>发送追问</td><td>个人 / 小组 / 全班</td><td>明确标注“教师提示”，进入当前对话</td><td>教师、原因、内容、是否回应</td></tr>
+              <tr><td>推送知识卡</td><td>角色 / 小组 / 全班</td><td>作为课程资料出现，不冒充学生发现</td><td>资料版本、阅读与引用情况</td></tr>
+              <tr><td>加时 / 暂停</td><td>任务 / 小组 / 全班</td><td>更新时间并说明教师操作</td><td>原时间、变更值、原因</td></tr>
+              <tr><td>人工通过</td><td>证据 / 任务 / 关卡</td><td>显示教师确认，保留AI原判断</td><td>覆盖对象、依据、操作者</td></tr>
+              <tr><td>切换替代任务</td><td>点位任务 / 设备任务</td><td>进入同目标的离线或室内版本</td><td>触发原因、替代版本、学习目标等价性</td></tr>
+              <tr><td>紧急集合</td><td>全班</td><td>覆盖当前页面，要求确认并导航集合点</td><td>广播时间、确认时间、未确认人员</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="data">
+        <div class="section-kicker">09 / Learning data</div>
+        <h2>数据同时记录操作结果与学习发生过程</h2>
+        <p class="section-intro">数据项应由课程配置声明：采什么、为什么采、谁可见、保存多久、是否进入评价。平台提供统一事件协议，课程只选择需要的字段和评价映射。</p>
+        <div class="data-groups">
+          <article class="data-card"><h3>会话与身份</h3><ul><li>课程、版本、班级、场次</li><li>小组、成员、角色分配</li><li>设备、在线与权限</li></ul></article>
+          <article class="data-card"><h3>流程与行为</h3><ul><li>阶段进入、任务开始与完成</li><li>活动调用、停留、重试、跳过</li><li>提示层级与求助行为</li></ul></article>
+          <article class="data-card"><h3>现场与安全</h3><ul><li>到点、偏离与集合确认</li><li>网络、离线队列、设备异常</li><li>仅按必要频率采集位置</li></ul></article>
+          <article class="data-card"><h3>学习产物</h3><ul><li>照片、视频、录音、输入、测量</li><li>标注、证据卡、图谱与展示</li><li>原始内容与AI整理内容分开保存</li></ul></article>
+          <article class="data-card"><h3>认知过程</h3><ul><li>初始猜想、证据与结论</li><li>确信程度、分歧与版本修改</li><li>哪条新证据导致观点改变</li></ul></article>
+          <article class="data-card"><h3>协作过程</h3><ul><li>角色领取、成员贡献</li><li>讨论观点、投票与同伴确认</li><li>共识形成和保留的少数意见</li></ul></article>
+          <article class="data-card"><h3>AI运行</h3><ul><li>检索到的知识与来源</li><li>AI输出、活动调用、置信度</li><li>护栏触发、降级和疑似误判</li></ul></article>
+          <article class="data-card"><h3>教师干预</h3><ul><li>干预原因、级别与动作</li><li>对象、时点与学生可见状态</li><li>干预后是否恢复推进</li></ul></article>
+          <article class="data-card"><h3>评价与反思</h3><ul><li>量规维度、评价主体与证据</li><li>自评、互评、教师评价</li><li>学习总结与后续问题</li></ul></article>
+        </div>
+        <div class="data-principles">
+          <div class="principle"><h3>运行数据 ≠ 评价数据</h3><p>位置、点击和用时用于保障课程运行，不应自动换算为学习能力。只有课程量规明确绑定的证据才能进入评价。</p></div>
+          <div class="principle"><h3>AI整理 ≠ 学生原作</h3><p>必须保留学生原始表达、AI修改版本和接受记录，避免将AI生成内容误认为学生学习成果。</p></div>
+        </div>
+        <div class="warning"><strong>未成年人数据底线：</strong>默认最小化采集；明确监护与机构授权；位置和人像采用最短保存周期；教师只能查看所管理班级；网络检索、模型调用和第三方存储必须可审计。</div>
+      </section>
+
+      <section class="section" id="configuration">
+        <div class="section-kicker">10 / Course package</div>
+        <h2>一门课程最终交付为完整的“课程配置包”</h2>
+        <p class="section-intro">这部分全部由课程设计团队负责。未来后台提供可视化编辑方式；当前先定义配置协议，也可以用文件、表格或脚本生产课程。</p>
+        <div class="object-table-wrap">
+          <table>
+            <thead><tr><th>课程团队交付内容</th><th>需要回答的设计问题</th><th>进入产品后产生的作用</th><th>发布要求</th></tr></thead>
+            <tbody>
+              <tr><td>学习目标与产物</td><td>学生最终会做什么？用什么作品或证据证明？</td><td>决定任务、评价、证据库和最终展示</td><td>必填</td></tr>
+              <tr><td>阶段图</td><td>课程分几段？何时由AI主导、学生行动、教师讲解或全组协作？</td><td>生成主流程状态与双端阶段视图</td><td>必填</td></tr>
+              <tr><td>角色设计</td><td>需要几个角色？各自掌握什么独特信息？如何互相依赖？</td><td>生成角色领取、角色任务和小组共享范围</td><td>按课程选填</td></tr>
+              <tr><td>任务与活动</td><td>每一步学生做什么？调用哪个组件？提交什么？</td><td>AI在合适时机调出拍照、输入、讨论等界面</td><td>必填</td></tr>
+              <tr><td>课程知识</td><td>学生可能问什么？可靠答案与来源在哪里？何时可见？</td><td>进入课程RAG，成为AI优先回答来源</td><td>必填</td></tr>
+              <tr><td>引导与限制</td><td>希望学生自己发现什么？AI怎么追问？哪些内容需要延后披露？</td><td>控制各阶段对话目标、提示层级和禁答范围</td><td>必填</td></tr>
+              <tr><td>完成与解锁</td><td>什么条件算完成？AI、同伴和教师各有什么确认权？</td><td>生成确定性状态判断和缺失提示</td><td>必填</td></tr>
+              <tr><td>评价量规</td><td>评价哪些能力？依据哪些产物？谁来评价？</td><td>控制AI反馈、教师评价、自评互评和课后报告</td><td>必填</td></tr>
+              <tr><td>教师干预策略</td><td>哪些情况提醒教师？教师能执行哪些课程特有动作？</td><td>生成告警规则、求助分类和替代任务入口</td><td>必填</td></tr>
+              <tr><td>数据与隐私声明</td><td>采什么、为什么、谁看、保存多久、是否进入评价？</td><td>配置事件采集、权限、保存与审计</td><td>必填</td></tr>
+              <tr><td>主题与媒体</td><td>智能体叫什么？课程使用哪些视觉、音视频和知识卡？</td><td>形成课程独立的感知与叙事表达</td><td>建议填写</td></tr>
+              <tr><td>现场替代方案</td><td>点位关闭、网络中断、天气变化时如何保持学习目标？</td><td>触发离线、室内或替代资源任务</td><td>研学必填</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="config-package">
+          <div class="config-list">
+            <details open><summary>01. course.manifest｜课程总览</summary><div class="detail-body"><strong>包含：</strong>课程ID、名称、版本、适龄、场域、总时长、学习目标、主题、发布状态。<br><strong>作用：</strong>识别课程与版本，是所有对象的根。</div></details>
+            <details><summary>02. phases.json｜阶段流程图</summary><div class="detail-body"><strong>包含：</strong>阶段、进入/退出条件、顺序/并行关系、允许工具、答案披露等级、教师控制点。<br><strong>作用：</strong>决定主流程，不依赖AI自由发挥。</div></details>
+            <details><summary>03. roles.json｜N个角色</summary><div class="detail-body"><strong>包含：</strong>角色名称、人数、职责、人格、能力梯度、任务关系、共享与私有信息。<br><strong>作用：</strong>角色数量和任务视角完全数据化。</div></details>
+            <details><summary>04. missions.json｜角色与小组任务</summary><div class="detail-body"><strong>包含：</strong>核心问题、任务步骤、地点、活动序列、产物、完成条件、替代任务。<br><strong>作用：</strong>把课程教学设计转为可运行任务。</div></details>
+            <details><summary>05. activities.json｜活动组件参数</summary><div class="detail-body"><strong>包含：</strong>组件类型、字段、素材、校验、AI分析、教师权限、数据采集。<br><strong>作用：</strong>同一拍照组件在不同任务中呈现不同要求。</div></details>
+            <details><summary>06. knowledge/｜知识资产</summary><div class="detail-body"><strong>包含：</strong>知识单元、来源、可信度、标签、可见阶段、适用角色、年龄与引用格式。<br><strong>作用：</strong>成为智能体的首要回答依据。</div></details>
+            <details><summary>07. agent.policy｜智能体策略</summary><div class="detail-body"><strong>包含：</strong>人格、阶段目标、引导方法、禁答内容、误区、提示层级、网络策略、输出协议。<br><strong>作用：</strong>形成课程独立智能体体验，同时可测试和审计。</div></details>
+            <details><summary>08. teacher.policy｜教师干预策略</summary><div class="detail-body"><strong>包含：</strong>异常规则、告警等级、可执行动作、作用范围、人工覆盖与安全流程。<br><strong>作用：</strong>把教师端能力和课程节奏绑定。</div></details>
+            <details><summary>09. rubric.json｜评价量规</summary><div class="detail-body"><strong>包含：</strong>维度、等级、观察点、关联产物、评价主体与AI可用范围。<br><strong>作用：</strong>指导反馈与课后评价，避免只统计完成率。</div></details>
+            <details><summary>10. data.schema｜数据字典</summary><div class="detail-body"><strong>包含：</strong>采集字段、用途、可见角色、保存周期、是否进入评价、脱敏规则。<br><strong>作用：</strong>课程上线前完成数据治理。</div></details>
+            <details><summary>11. theme.json + assets/｜视觉与媒体</summary><div class="detail-body"><strong>包含：</strong>课程颜色、智能体名称、角色徽标、音视频、背景、知识卡模板。<br><strong>作用：</strong>让不同课程拥有独立视觉，但不改变产品结构。</div></details>
+          </div>
+          <aside class="config-preview" aria-label="课程配置示例">
+            <h3>任务配置示例</h3>
+            <pre>{
+  <span class="key">"taskId"</span>: <span class="value">"forbidden-city.slope.observe"</span>,
+  <span class="key">"roleId"</span>: <span class="value">"slope-officer"</span>,
+  <span class="key">"goal"</span>: <span class="value">"用现场证据判断水流方向"</span>,
+  <span class="key">"activities"</span>: [
+    {
+      <span class="key">"type"</span>: <span class="value">"location_check"</span>,
+      <span class="key">"pointId"</span>: <span class="value">"central-axis-01"</span>
+    },
+    {
+      <span class="key">"type"</span>: <span class="value">"measure"</span>,
+      <span class="key">"metric"</span>: <span class="value">"slope_direction"</span>,
+      <span class="key">"repeat"</span>: 3
+    },
+    {
+      <span class="key">"type"</span>: <span class="value">"group_discussion"</span>,
+      <span class="key">"question"</span>: <span class="value">"三次结果是否一致？"</span>
+    },
+    {
+      <span class="key">"type"</span>: <span class="value">"ai_dialogue"</span>,
+      <span class="key">"strategy"</span>: <span class="value">"evidence_coach"</span>,
+      <span class="key">"forbiddenReveal"</span>: [<span class="value">"final_system_answer"</span>]
+    }
+  ],
+  <span class="key">"completion"</span>: {
+    <span class="key">"requiredArtifacts"</span>: [<span class="value">"3_measurements"</span>, <span class="value">"group_claim"</span>],
+    <span class="key">"peerConfirm"</span>: 1,
+    <span class="key">"teacherOverride"</span>: true
+  }
+}</pre>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="example">
+        <div class="section-kicker">11 / Forbidden City mapping</div>
+        <h2>故宫课程作为第一份标准课程配置运行</h2>
+        <p class="section-intro">角色数组填入六个官，现场任务分别组合不同活动；每个小组完成六个角色任务后，共享产物进入同一个总任务。下一门课程只替换配置对象。</p>
+        <div class="forbidden-example">
+          <h3>课程阶段图</h3>
+          <div class="course-phases">
+            <div class="course-phase"><small>PHASE 01</small><strong>沉浸影片</strong><span>教师统一触发；学生记录初始猜想</span></div>
+            <div class="course-phase"><small>PHASE 02</small><strong>组队领卡</strong><span>扫码激活六种身份；建立小组会话</span></div>
+            <div class="course-phase"><small>PHASE 03</small><strong>故宫采证</strong><span>六角色并行任务；AI现场陪伴</span></div>
+            <div class="course-phase"><small>PHASE 04</small><strong>小组推演</strong><span>证据图谱；形成“不易积水”解释</span></div>
+            <div class="course-phase"><small>PHASE 05</small><strong>展示与璇玑</strong><span>分享、讲解、影片与认知修正</span></div>
+          </div>
+          <div class="object-table-wrap role-table">
+            <table>
+              <thead><tr><th>角色配置</th><th>核心活动组合</th><th>关键产物</th><th>AI策略</th></tr></thead>
+              <tbody>
+                <tr><td>数龙官</td><td>拍照 → 标注 → 计数/输入 → AI追问</td><td>螭首结构与局部排水证据</td><td>观察教练，不给出总数量答案</td></tr>
+                <tr><td>测坡官</td><td>定位 → 多次测量 → 小组讨论 → 提交判断</td><td>坡向数据与可靠性说明</td><td>方法教练，提醒重复测量</td></tr>
+                <tr><td>寻沟官</td><td>拍照 → 分类 → 位置记录 → 关系标注</td><td>明沟、钱眼与暗沟推测</td><td>证据教练，区分观察与推断</td></tr>
+                <tr><td>引河官</td><td>路线采集 → 视频/照片 → 地图标注 → 讨论</td><td>内金水河走向与功能假设</td><td>系统教练，追问弯曲原因</td></tr>
+                <tr><td>护城官</td><td>定位 → 观察记录 → 测量/估算 → 同伴确认</td><td>护城河调蓄与外围关系</td><td>尺度教练，避免无证据夸大</td></tr>
+                <tr><td>真相官</td><td>证据审查 → 来源分类 → 反例问题 → 小组讨论</td><td>证据等级与未解问题</td><td>质疑教练，不提前透露璇玑反转</td></tr>
+                <tr><td>小组总任务</td><td>证据库 → 推演画布 → 共识确认 → 展示</td><td>水系图、原因模型、证据链、保留问题</td><td>推理伙伴，只指出断点与矛盾</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="unlock-rule">最终任务解锁 = 六张身份已激活 + 六类必要证据已提交 + 每类至少一名同伴确认。AI质量判断只提供提示，不直接作为唯一通关分数。</div>
+        </div>
+      </section>
+
+      <section class="section" id="workflow">
+        <div class="section-kicker">12 / Course production</div>
+        <h2>未来设计一门新课程，需要完成哪些内容</h2>
+        <p class="section-intro">课程生产从学习证据倒推任务，再编写智能体对话与引导策略。完成下列八步后，平台即可生成对应的学生端、教师端和课程智能体。</p>
+        <div class="workflow">
+          <article class="workflow-step"><h3>定义学习目标与最终产物</h3><p>明确学生最终要能够解释、制作、比较或迁移什么，以及用什么真实产物证明。</p></article>
+          <article class="workflow-step"><h3>设计阶段图</h3><p>确定集体环节、角色任务、总任务、展示与反思的先后、并行和解锁关系。</p></article>
+          <article class="workflow-step"><h3>定义N个角色</h3><p>说明每个角色为什么存在、掌握什么独特证据、如何与其他角色形成信息互赖。</p></article>
+          <article class="workflow-step"><h3>组合任务活动</h3><p>从组件库选择拍照、输入、讨论、测量、定位等活动，配置产物与完成条件。</p></article>
+          <article class="workflow-step"><h3>建设课程知识资产</h3><p>整理事实、史料、方法、误区、出处、阶段权限和网络检索策略。</p></article>
+          <article class="workflow-step"><h3>配置AI教学策略</h3><p>定义各阶段AI要推动的思考、不能透露的内容、提示层级与多模态分析标准。</p></article>
+          <article class="workflow-step"><h3>配置教师与安全策略</h3><p>定义教师告警、可执行动作、人工覆盖、替代任务、位置与紧急流程。</p></article>
+          <article class="workflow-step"><h3>定义数据并进行模拟课</h3><p>声明数据用途与保存规则，用虚拟小组跑通正常、失败、离线、误判和教师接管路径后发布。</p></article>
+        </div>
+        <div class="deliverables">
+          <h3>一门课程的标准交付物</h3>
+          <div class="deliverable-grid">
+            <div class="deliverable"><strong>课程清单</strong><span>目标、阶段、版本</span></div>
+            <div class="deliverable"><strong>角色与任务包</strong><span>N个角色、活动与产物</span></div>
+            <div class="deliverable"><strong>知识库</strong><span>来源、权限与可信度</span></div>
+            <div class="deliverable"><strong>智能体策略</strong><span>引导、限制、误区与工具</span></div>
+            <div class="deliverable"><strong>教师策略</strong><span>告警、干预与安全</span></div>
+            <div class="deliverable"><strong>评价量规</strong><span>证据、维度与主体</span></div>
+            <div class="deliverable"><strong>数据字典</strong><span>用途、权限与保存期</span></div>
+            <div class="deliverable"><strong>主题素材包</strong><span>视觉、音频、视频与卡片</span></div>
+            <div class="deliverable"><strong>课程测试报告</strong><span>正常、异常和AI边界测试</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="roadmap">
+        <div class="section-kicker">13 / Build roadmap</div>
+        <h2>先验证“配置能生成课程”，再建设完整后台</h2>
+        <p class="section-intro">第一阶段不必急着做一个庞大的课程编辑后台。先用故宫课程把配置协议、双端运行和智能体边界跑通，后台只是后续提高生产效率的工具。</p>
+        <div class="roadmap">
+          <article class="roadmap-card recommended"><div class="stage-label">MVP / 优先</div><h3>课程运行底座</h3><ul><li>课程、阶段、N角色、任务与活动配置</li><li>学生AI主对话 + 动态活动卡</li><li>基础图片理解、语音转写和文本语义分析</li><li>小组状态、证据库与总任务</li><li>教师态势、呼叫、加时、推送、解锁与集合</li><li>课程知识RAG、阶段禁答和来源标注</li><li>统一学习事件与审计日志</li></ul></article>
+          <article class="roadmap-card"><div class="stage-label">PHASE 2</div><h3>增强学习能力</h3><ul><li>视频、复杂图谱与跨媒体联合分析</li><li>讨论主持、共识与推演画布</li><li>不同年龄的自适应提示</li><li>离线现场任务与同步冲突处理</li><li>课后证据与认知变化报告</li></ul></article>
+          <article class="roadmap-card"><div class="stage-label">PHASE 3</div><h3>课程生产后台</h3><ul><li>可视化阶段图编辑器</li><li>活动组件配置器</li><li>知识与限制管理</li><li>智能体策略测试台</li><li>课程版本、灰度与复用市场</li></ul></article>
+        </div>
+        <div class="decision-box"><h3>建议下一步直接做什么</h3><p>先建立一份正式的“课程配置字段清单”，再用故宫课程逐字段填写并验证。随后选择第二门结构明显不同的课程进行盲测：如果不改底层代码也能生成可用的双端流程，这套抽象才算成立。</p></div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner"><div><strong>AI研学课程智能体平台</strong><br><span>整体产品设计方案 · 学生端 / 教师端 / 课程配置底座</span></div><span>Version 1.0 · 2026-07-20</span></div>
+  </footer>
+
+  <script>
+    const navLinks = [...document.querySelectorAll('.side-nav a')];
+    const sections = [...document.querySelectorAll('main .section')];
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      navLinks.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${visible.target.id}`));
+    }, { rootMargin: '-18% 0px -66% 0px', threshold: [0, .2, .5] });
+    sections.forEach((section) => observer.observe(section));
+
+    const filterButtons = [...document.querySelectorAll('.filter-button')];
+    const capabilityCards = [...document.querySelectorAll('.capability-card')];
+    filterButtons.forEach((button) => button.addEventListener('click', () => {
+      const filter = button.dataset.filter;
+      filterButtons.forEach((item) => item.classList.toggle('active', item === button));
+      capabilityCards.forEach((card) => { card.hidden = filter !== 'all' && card.dataset.category !== filter; });
+    }));
+
+    const journeyButtons = [...document.querySelectorAll('[data-journey]')];
+    const journeyViews = [...document.querySelectorAll('[data-journey-view]')];
+    journeyButtons.forEach((button) => button.addEventListener('click', () => {
+      const target = button.dataset.journey;
+      journeyButtons.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', String(active));
+      });
+      journeyViews.forEach((view) => { view.hidden = view.dataset.journeyView !== target; });
+    }));
+  </script>
+</body>
+</html>

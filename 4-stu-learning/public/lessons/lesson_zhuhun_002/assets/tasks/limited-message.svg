@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <rect width="720" height="520" fill="#eee3d0"/>
+  <rect x="54" y="42" width="612" height="436" rx="16" fill="#fffaf0" stroke="#8d211f" stroke-width="3"/>
+  <path d="M54 108H666" stroke="#8d211f" stroke-width="2"/>
+  <g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#4d4437">
+    <text x="82" y="82" font-size="25" font-weight="700" fill="#8d211f">局部命令卡｜课程情境材料</text>
+    <text x="82" y="134" font-size="14" fill="#756852">只使用当前可见信息；卡片未提供的字段保留“需确认”。</text>
+    <text x="82" y="176" font-size="16" font-weight="700">行动</text><text x="150" y="176" font-size="15">与本组成员在原地完成一次人员核对。</text>
+    <text x="82" y="224" font-size="16" font-weight="700">报告</text><text x="150" y="224" font-size="15">核对完成后，向小组记录员报告人数。</text>
+    <text x="82" y="272" font-size="16" font-weight="700">时间</text><text x="150" y="272" font-size="15" fill="#8d211f">未提供｜执行前需确认</text>
+    <text x="82" y="320" font-size="16" font-weight="700">地点</text><text x="150" y="320" font-size="15" fill="#8d211f">下一行动地点未提供｜不可自行猜测</text>
+    <text x="82" y="368" font-size="16" font-weight="700">确认</text><text x="150" y="368" font-size="15">向带队老师确认出发时间与下一行动地点。</text>
+    <text x="82" y="416" font-size="16" font-weight="700">停止条件</text><text x="180" y="416" font-size="15">人员不齐、路线不清或现场拥挤时，停止移动并呼叫老师。</text>
+    <text x="82" y="456" font-size="12" fill="#8d211f">课程推演命令｜用于信息边界练习，不得作为历史原件或真实电文引用</text>
+  </g>
+</svg>

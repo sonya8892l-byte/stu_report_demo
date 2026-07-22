@@ -1,0 +1,16 @@
+:root[data-theme="youyi"] {
+  --ink: #1e1625;
+  --ink-soft: #5c4d68;
+  --ink-faint: #7d6f8a;
+  --paper: #f5f0f8;
+  --surface: #fdfbff;
+  --surface-muted: #e8e0ee;
+  --line: #d0c5d9;
+  --brand: #6b2d7b;
+  --brand-strong: #4a1d5a;
+  --brand-soft: #f0ddf6;
+  --gold: #9e6b3a;
+  --gold-soft: #f0e2cc;
+  --teal: #a0445c;
+  --teal-soft: #f4dce3;
+}

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#6f211b" />
+  <meta name="description" content="研学课程教师带队工作台" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/app-icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+  <title>铸魂·教师带队</title>
+</head>
+<body>
+  <div class="app-shell" id="teacherApp">
+    <div class="offline-banner" id="offlineBanner" hidden>当前离线 · 安全指令已停用，显示最近一次同步数据</div>
+
+    <main class="app-main">
+      <section class="app-view" data-view="runs" aria-labelledby="runsTitle">
+        <header class="page-header page-header--paper">
+          <div>
+            <p class="eyebrow">教学运行</p>
+            <h1 id="runsTitle">场次中心</h1>
+          </div>
+          <button class="round-button" type="button" data-action="new-run" aria-label="创建场次">+</button>
+        </header>
+        <div class="run-summary" id="runSummary"></div>
+        <div class="run-list" id="runList" aria-live="polite"></div>
+      </section>
+
+      <section class="app-view is-active live-view" data-view="live" aria-labelledby="liveTitle">
+        <header class="live-header">
+          <div class="live-header__top">
+            <div>
+              <p class="eyebrow" id="livePhase">正在读取课程状态</p>
+              <h1 id="liveTitle">教师带队台</h1>
+            </div>
+            <button class="sync-button" id="syncButton" type="button" data-action="refresh" aria-label="刷新状态">
+              <span class="sync-dot"></span><span id="syncLabel">连接中</span>
+            </button>
+          </div>
+          <div class="status-strip" id="statusStrip"></div>
+        </header>
+
+        <section class="map-stage" id="mapStage" aria-label="全班位置地图">
+          <div class="map-canvas" id="teacherMap" aria-hidden="true"></div>
+          <div class="map-status" id="mapStatus" role="status" aria-live="polite">
+            <span class="map-status__spinner" aria-hidden="true"></span>
+            <strong>正在连接高德地图</strong>
+            <small>学生位置将显示在真实地图上</small>
+          </div>
+          <div class="map-tools">
+            <button type="button" data-action="center-map" aria-label="回到全班位置">⌖</button>
+            <button type="button" data-action="toggle-map-list" aria-label="切换位置列表">≡</button>
+          </div>
+          <div class="map-legend">
+            <span><i class="legend-normal"></i>实时</span>
+            <span><i class="legend-stale"></i>可能过期</span>
+            <span><i class="legend-alert"></i>异常</span>
+          </div>
+          <button class="rally-button" type="button" data-action="prepare-rally">
+            <span aria-hidden="true">◉</span> 紧急集合
+          </button>
+        </section>
+
+        <section class="location-fallback" id="locationFallback" hidden aria-label="位置文本列表"></section>
+
+        <section class="group-sheet" aria-labelledby="groupsTitle">
+          <div class="sheet-handle" aria-hidden="true"></div>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">课程小组</p>
+              <h2 id="groupsTitle">现场态势</h2>
+            </div>
+          </div>
+          <div class="group-list" id="groupList"></div>
+        </section>
+      </section>
+
+      <section class="app-view" data-view="alerts" aria-labelledby="alertsTitle">
+        <header class="page-header page-header--paper">
+          <div><p class="eyebrow">待处理中心</p><h1 id="alertsTitle">需要你的地方</h1></div>
+          <span class="count-pill" id="alertCount">0</span>
+        </header>
+        <div class="priority-guide"><strong>P0</strong>安全优先 <span>·</span> P1教学介入 <span>·</span> P2运行关注</div>
+        <div class="alert-list" id="alertList"></div>
+      </section>
+
+      <section class="app-view" data-view="review" aria-labelledby="reviewTitle">
+        <header class="page-header page-header--paper">
+          <div><p class="eyebrow">课后回看</p><h1 id="reviewTitle">运行与学习证据</h1></div>
+          <button class="outline-button" type="button" data-action="export-review">导出</button>
+        </header>
+        <div id="reviewContent"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="教师端主导航">
+      <button type="button" data-nav="runs"><span aria-hidden="true">▦</span><small>场次</small></button>
+      <button class="is-active" type="button" data-nav="live"><span aria-hidden="true">⌖</span><small>态势</small></button>
+      <button type="button" data-nav="alerts"><span aria-hidden="true">◇</span><small>待处理</small><i id="alertNavBadge" hidden>0</i></button>
+      <button type="button" data-nav="review"><span aria-hidden="true">∿</span><small>回看</small></button>
+    </nav>
+
+    <div class="backdrop" id="backdrop" hidden data-action="close-layer"></div>
+    <aside class="detail-drawer" id="detailDrawer" aria-hidden="true" aria-labelledby="drawerTitle">
+      <div class="drawer-handle"></div>
+      <header class="drawer-header">
+        <div><p class="eyebrow" id="drawerEyebrow">详情</p><h2 id="drawerTitle">详情</h2></div>
+        <button class="close-button" type="button" data-action="close-layer" aria-label="关闭">×</button>
+      </header>
+      <div class="drawer-body" id="drawerBody"></div>
+    </aside>
+
+    <section class="dialog" id="confirmDialog" hidden role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <p class="eyebrow" id="confirmEyebrow">确认操作</p>
+      <h2 id="confirmTitle">请确认</h2>
+      <p id="confirmDescription"></p>
+      <label class="field-label" for="commandReason">操作原因</label>
+      <textarea id="commandReason" rows="3" placeholder="记录这次操作的原因"></textarea>
+      <div class="dialog-actions">
+        <button class="outline-button" type="button" data-action="close-layer">取消</button>
+        <button class="primary-button" id="confirmCommandButton" type="button" data-action="confirm-command">确认并发送</button>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

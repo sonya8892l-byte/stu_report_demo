@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <rect width="720" height="520" fill="#f7f0df"/>
+  <path d="M0 96H720M0 192H720M0 288H720M0 384H720M120 0V520M240 0V520M360 0V520M480 0V520M600 0V520" stroke="#d9cfbd" stroke-width="1" stroke-dasharray="4 8"/>
+  <path d="M28 108C118 58 176 170 268 121S430 51 512 111 625 202 704 156" fill="none" stroke="#5b94a8" stroke-width="18" opacity=".82"/>
+  <path d="M84 470C124 382 224 418 272 334S376 213 458 244 558 356 684 306" fill="none" stroke="#76a8b8" stroke-width="12" opacity=".78"/>
+  <path d="M130 280l38-72 38 72zm56 28l44-84 44 84zm316 44l42-80 42 80zm58 40l36-68 36 68z" fill="#b7a480" opacity=".74"/>
+  <g fill="#fffaf0" stroke="#8e7a5d" stroke-width="2" stroke-dasharray="6 5">
+    <circle cx="150" cy="128" r="24"/><circle cx="330" cy="99" r="24"/><circle cx="470" cy="283" r="24"/><circle cx="596" cy="328" r="24"/>
+  </g>
+  <g font-family="PingFang SC, Microsoft YaHei, sans-serif" fill="#4d4437">
+    <text x="28" y="40" font-size="24" font-weight="700">地形与水系标注底图</text>
+    <text x="28" y="66" font-size="13">依据现场照片补写名称、方向与来源；虚线圆只表示候选标注位</text>
+    <text x="650" y="46" font-size="15" font-weight="700">N</text><path d="M657 80V52m0 0l-8 12m8-12l8 12" stroke="#8d211f" stroke-width="3"/>
+    <text x="25" y="503" font-size="12" fill="#786b58">课程工作底图｜红色实线=可确认　绿色虚线=推演　黑色=待核或阻断</text>
+  </g>
+</svg>

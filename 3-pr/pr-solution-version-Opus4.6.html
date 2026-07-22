@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>研学智能体平台 · 产品方案 v1.0</title>
+<style>
+/* ===== 设计系统 ===== */
+:root {
+  --red: #8c211d;
+  --red-light: #b83a35;
+  --gold: #b88738;
+  --gold-light: #d4a84b;
+  --ink: #2c2417;
+  --ink-light: #5a4d3a;
+  --paper: #fffdf8;
+  --page: #f5f0e8;
+  --border: #d6cbb8;
+  --card-bg: #fff;
+  --code-bg: #1e1e2e;
+  --code-text: #cdd6f4;
+  --tag-bg: #f0ebe0;
+  --success: #2d7d46;
+  --info: #2563eb;
+  --warn: #ca8a04;
+  --radius: 10px;
+  --shadow: 0 2px 12px rgba(44,36,23,.08);
+  --shadow-lg: 0 8px 32px rgba(44,36,23,.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color: var(--ink);
+  background: var(--page);
+  line-height: 1.75;
+}
+
+/* ===== 侧边导航 ===== */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: 260px; background: var(--ink);
+  color: #c8bfa8; padding: 32px 0 24px;
+  overflow-y: auto; z-index: 100;
+  display: flex; flex-direction: column;
+}
+.sidebar-logo {
+  text-align: center; padding: 0 20px 24px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 16px;
+}
+.sidebar-logo h2 {
+  font-family: "Songti SC","STSong",serif;
+  color: var(--gold); font-size: 1.15rem; font-weight: 600;
+  letter-spacing: .08em;
+}
+.sidebar-logo small { font-size: .75rem; opacity:.6; display:block; margin-top:4px;}
+.nav-list { list-style:none; flex:1; }
+.nav-list li a {
+  display:block; padding:10px 24px; color:#c8bfa8;
+  text-decoration:none; font-size:.88rem;
+  border-left:3px solid transparent;
+  transition: all .2s;
+}
+.nav-list li a:hover, .nav-list li a.active {
+  color:#fff; background:rgba(255,255,255,.06);
+  border-left-color: var(--gold);
+}
+.nav-list li a .nav-num {
+  display:inline-block; width:22px; height:22px;
+  line-height:22px; text-align:center;
+  background: rgba(255,255,255,.1); border-radius:4px;
+  font-size:.75rem; margin-right:8px;
+}
+.nav-list li a.active .nav-num {
+  background: var(--red); color:#fff;
+}
+
+/* ===== 主内容区 ===== */
+.main { margin-left:260px; min-height:100vh; }
+
+/* ===== 封面 ===== */
+.cover {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: linear-gradient(165deg, var(--ink) 0%, #3a2e1f 40%, var(--red) 100%);
+  color: #fff; text-align: center;
+  padding: 60px 40px;
+  position: relative; overflow: hidden;
+}
+.cover::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse at 30% 70%, rgba(184,135,56,.15) 0%, transparent 60%);
+}
+.cover-badge {
+  display:inline-block; border:1px solid rgba(255,255,255,.3);
+  padding:6px 20px; border-radius:20px; font-size:.85rem;
+  letter-spacing:.15em; margin-bottom:32px;
+  position:relative;
+}
+.cover h1 {
+  font-family:"Songti SC","STSong",serif;
+  font-size:2.8rem; font-weight:700;
+  letter-spacing:.1em; line-height:1.4;
+  margin-bottom:16px; position:relative;
+}
+.cover h1 em {
+  font-style:normal; color:var(--gold-light);
+}
+.cover .subtitle {
+  font-size:1.15rem; opacity:.75;
+  max-width:560px; line-height:1.8;
+  margin-bottom:40px; position:relative;
+}
+.cover-meta {
+  display:flex; gap:32px; font-size:.85rem;
+  opacity:.5; position:relative;
+}
+
+/* ===== 章节 ===== */
+.section {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 72px 40px 60px;
+}
+.section + .section { border-top: 1px solid var(--border); }
+
+.section-num {
+  display: inline-block;
+  background: var(--red); color: #fff;
+  width: 36px; height: 36px; line-height: 36px;
+  text-align: center; border-radius: 8px;
+  font-size: 1rem; font-weight: 700;
+  margin-bottom: 12px;
+}
+.section h2 {
+  font-family:"Songti SC","STSong",serif;
+  font-size:1.65rem; font-weight:700;
+  color: var(--ink); margin-bottom:8px;
+  letter-spacing:.04em;
+}
+.section .lead {
+  font-size:.95rem; color:var(--ink-light);
+  margin-bottom:32px; line-height:1.8;
+}
+.section h3 {
+  font-size:1.15rem; font-weight:700;
+  margin:36px 0 12px; padding-bottom:8px;
+  border-bottom:2px solid var(--border);
+  color: var(--ink);
+}
+.section h4 {
+  font-size:1rem; font-weight:600;
+  margin:24px 0 8px; color:var(--red);
+}
+
+/* ===== 卡片 ===== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.card-header {
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:16px;
+}
+.card-icon {
+  width:44px; height:44px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem; flex-shrink:0;
+}
+.card-header h4 { margin:0; font-size:1.05rem; color:var(--ink); }
+.card-header small { display:block; color:var(--ink-light); font-size:.8rem; font-weight:400; }
+.card-body { font-size:.9rem; color:var(--ink-light); }
+.card-body ul { padding-left:18px; }
+.card-body li { margin-bottom:4px; }
+
+/* 图标背景色 */
+.icon-capture { background:#e8f5e9; color:#2e7d32; }
+.icon-interact { background:#e3f2fd; color:#1565c0; }
+.icon-collab { background:#fff3e0; color:#e65100; }
+.icon-nav { background:#f3e5f5; color:#7b1fa2; }
+.icon-assess { background:#fce4ec; color:#c62828; }
+.icon-knowledge { background:#e0f2f1; color:#00695c; }
+.icon-guide { background:#fff8e1; color:#f57f17; }
+.icon-constraint { background:#ffebee; color:#b71c1c; }
+.icon-flow { background:#e8eaf6; color:#283593; }
+.icon-rubric { background:#f1f8e9; color:#558b2f; }
+.icon-scaffold { background:#e0f7fa; color:#00838f; }
+.icon-data { background:#ede7f6; color:#4527a0; }
+
+/* ===== 网格 ===== */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+
+/* ===== 架构图 ===== */
+.arch-diagram {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin: 24px 0;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+.arch-layer {
+  display:flex; align-items:stretch; gap:12px;
+  padding:16px; border-radius:8px;
+  margin-bottom:12px;
+}
+.arch-layer-label {
+  writing-mode:vertical-lr; text-orientation:mixed;
+  background:var(--red); color:#fff;
+  padding:12px 8px; border-radius:6px;
+  font-weight:700; font-size:.85rem;
+  display:flex; align-items:center; justify-content:center;
+  letter-spacing:.15em; min-width:36px;
+}
+.arch-layer-content {
+  flex:1; display:flex; flex-wrap:wrap; gap:10px;
+  align-items:center;
+}
+.arch-box {
+  padding:10px 16px; border-radius:6px;
+  font-size:.82rem; font-weight:500;
+  border:1px solid; text-align:center;
+  min-width:100px;
+}
+.arch-arrow {
+  text-align:center; font-size:1.5rem;
+  color:var(--gold); margin:4px 0;
+  letter-spacing:8px;
+}
+.layer-config { background:#fef9ef; }
+.layer-engine { background:#f5f0fb; }
+.layer-client { background:#eef7f0; }
+
+.box-config { background:#fff8e1; border-color:#ffe082; color:#795548; }
+.box-engine { background:#f3e5f5; border-color:#ce93d8; color:#6a1b9a; }
+.box-client { background:#e8f5e9; border-color:#a5d6a7; color:#2e7d32; }
+.box-data { background:#e3f2fd; border-color:#90caf9; color:#1565c0; }
+
+/* ===== 代码块 ===== */
+.code-block {
+  background: var(--code-bg);
+  color: var(--code-text);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 16px 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "SF Mono","Fira Code",monospace;
+  font-size: .82rem;
+  line-height: 1.7;
+  box-shadow: var(--shadow);
+  max-width: 100%;
+}
+.code-block .ck { color:#cba6f7; }
+.code-block .cs { color:#a6e3a1; }
+.code-block .cn { color:#fab387; }
+.code-block .cc { color:#6c7086; font-style:italic; }
+.code-block .cv { color:#89b4fa; }
+
+/* ===== 标签 ===== */
+.tag {
+  display:inline-block; padding:2px 10px;
+  background:var(--tag-bg); border-radius:4px;
+  font-size:.78rem; color:var(--ink-light);
+  margin:2px;
+}
+.tag-red { background:#fce4ec; color:var(--red); }
+.tag-gold { background:#fff8e1; color:#795548; }
+.tag-green { background:#e8f5e9; color:#2e7d32; }
+.tag-blue { background:#e3f2fd; color:#1565c0; }
+
+/* ===== 表格 ===== */
+table {
+  width:100%; border-collapse:collapse;
+  margin:16px 0; font-size:.88rem;
+}
+th {
+  background:var(--ink); color:#fff;
+  padding:10px 14px; text-align:left;
+  font-weight:600; font-size:.82rem;
+}
+td {
+  padding:10px 14px; border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+tr:hover td { background:rgba(184,135,56,.04); }
+
+/* ===== 流程图 ===== */
+.flow-row {
+  display:flex; align-items:center; gap:0;
+  margin:20px 0; flex-wrap:wrap; justify-content:center;
+}
+.flow-step {
+  padding:14px 20px; border-radius:10px;
+  text-align:center; font-size:.85rem;
+  font-weight:600; min-width:120px;
+  border:2px solid;
+}
+.flow-arrow {
+  font-size:1.2rem; color:var(--gold);
+  margin:0 4px; flex-shrink:0;
+}
+.step-config { background:#fff8e1; border-color:#ffe082; color:#795548; }
+.step-engine { background:#f3e5f5; border-color:#ce93d8; color:#6a1b9a; }
+.step-client { background:#e8f5e9; border-color:#a5d6a7; color:#2e7d32; }
+
+/* ===== 屏幕线框 ===== */
+.wireframe {
+  background:#1a1a2e; border-radius:20px;
+  padding:12px; max-width:320px;
+  margin:20px auto; box-shadow:var(--shadow-lg);
+}
+.wireframe-screen {
+  background:#fff; border-radius:12px;
+  min-height:480px; padding:16px;
+  font-size:.78rem; overflow:hidden;
+}
+.wire-statusbar {
+  display:flex; justify-content:space-between;
+  font-size:.65rem; color:#999; padding:4px 0 8px;
+}
+.wire-header {
+  background:var(--red); color:#fff;
+  margin:-16px -16px 12px; padding:14px 16px;
+  border-radius:12px 12px 0 0;
+  font-weight:700; font-size:.9rem;
+}
+.wire-chat-bubble {
+  background:#f0ebe0; border-radius:12px;
+  padding:10px 14px; margin:8px 0;
+  font-size:.8rem; max-width:85%;
+}
+.wire-chat-bubble.user {
+  background:var(--red); color:#fff;
+  margin-left:auto;
+}
+.wire-action-bar {
+  display:flex; gap:6px; margin-top:12px;
+  flex-wrap:wrap;
+}
+.wire-action-btn {
+  padding:6px 12px; border-radius:6px;
+  background:var(--tag-bg); font-size:.72rem;
+  border:1px solid var(--border);
+}
+
+/* ===== 提示框 ===== */
+.callout {
+  padding:16px 20px; border-radius:8px;
+  margin:20px 0; font-size:.9rem;
+  border-left:4px solid;
+}
+.callout-idea { background:#fff8e1; border-color:var(--gold); }
+.callout-warn { background:#fff3e0; border-color:#e65100; }
+.callout-info { background:#e3f2fd; border-color:var(--info); }
+
+/* ===== 响应式 ===== */
+@media (max-width:900px) {
+  .sidebar { display:none; }
+  .main { margin-left:0; }
+  .grid-2, .grid-3 { grid-template-columns:1fr; }
+  .cover h1 { font-size:1.8rem; }
+  .section { padding:40px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 侧边导航 ===== -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h2>研学智能体平台</h2>
+    <small>产品方案 v1.0 · Opus 4.6</small>
+  </div>
+  <ul class="nav-list">
+    <li><a href="#cover"><span class="nav-num">⊙</span>封面</a></li>
+    <li><a href="#s1"><span class="nav-num">1</span>愿景与架构总览</a></li>
+    <li><a href="#s2"><span class="nav-num">2</span>A 可配置模块库</a></li>
+    <li><a href="#s3"><span class="nav-num">3</span>B 智能体知识库</a></li>
+    <li><a href="#s4"><span class="nav-num">4</span>C 数据采集架构</a></li>
+    <li><a href="#s5"><span class="nav-num">5</span>课程配置机制</a></li>
+    <li><a href="#s6"><span class="nav-num">6</span>学生端设计</a></li>
+    <li><a href="#s7"><span class="nav-num">7</span>教师端设计</a></li>
+    <li><a href="#s8"><span class="nav-num">8</span>配置→智能体管线</a></li>
+  </ul>
+</nav>
+
+<!-- ===== 主内容 ===== -->
+<div class="main">
+
+<!-- ===== 封面 ===== -->
+<section class="cover" id="cover">
+  <span class="cover-badge">PRODUCT SOLUTION v1.0</span>
+  <h1>研学<em>智能体</em>平台<br>产品方案</h1>
+  <p class="subtitle">
+    一套通用的课程配置架构，让每一门研学课程<br>
+    都能生成一个懂知识、会引导、能陪伴的 AI 学习同伴
+  </p>
+  <div class="cover-meta">
+    <span>2026.07</span>
+    <span>Claude Opus 4.6</span>
+    <span>v1.0</span>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 1: 愿景与架构总览 -->
+<!-- ========================================== -->
+<section class="section" id="s1">
+  <div class="section-num">1</div>
+  <h2>产品愿景与架构总览</h2>
+  <p class="lead">
+    一句话定义：<strong>通过课程配置驱动AI智能体生成</strong>——课程设计者填入知识库、编排任务流程、选择功能模块，平台自动生成一个「看起来独立」的学习智能体小程序，陪伴学生完成从导入到反思的全流程学习。
+  </p>
+
+  <h3>1.1 核心理念：三层架构</h3>
+  <div class="arch-diagram">
+    <div class="arch-layer layer-config">
+      <div class="arch-layer-label">配置层</div>
+      <div class="arch-layer-content">
+        <div class="arch-box box-config">课程元数据</div>
+        <div class="arch-box box-config">阶段编排</div>
+        <div class="arch-box box-config">角色定义</div>
+        <div class="arch-box box-config">任务流程</div>
+        <div class="arch-box box-config">知识库 (B类)</div>
+        <div class="arch-box box-config">功能选配 (A类)</div>
+        <div class="arch-box box-config">采集项 (C类)</div>
+      </div>
+    </div>
+    <div class="arch-arrow">▼ ▼ ▼ ▼ ▼</div>
+    <div class="arch-layer layer-engine">
+      <div class="arch-layer-label">引擎层</div>
+      <div class="arch-layer-content">
+        <div class="arch-box box-engine">LLM 对话引擎</div>
+        <div class="arch-box box-engine">Prompt 编译器</div>
+        <div class="arch-box box-engine">知识检索 (RAG)</div>
+        <div class="arch-box box-engine">功能调度器</div>
+        <div class="arch-box box-engine">状态机引擎</div>
+        <div class="arch-box box-engine">数据管线</div>
+        <div class="arch-box box-engine">实时同步</div>
+      </div>
+    </div>
+    <div class="arch-arrow">▼ ▼ ▼ ▼ ▼</div>
+    <div class="arch-layer layer-client">
+      <div class="arch-layer-label">端侧层</div>
+      <div class="arch-layer-content">
+        <div class="arch-box box-client">学生端小程序</div>
+        <div class="arch-box box-client">教师端小程序</div>
+        <div class="arch-box box-data">学习报告</div>
+        <div class="arch-box box-data">数据看板</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>1.2 从配置到智能体：全链路</h3>
+  <div class="flow-row">
+    <div class="flow-step step-config">课程设计者<br><small>配置 A+B+C</small></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step step-engine">Prompt 编译<br><small>生成 System Prompt</small></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step step-engine">功能绑定<br><small>A→Tool Calls</small></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step step-client">学生端渲染<br><small>课程专属智能体</small></div>
+  </div>
+
+  <div class="callout callout-idea">
+    <strong>💡 核心设计原则：</strong>同一套技术底座，通过配置差异化，生成「故宫治水研学」「长城防御体系」「苏州园林美学」等任意课程的独立智能体——它们界面相同、内核统一、但知识和行为完全不同。
+  </div>
+
+  <h3>1.3 产品角色</h3>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-guide">📋</div>
+        <h4>课程设计者<small>使用后台配置系统</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>配置课程元数据、阶段、角色、任务</li>
+          <li>编写知识库条目与引导规则</li>
+          <li>选择功能模块并设置参数</li>
+          <li>定义数据采集项与评估标准</li>
+          <li>预览生成的智能体效果</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-interact">🎓</div>
+        <h4>学生<small>使用学生端小程序</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>与 AI 同伴对话驱动学习流程</li>
+          <li>使用功能模块完成任务（拍照/测量/绘制等）</li>
+          <li>与团队成员协作</li>
+          <li>接收教师的实时干预</li>
+          <li>获得个人学习报告</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-constraint">👩‍🏫</div>
+        <h4>教师<small>使用教师端小程序</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>实时监控学生位置与任务进度</li>
+          <li>控制课程流程推进（阶段切换）</li>
+          <li>对学生/小组进行干预（加时/提醒/集合）</li>
+          <li>查看数据看板与学习分析</li>
+          <li>调整智能体行为参数</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-data">📊</div>
+        <h4>管理者<small>查看数据与报告</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>跨课程数据聚合分析</li>
+          <li>课程效果评估</li>
+          <li>学生成长档案追踪</li>
+          <li>智能体对话质量监控</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- SECTION 2: A类功能模块库 -->
+<!-- ========================================== -->
+<section class="section" id="s2">
+  <div class="section-num">2</div>
+  <h2>A类：可配置功能模块库</h2>
+  <p class="lead">
+    功能模块是课程设计者在编排任务时可以选配的交互能力单元。底层基座（AI对话引擎、位置感知、时间管理、师生通信——详见第6、7节）为每门课程提供通用能力；以下模块由课程按需组合。课程设计者在 .md 配置文件中为每个任务指定所需模块及其参数。平台提供 <strong>7 个可配置功能模块（A01–A07）</strong>，分为 4 个类别。
+  </p>
+
+  <div class="callout callout-info">
+    <strong>🔑 底层基座 vs 可配置模块：</strong>AI对话引擎、位置感知系统、时间管理、师生通信是<strong>每门研学课程的标配</strong>——它们构成 App 的底层基座，不在此处列出。以下模块是课程设计者<strong>按需选配</strong>的交互组件，嵌入对话流中以卡片形式呈现。
+  </div>
+
+  <h3>2.1 采集类模块</h3>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-capture">📸</div>
+      <h4>A01 · 多模态采集<small>拍照 + 语音 + 文字 + 画板</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>定义：</strong>将学生在现场的观察与思考转化为可留存的数字证据。四种输入方式可独立使用或组合。</p>
+      <table>
+        <tr><th>子功能</th><th>描述</th><th>配置参数</th></tr>
+        <tr><td>📷 拍照</td><td>调起相机拍摄，支持AI识别反馈</td><td>识别类型（通用/特定物体）、最少拍摄数、参考图</td></tr>
+        <tr><td>🎤 语音</td><td>录音并实时转文字，支持AI语义分析</td><td>最短时长、转写语言、是否触发AI分析</td></tr>
+        <tr><td>✏️ 文字</td><td>文本输入框，可配置引导提示</td><td>placeholder文案、最少字数、字段类型（短文本/长文本/数值）</td></tr>
+        <tr><td>🎨 画板</td><td>手绘草图/标注/示意图绘制</td><td>画布尺寸、是否提供底图、笔刷类型</td></tr>
+      </table>
+      <p style="margin-top:12px"><strong>产出数据：</strong>照片文件 + 语音文件及转写文本 + 文字内容 + 草图图片 → 统一封装为「证据包」</p>
+      <p><strong>故宫实例：</strong>数龙官拍摄螭首细节照片 + 语音记录观察心得 + 手绘估算分区草图</p>
+    </div>
+  </div>
+
+  <h3>2.2 交互类模块</h3>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-interact">❓</div>
+      <h4>A02 · 答题与评测<small>选择题 + 填空 + 判断 + AI评阅</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>定义：</strong>结构化的知识检验与能力评测，支持客观题自动批改和主观题AI评阅。</p>
+      <table>
+        <tr><th>题型</th><th>评判方式</th><th>配置参数</th></tr>
+        <tr><td>单选/多选</td><td>精确匹配</td><td>题干、选项、正确答案、解析</td></tr>
+        <tr><td>数值填空</td><td>误差范围匹配</td><td>正确值、允许误差百分比、单位</td></tr>
+        <tr><td>开放问答</td><td>AI语义评阅</td><td>评分维度、参考答案要点、评阅prompt</td></tr>
+        <tr><td>判断题</td><td>精确匹配</td><td>陈述、正确判断、解析</td></tr>
+      </table>
+      <p style="margin-top:12px"><strong>产出数据：</strong>答题记录（答案+用时+对错）+ AI评阅结果 + 错题归因</p>
+      <p><strong>故宫实例：</strong>分支任务中"开国大典礼炮齐鸣多少响？这个数字和什么年份有关？"——答对为时间银行充值</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-interact">🧩</div>
+      <h4>A03 · 拼合与搭建<small>拖拽拼图 + 流程图搭建 + 证据墙</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>定义：</strong>将碎片化的证据/模块拖拽组合为结构化产出。</p>
+      <table>
+        <tr><th>子功能</th><th>描述</th><th>配置参数</th></tr>
+        <tr><td>🧩 拖拽拼图</td><td>将证据碎片/图片拖入正确位置</td><td>拼图模板、碎片列表、正确位置映射</td></tr>
+        <tr><td>🔗 流程图搭建</td><td>拖入模块并连线，构建系统示意图</td><td>可用模块列表、合法连接规则、参考答案</td></tr>
+        <tr><td>📌 证据墙</td><td>将采集的多种证据贴到分类看板上</td><td>分类标签（如"支持/反对"）、是否允许讨论标注</td></tr>
+      </table>
+      <p style="margin-top:12px"><strong>产出数据：</strong>拼合结果截图 + 模块连接关系 + 证据分类结果</p>
+      <p><strong>故宫实例：</strong>回归阶段，小组将「屋顶→螭首→台基→明沟→暗沟→金水河→护城河」拖拽搭建为完整水系流程图</p>
+    </div>
+  </div>
+
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-interact">🏔️</div>
+      <h4>A04 · 沙盘推演<small>规则仿真 + 多轮决策 + 因果模拟</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>定义：</strong>在一套可配置的仿真规则中，学生做出多轮决策并观察后果。A03 拼合搭建有参考结果；沙盘允许多种可行方案，并强调优劣与取舍。核心是<strong>「决策→模拟→反馈→再决策」</strong>的闭环。</p>
+      <table>
+        <tr><th>子功能</th><th>描述</th><th>配置参数</th></tr>
+        <tr><td>🗺️ 沙盘底图</td><td>可交互的地形/场景画布，支持放置、移动、连接</td><td>底图类型（地形/平面/网格）、可放置元素库、初始状态</td></tr>
+        <tr><td>⚙️ 规则引擎</td><td>定义元素间的因果关系和约束条件</td><td>规则集（如"坡度＞2%则水流加速""兵力＜对方50%则败退"）、资源上限</td></tr>
+        <tr><td>▶️ 推演执行</td><td>学生提交决策后，系统模拟推演并可视化结果</td><td>推演模式（回合制/实时）、最大回合数、动画速度</td></tr>
+        <tr><td>📊 结果评估</td><td>对比不同方案的效果，AI给出分析</td><td>评估维度（效率/成本/安全/美观）、优秀阈值、AI评语prompt</td></tr>
+        <tr><td>⚔️ 对抗模式（可选）</td><td>组间对抗或人机对抗，双方交替决策</td><td>对抗类型（PvP/PvE）、胜负条件、观战模式</td></tr>
+      </table>
+      <p style="margin-top:12px"><strong>产出数据：</strong>决策序列 + 每轮状态快照 + 最终评估得分 + AI分析报告</p>
+      <p><strong>适用场景举例：</strong></p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+        <span class="tag tag-red">战争攻防布阵</span>
+        <span class="tag tag-blue">城市排水系统设计</span>
+        <span class="tag tag-green">生态资源调配</span>
+        <span class="tag tag-gold">贸易路线规划</span>
+        <span class="tag">古建排水改造</span>
+        <span class="tag">航线选择模拟</span>
+      </div>
+      <p style="margin-top:10px"><strong>故宫实例：</strong>"如果你是明代工匠，面对72万m²的宫城和年均600mm降雨，你会怎么设计排水系统？" → 学生在沙盘上布置明沟、暗沟、河道 → 系统模拟暴雨 → 看哪里淹了 → 调整方案再推演</p>
+    </div>
+  </div>
+
+  <h3>2.3 协作类模块</h3>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-collab">👥</div>
+      <h4>A05 · 团队协作<small>组内讨论 + 进度同步 + 角色分工</small></h4>
+    </div>
+    <div class="card-body">
+      <p>组内成员进度实时同步；文字/语音讨论频道；角色分工可视化；证据汇总看板。</p>
+      <p><strong>配置：</strong>分组策略（按角色/随机/手动）、组内人数上限、是否开启讨论频道</p>
+      <p><strong>故宫实例：</strong>6个角色的密符进度实时同步，集齐后触发璇玑时刻解锁</p>
+    </div>
+  </div>
+
+  <h3>2.4 媒体与识别类模块</h3>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-assess">🎬</div>
+        <h4>A06 · 沉浸媒体<small>视频播放 + 角色动画 + 过场特效</small></h4>
+      </div>
+      <div class="card-body">
+        <p>承载沉浸叙事内容：先导影片、AI同伴动画、阶段过渡特效、终章仪式动画。</p>
+        <p><strong>配置：</strong>视频URL列表、AI同伴形象（WebM动画集）、过渡动画类型、结业仪式模板</p>
+        <p><strong>故宫实例：</strong>"暴雨将至"先导片 → 絮絮引导动画 → 阶段过渡水流动效 → 烟花结业</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-assess">🔍</div>
+        <h4>A07 · 扫码与识别<small>二维码 + 身份卡 + 实物AI识别</small></h4>
+      </div>
+      <div class="card-body">
+        <p>通过扫码或AI视觉识别完成签到、领卡、实物核验等操作。</p>
+        <p><strong>配置：</strong>码类型（QR/条形码）、识别模型（通用/定制）、识别结果映射动作</p>
+        <p><strong>故宫实例：</strong>扫描身份卡领取角色 → 对准螭首拍照由AI判断是否拍到关键特征</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>2.5 模块总览矩阵</h3>
+  <table>
+    <tr>
+      <th>编号</th><th>模块名称</th><th>类别</th><th>学生端</th><th>教师端</th><th>离线可用</th>
+    </tr>
+    <tr><td>A01</td><td>多模态采集</td><td><span class="tag tag-green">采集</span></td><td>✅ 使用</td><td>查看产出</td><td>✅ 本地暂存</td></tr>
+    <tr><td>A02</td><td>答题与评测</td><td><span class="tag tag-blue">交互</span></td><td>✅ 使用</td><td>查看结果</td><td>✅ 客观题可离线</td></tr>
+    <tr><td>A03</td><td>拼合与搭建</td><td><span class="tag tag-blue">交互</span></td><td>✅ 使用</td><td>查看产出</td><td>✅ 纯前端</td></tr>
+    <tr><td>A04</td><td>沙盘推演</td><td><span class="tag tag-blue">交互</span></td><td>✅ 使用</td><td>查看/回放</td><td>⚠️ 规则引擎可离线，AI评估需网络</td></tr>
+    <tr><td>A05</td><td>团队协作</td><td><span class="tag tag-gold">协作</span></td><td>✅ 使用</td><td>✅ 管理</td><td>⚠️ 需同步</td></tr>
+    <tr><td>A06</td><td>沉浸媒体</td><td><span class="tag tag-red">媒体</span></td><td>✅ 播放</td><td>控制播放</td><td>✅ 预缓存</td></tr>
+    <tr><td>A07</td><td>扫码与识别</td><td><span class="tag tag-red">识别</span></td><td>✅ 使用</td><td>查看结果</td><td>⚠️ AI识别需网络</td></tr>
+  </table>
+  <p style="margin-top:12px;color:var(--ink-light);font-size:.85rem;">注：AI对话引擎、位置感知、时间管理、师生通信为底层基座能力，每门课程标配，无需在此选配。详见第6节（学生端设计）和第7节（教师端设计）。</p>
+  <!-- ========================================== -->
+<!-- SECTION 3: B类智能体知识库 -->
+<!-- ========================================== -->
+<section class="section" id="s3">
+  <div class="section-num">3</div>
+  <h2>B类：智能体知识库结构</h2>
+  <p class="lead">
+    知识库是每门课程智能体的"大脑"——它决定了AI同伴知道什么、怎么引导、不能说什么。知识库分为两层：<strong>平台通用规则</strong>（内置，所有课程共享）和<strong>课程专属知识</strong>（由课程设计者用 .md 文件配置）。
+  </p>
+
+  <div class="callout callout-info">
+    <strong>🔑 核心架构决策：</strong>知识库的双层分离意味着——课程设计者只需要关心"我这门课教什么、怎么引导、什么不能说"，而不需要操心安全边界、话题回避、对话伦理等通用规则。平台已经内置了这些。
+  </div>
+
+  <h3>3.1 双层架构总览</h3>
+  <div class="arch-diagram">
+    <div style="margin-bottom:16px;">
+      <div style="background:#f3e5f5;border:2px solid #ce93d8;border-radius:10px;padding:16px;margin-bottom:12px;">
+        <div style="font-weight:bold;color:#6a1b9a;margin-bottom:10px;">🔒 平台通用层（Platform Built-in）<span style="font-size:.8rem;color:#8e24aa;margin-left:8px;">课程设计者无需配置</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <div class="arch-box" style="min-width:110px;background:#f3e5f5;border-color:#ce93d8;color:#4a148c;font-size:.82rem;"><strong>安全边界</strong><br><small>人身安全保护</small></div>
+          <div class="arch-box" style="min-width:110px;background:#f3e5f5;border-color:#ce93d8;color:#4a148c;font-size:.82rem;"><strong>话题回避</strong><br><small>敏感话题屏蔽</small></div>
+          <div class="arch-box" style="min-width:110px;background:#f3e5f5;border-color:#ce93d8;color:#4a148c;font-size:.82rem;"><strong>角色边界</strong><br><small>不替代教师</small></div>
+          <div class="arch-box" style="min-width:110px;background:#f3e5f5;border-color:#ce93d8;color:#4a148c;font-size:.82rem;"><strong>来源标注</strong><br><small>知识溯源规则</small></div>
+          <div class="arch-box" style="min-width:110px;background:#f3e5f5;border-color:#ce93d8;color:#4a148c;font-size:.82rem;"><strong>对话伦理</strong><br><small>苏格拉底基本原则</small></div>
+          <div class="arch-box" style="min-width:110px;background:#f3e5f5;border-color:#ce93d8;color:#4a148c;font-size:.82rem;"><strong>数据隐私</strong><br><small>学生信息保护</small></div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:1.2rem;color:var(--ink-light);">▼ 叠加 ▼</div>
+      <div style="background:#e8f5e9;border:2px solid #a5d6a7;border-radius:10px;padding:16px;margin-top:12px;">
+        <div style="font-weight:bold;color:#2e7d32;margin-bottom:10px;">📝 课程专属层（Course-Specific）<span style="font-size:.8rem;color:#388e3c;margin-left:8px;">课程设计者用 .md 文件配置</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <div class="arch-box box-config" style="min-width:110px;font-size:.82rem;"><strong>B1 领域知识</strong><br><small>课程核心知识条目</small></div>
+          <div class="arch-box box-config" style="min-width:110px;font-size:.82rem;"><strong>B2 引导规则</strong><br><small>追问策略与引导方向</small></div>
+          <div class="arch-box" style="min-width:110px;background:#ffebee;border-color:#ef9a9a;color:#b71c1c;font-size:.82rem;"><strong>B3 课程限制</strong><br><small>本课不可剧透内容</small></div>
+          <div class="arch-box box-engine" style="min-width:110px;font-size:.82rem;"><strong>B4 流程提示词</strong><br><small>阶段×角色提示模板</small></div>
+          <div class="arch-box box-client" style="min-width:110px;font-size:.82rem;"><strong>B5 评估标准</strong><br><small>任务通过与评分</small></div>
+          <div class="arch-box box-data" style="min-width:110px;font-size:.82rem;"><strong>B6 自适应脚手架</strong><br><small>梯度提示序列</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>3.2 平台通用规则（内置）</h3>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-knowledge">🔒</div>
+      <h4>所有课程共享的底线规则<small>开发时写入，课程设计者无需关心</small></h4>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr><th>规则类别</th><th>内容</th><th>示例</th></tr>
+        <tr><td><strong>安全边界</strong></td><td>禁止引导学生进入危险区域或做危险行为</td><td>"不要爬到围栏上去拍照哦"</td></tr>
+        <tr><td><strong>话题回避</strong></td><td>不讨论与课程无关的敏感话题</td><td>政治、暴力、不适合未成年人的内容</td></tr>
+        <tr><td><strong>角色边界</strong></td><td>不替代教师做教学决策，不给医疗/法律建议</td><td>"这个问题你问一下带队老师更好"</td></tr>
+        <tr><td><strong>来源标注</strong></td><td>非知识库内容必须标注来源级别</td><td>"根据我已有的知识…" / "根据网络信息…"</td></tr>
+        <tr><td><strong>苏格拉底底线</strong></td><td>不直接给最终答案，必须通过追问引导</td><td>学生问"螭首有多少只" → 反问 → 引导估算</td></tr>
+        <tr><td><strong>数据隐私</strong></td><td>不向学生透露其他学生数据，不记录个人隐私</td><td>不说"小明比你快"</td></tr>
+      </table>
+      <p style="margin-top:12px;color:var(--ink-light);font-size:.85rem;">这些规则以 System Prompt 前缀方式注入每个课程智能体，课程设计者无法覆盖或关闭。</p>
+    </div>
+  </div>
+
+  <h3>3.3 课程专属知识库（B1—B6）</h3>
+  <p>以下六个知识域由课程设计者配置（使用 .md 文件，见第5节），是每门课程智能体区别于其他课程的核心差异所在。</p>
+
+  <h3>3.3.1 B1 · 领域知识</h3>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-knowledge">📚</div>
+      <h4>课程核心知识条目<small>AI回答的"第一优先级"来源</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>作用：</strong>当学生提问时，AI优先从这里检索答案。如果知识库中没有相关条目，才回退到AI自身知识或网络搜索——后两者必须明确标注来源。</p>
+      <p><strong>条目结构：</strong></p>
+      <div class="code-block">
+<span class="cc">// B1 领域知识条目示例</span>
+{
+  <span class="ck">"id"</span>: <span class="cs">"K-01"</span>,
+  <span class="ck">"topic"</span>: <span class="cs">"螭首基本信息"</span>,
+  <span class="ck">"content"</span>: <span class="cs">"太和殿、中和殿、保和殿三大殿的三层须弥座台基上，共有1142只螭首。螭首是龙的第九子，材质为汉白玉，兼具排水功能与礼制象征..."</span>,
+  <span class="ck">"tags"</span>: [<span class="cs">"螭首"</span>, <span class="cs">"排水"</span>, <span class="cs">"数龙官"</span>],
+  <span class="ck">"source"</span>: <span class="cs">"故宫博物院官方资料"</span>,
+  <span class="ck">"roles"</span>: [<span class="cs">"数龙官"</span>],          <span class="cc">// 关联角色</span>
+  <span class="ck">"revealTiming"</span>: <span class="cs">"after_task_1"</span>  <span class="cc">// 何时可以告知学生</span>
+}
+      </div>
+      <p style="margin-top:12px"><strong>来源优先级机制：</strong></p>
+      <div class="flow-row">
+        <div class="flow-step" style="background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32;">B1 课程知识库<br><small>最高优先</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" style="background:#fff8e1;border-color:#ffe082;color:#795548;">AI自有认知<br><small>标注「根据已有知识」</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" style="background:#e3f2fd;border-color:#90caf9;color:#1565c0;">网络检索<br><small>标注「根据网络信息」</small></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>3.3.2 B2 · 引导规则</h3>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-guide">🧭</div>
+      <h4>苏格拉底式引导策略<small>引而不教，问而不答</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>作用：</strong>定义AI在每个阶段应该引导学生走向的方向，以及具体的追问策略。</p>
+      <div class="code-block">
+<span class="cc">// B2 引导规则示例</span>
+{
+  <span class="ck">"phase"</span>: <span class="cs">"field_investigation"</span>,
+  <span class="ck">"role"</span>: <span class="cs">"数龙官"</span>,
+  <span class="ck">"goal"</span>: <span class="cs">"引导学生从逐一计数走向发现规律+分层估算"</span>,
+  <span class="ck">"strategies"</span>: [
+    {
+      <span class="ck">"trigger"</span>: <span class="cs">"学生说要一只只数"</span>,
+      <span class="ck">"response_hint"</span>: <span class="cs">"肯定态度，然后追问：数完一面大概要多久？三层四面全数完呢？有没有更聪明的办法？"</span>
+    },
+    {
+      <span class="ck">"trigger"</span>: <span class="cs">"学生发现每面数量接近"</span>,
+      <span class="ck">"response_hint"</span>: <span class="cs">"太棒了！这就是规律。那你能用这个规律估算总数吗？"</span>
+    }
+  ],
+  <span class="ck">"never_do"</span>: <span class="cs">"不要直接告诉学生1142这个数字，不要替学生计算"</span>
+}
+      </div>
+    </div>
+  </div>
+
+  <h3>3.3.3 B3 · 课程限制规则</h3>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-constraint">🚫</div>
+      <h4>课程专属禁止清单<small>本课程的"红线"——防止破坏教学设计</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>作用：</strong>明确定义AI在本课程中绝对不能透露的内容。这是教学设计的核心保护——防止AI破坏精心设计的认知反转和发现式学习体验。与平台通用规则（安全/话题/角色边界）不同，这里的每条限制都与本课程的具体教学设计强相关。</p>
+      <table>
+        <tr><th>限制类型</th><th>描述</th><th>故宫课程实例</th></tr>
+        <tr>
+          <td><span class="tag tag-red">答案剧透</span></td>
+          <td>不提前揭示任务答案或关键数据</td>
+          <td>在学生估算前不说"1142"；不提前说"其实故宫也会积水"</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">流程剧透</span></td>
+          <td>不提前揭示后续阶段的内容</td>
+          <td>不在采证阶段提及璇玑时刻的反转照片</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">跨角色泄露</span></td>
+          <td>不把其他角色的发现告诉当前学生</td>
+          <td>不告诉数龙官"寻沟官那边发现了暗沟入口位置"</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">线索提前</span></td>
+          <td>不在达成条件前给出线索奖励</td>
+          <td>学生没完成估算验证前不给字母线索"Y=因"</td>
+        </tr>
+      </table>
+      <p style="margin-top:12px;color:var(--ink-light);font-size:.85rem;">注：安全边界、话题回避、角色越界等通用规则已在平台层内置（见 3.2），无需课程设计者重复配置。</p>
+    </div>
+  </div>
+
+  <h3>3.3.4 B4 · 流程提示词</h3>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-flow">📜</div>
+      <h4>阶段×角色提示词矩阵<small>AI在每个时刻"该说什么"的蓝图</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>作用：</strong>为课程的每个阶段、每个角色预设一段主提示词(System Prompt片段)。引擎在运行时将 B1-B6 编译为完整的 System Prompt，B4是其中的「主线剧本」。</p>
+      <div class="code-block">
+<span class="cc">// B4 流程提示词矩阵（简化示意）</span>
+{
+  <span class="ck">"course"</span>: <span class="cs">"forbidden-city-drainage"</span>,
+  <span class="ck">"promptMatrix"</span>: {
+    <span class="ck">"immersive_intro"</span>: {
+      <span class="ck">"_all"</span>: <span class="cs">"你是故宫治水研学的AI助手「絮絮」。现在是沉浸导入阶段，学生刚看完先导影片。你的任务是种下一颗思考种子：问学生他觉得故宫真的从不积水吗，记录他的初始猜想。语气亲切但有点神秘。"</span>
+    },
+    <span class="ck">"field_investigation"</span>: {
+      <span class="ck">"数龙官"</span>: <span class="cs">"学生正在太和殿月台执行数龙官任务。引导观察螭首、发现计数规律、完成分层估算。【参考B2引导规则】【遵守B3不说1142】"</span>,
+      <span class="ck">"测坡官"</span>: <span class="cs">"学生正在中轴线执行测坡官任务。引导使用水平仪测量坡度、理解微小高差如何驱动水流..."</span>,
+      <span class="cc">// ... 其他角色</span>
+    },
+    <span class="ck">"synthesis"</span>: {
+      <span class="ck">"_all"</span>: <span class="cs">"小组正在汇总六位理水官的证据。引导他们构建完整的排水系统图，不直接给出答案，通过追问帮助他们发现遗漏的环节。"</span>
+    },
+    <span class="ck">"xuanji_moment"</span>: {
+      <span class="ck">"_all"</span>: <span class="cs">"关键时刻！回调学生在导入阶段的初始猜想，然后呈现7·21积水照片。引导得出'带边界的结论'：必须包含①排水智慧②神话被夸大③古今接力 三个要素。"</span>
+    }
+  }
+}
+      </div>
+    </div>
+  </div>
+
+  <h3>3.3.5 B5 · 评估标准</h3>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-rubric">✅</div>
+      <h4>多维评估规则<small>任务通过条件 + 能力评分维度</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>作用：</strong>定义每个任务的通过/不通过条件，以及学生能力的多维评分规则。这些规则既用于AI实时反馈，也用于事后报告生成。</p>
+      <div class="grid-2">
+        <div>
+          <h4>任务通过条件</h4>
+          <ul>
+            <li>照片匹配准确率 ≥ 90%</li>
+            <li>估算误差 ≤ 10% 为优秀</li>
+            <li>反思文本 ≥ 50字且包含误差归因</li>
+            <li>小组证据墙须覆盖6种证据类型</li>
+          </ul>
+        </div>
+        <div>
+          <h4>能力评分维度（五维雷达）</h4>
+          <ul>
+            <li><strong>参与度</strong>：轨迹覆盖率、停留点数、工具使用频次</li>
+            <li><strong>投入度</strong>：任务用时、语音/文字产出量</li>
+            <li><strong>合作度</strong>：讨论参与、赠时行为、求助/被求助</li>
+            <li><strong>敏捷度</strong>：答题正确率、估算精度、任务完成速度</li>
+            <li><strong>表达力</strong>：反思深度、展示评分、语言丰富度</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>3.3.6 B6 · 自适应脚手架</h3>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-scaffold">🪜</div>
+      <h4>难度自适应提示梯度<small>根据年级和表现动态调整</small></h4>
+    </div>
+    <div class="card-body">
+      <p><strong>作用：</strong>同一个任务，不同年级/水平的学生看到的提示深度不同。脚手架分层设计，AI根据学生实时表现在层级间切换。</p>
+      <table>
+        <tr><th>维度</th><th>入门（小学）</th><th>进阶（初中）</th><th>精研（高中）</th></tr>
+        <tr>
+          <td>数龙官<br>引导方式</td>
+          <td>"先数最上面那层，一面一面绕着走！"<br><span class="tag tag-green">直接+具体</span></td>
+          <td>"如果你不想一只只数，有没有更快的方法？"<br><span class="tag tag-blue">启发+半开放</span></td>
+          <td>"既然螭首能排走台基水，为何还要修整套沟渠？"<br><span class="tag tag-red">系统+思辨</span></td>
+        </tr>
+        <tr>
+          <td>脚手架触发</td>
+          <td>主动给出指引</td>
+          <td>学生卡住30秒后提示</td>
+          <td>仅在学生明确求助时提供</td>
+        </tr>
+        <tr>
+          <td>动态升降</td>
+          <td colspan="3">如果进阶学生连续两个任务表现困难，自动降至入门级提示；如果入门学生表现超预期，尝试给进阶级问题</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- SECTION 4: C类数据采集架构 -->
+<!-- ========================================== -->
+<section class="section" id="s4">
+  <div class="section-num">4</div>
+  <h2>C类：数据采集架构</h2>
+  <p class="lead">
+    数据采集定义了平台在学习过程中自动收集或由学生主动提交的所有数据类型。这些数据有三重用途：<strong>实时反馈</strong>（驱动AI对话和教师监控）、<strong>事后评价</strong>（生成学习报告）、<strong>课程迭代</strong>（优化课程设计）。
+  </p>
+
+  <h3>4.1 四个数据域</h3>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-data">🦶</div>
+        <h4>C1 · 行为数据<small>自动采集 · 无需学生操作</small></h4>
+      </div>
+      <div class="card-body">
+        <table>
+          <tr><th>数据项</th><th>采集方式</th><th>用途</th></tr>
+          <tr><td>GPS轨迹</td><td>P03位置感知自动采集</td><td>参与度评估、安全监控</td></tr>
+          <tr><td>步数/距离</td><td>设备传感器</td><td>身心健康维度评价</td></tr>
+          <tr><td>任务用时</td><td>自动计时</td><td>投入度评估</td></tr>
+          <tr><td>工具使用频次</td><td>事件埋点</td><td>敏捷度、学习策略分析</td></tr>
+          <tr><td>区域停留时长</td><td>围栏+GPS</td><td>观察深度评估</td></tr>
+          <tr><td>AI对话次数/长度</td><td>对话日志</td><td>主动性评估</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-data">🧠</div>
+        <h4>C2 · 认知数据<small>学生主动提交 · 反映思维过程</small></h4>
+      </div>
+      <div class="card-body">
+        <table>
+          <tr><th>数据项</th><th>来源模块</th><th>用途</th></tr>
+          <tr><td>初始假设</td><td>P01 AI对话引擎</td><td>璇玑时刻回调的锚点</td></tr>
+          <tr><td>估算方案文本</td><td>A01文字</td><td>方法论评估</td></tr>
+          <tr><td>数值答案</td><td>A02填空</td><td>准确度计算</td></tr>
+          <tr><td>误差归因文本</td><td>A01文字</td><td>反思深度评估</td></tr>
+          <tr><td>证据分类结果</td><td>A03证据墙</td><td>思辨能力评估</td></tr>
+          <tr><td>带边界结论</td><td>P01 AI对话引擎</td><td>最终认知水平评估</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-data">🤝</div>
+        <h4>C3 · 协作数据<small>组间互动 · 反映社会性学习</small></h4>
+      </div>
+      <div class="card-body">
+        <table>
+          <tr><th>数据项</th><th>来源模块</th><th>用途</th></tr>
+          <tr><td>时间赠予/借入</td><td>CM01时间银行</td><td>合作度评估</td></tr>
+          <tr><td>求助事件</td><td>P05师生通信</td><td>协作网络分析</td></tr>
+          <tr><td>讨论发言记录</td><td>A05团队协作</td><td>表达力评估</td></tr>
+          <tr><td>分支任务贡献</td><td>A02答题</td><td>分工效率分析</td></tr>
+          <tr><td>轨迹重叠率</td><td>P03位置感知</td><td>团队默契度指标</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-data">🖼️</div>
+        <h4>C4 · 作品数据<small>学生创作产出 · 构成学习档案</small></h4>
+      </div>
+      <div class="card-body">
+        <table>
+          <tr><th>数据项</th><th>来源模块</th><th>用途</th></tr>
+          <tr><td>现场照片</td><td>A01拍照</td><td>证据存档、报告插图</td></tr>
+          <tr><td>手绘草图</td><td>A01画板</td><td>思维可视化证据</td></tr>
+          <tr><td>语音录制</td><td>A01语音</td><td>口头表达评估</td></tr>
+          <tr><td>拼合/搭建截图</td><td>A03拼合</td><td>系统思维证据</td></tr>
+          <tr><td>展示演讲录制</td><td>A01语音 + A06媒体</td><td>综合表达评估</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h3>4.2 数据流向</h3>
+  <div class="arch-diagram">
+    <div class="flow-row">
+      <div class="flow-step step-client">学生端采集<br><small>C1-C4</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step" style="background:#fff3e0;border-color:#ffcc80;color:#e65100;">本地暂存<br><small>离线缓冲</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step step-engine">数据管线<br><small>清洗·聚合</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step step-config">三重消费</div>
+    </div>
+  </div>
+  <div class="grid-3">
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.5rem;margin-bottom:8px;">⚡</div>
+      <strong>实时反馈</strong>
+      <p style="font-size:.82rem;color:var(--ink-light)">驱动AI对话<br>教师端监控看板</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.5rem;margin-bottom:8px;">📊</div>
+      <strong>事后评价</strong>
+      <p style="font-size:.82rem;color:var(--ink-light)">学习报告生成<br>五维雷达+五育评价</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🔄</div>
+      <strong>课程迭代</strong>
+      <p style="font-size:.82rem;color:var(--ink-light)">难度校准<br>任务时长优化</p>
+    </div>
+  </div>
+
+  <h3>4.3 数据采集配置示例</h3>
+  <div class="code-block">
+<span class="cc">// 课程级数据采集配置</span>
+{
+  <span class="ck">"collection"</span>: {
+    <span class="ck">"behavior"</span>: {
+      <span class="ck">"gps"</span>:      { <span class="ck">"enabled"</span>: <span class="cn">true</span>, <span class="ck">"interval"</span>: <span class="cn">15</span> },
+      <span class="ck">"steps"</span>:     { <span class="ck">"enabled"</span>: <span class="cn">true</span> },
+      <span class="ck">"taskTime"</span>:  { <span class="ck">"enabled"</span>: <span class="cn">true</span> },
+      <span class="ck">"toolUsage"</span>: { <span class="ck">"enabled"</span>: <span class="cn">true</span> }
+    },
+    <span class="ck">"cognitive"</span>: {
+      <span class="ck">"initialHypothesis"</span>: { <span class="ck">"phase"</span>: <span class="cs">"immersive_intro"</span>, <span class="ck">"prompt"</span>: <span class="cs">"你觉得故宫真的从不积水吗？"</span> },
+      <span class="ck">"estimationPlan"</span>:     { <span class="ck">"minWords"</span>: <span class="cn">30</span> },
+      <span class="ck">"reflectionText"</span>:     { <span class="ck">"minWords"</span>: <span class="cn">50</span>, <span class="ck">"requiredElements"</span>: [<span class="cs">"误差归因"</span>] }
+    },
+    <span class="ck">"collaboration"</span>: {
+      <span class="ck">"timeBank"</span>:     { <span class="ck">"enabled"</span>: <span class="cn">true</span> },
+      <span class="ck">"discussion"</span>:   { <span class="ck">"enabled"</span>: <span class="cn">true</span> },
+      <span class="ck">"helpEvents"</span>:   { <span class="ck">"enabled"</span>: <span class="cn">true</span> }
+    },
+    <span class="ck">"artifacts"</span>: {
+      <span class="ck">"photos"</span>:    { <span class="ck">"maxCount"</span>: <span class="cn">20</span>, <span class="ck">"aiAnalysis"</span>: <span class="cn">true</span> },
+      <span class="ck">"sketches"</span>:  { <span class="ck">"enabled"</span>: <span class="cn">true</span> },
+      <span class="ck">"voiceMemo"</span>: { <span class="ck">"maxDuration"</span>: <span class="cn">300</span> }
+    }
+  }
+}
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 5: 课程配置机制 -->
+<!-- ========================================== -->
+<section class="section" id="s5">
+  <div class="section-num">5</div>
+  <h2>课程配置机制</h2>
+  <p class="lead">
+    课程配置是整个平台的中枢——它把 A类功能模块、B类课程专属知识库、C类数据采集 组装成一门具体课程。课程配置使用 <strong>.md（Markdown）文件</strong>作为配置格式，而非数据库或 JSON——因为配置的撰写者是<strong>课程设计者</strong>（教育研究者、教学设计师），不是开发者。
+  </p>
+
+  <div class="callout callout-idea">
+    <strong>为什么是 .md 文件？</strong>Markdown 文件可以用任何文本编辑器打开，支持富文本排版，可以用 Git 做版本管理，也可以直接在 GitHub/Gitee 上预览和协作编辑。课程设计者不需要学习任何编程语言——写文档就是写配置。引擎负责将 .md 文件解析编译为智能体运行时所需的结构化数据。
+  </div>
+
+  <div class="callout callout-info">
+    <strong>核心原则：根基先行。</strong>课程配置不是从"要做什么活动"开始，而是从三个根基问题开始：<strong>在哪里学？学什么？谁来学？</strong>——场地、目标、学生画像三者交叉才能定义课程边界。
+  </div>
+
+  <h3>5.1 课程根基：三要素共同约束</h3>
+  <p>目标体系、场地/主题、学生画像是课程设计的<strong>三个根基</strong>，缺一不可、互相影响：</p>
+
+  <div class="arch-diagram">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;">
+        <div class="arch-box" style="min-width:160px;background:#fff3e0;border:2px solid var(--gold);color:var(--ink);"><strong>🎯 目标体系</strong><br><small>什么能力？</small><br><small>知识·学科·核心</small></div>
+        <div class="arch-box" style="min-width:160px;background:#e8f5e9;border:2px solid #a5d6a7;color:#2e7d32;"><strong>📍 场地 / 主题</strong><br><small>在哪里？学什么？</small><br><small>空间·资源·约束</small></div>
+        <div class="arch-box" style="min-width:160px;background:#e3f2fd;border:2px solid #90caf9;color:#1565c0;"><strong>👥 学生画像</strong><br><small>谁来学？</small><br><small>年级·人数·分组</small></div>
+      </div>
+      <div style="font-size:1rem;color:var(--ink-light);">▼ 三者交叉 = 课程边界 ▼</div>
+    </div>
+  </div>
+
+  <div class="callout callout-idea">
+    <strong>💡 为什么场地是根基而不是元数据？</strong>场地不只是"上课地点"——它是核心设计约束。选了故宫，知识领域就只能围绕排水/建筑/礼制；角色就必须基于空间点位；阶段就受制于参观路线。换成良渚遗址，从目标到角色到任务全部不同。
+  </div>
+
+  <div class="grid-3">
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <h4 style="text-align:center;color:var(--gold);">🎯 目标体系</h4>
+      <p style="font-size:.85rem;"><strong>三个维度：</strong></p>
+      <ul style="font-size:.82rem;">
+        <li><span class="tag tag-red">知识领域</span> 学科核心知识</li>
+        <li><span class="tag tag-blue">学科能力</span> 跨学科方法</li>
+        <li><span class="tag tag-gold">核心能力</span> 高阶思维素养</li>
+      </ul>
+      <p style="font-size:.82rem;color:var(--ink-light);margin-top:6px;">所有后续设计都必须反向挂靠到目标——没有目标关联的任务不应存在。</p>
+    </div>
+    <div class="card" style="border-top:3px solid #66bb6a;">
+      <h4 style="text-align:center;color:#2e7d32;">📍 场地 / 主题</h4>
+      <p style="font-size:.85rem;"><strong>约束维度：</strong></p>
+      <ul style="font-size:.82rem;">
+        <li>空间范围 → 围栏、路线</li>
+        <li>可观察资源 → 角色点位</li>
+        <li>网络条件 → 离线策略</li>
+        <li>安全限制 → 安全围栏</li>
+        <li>开放时间 → 总时长约束</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid #42a5f5;">
+      <h4 style="text-align:center;color:#1565c0;">👥 学生画像</h4>
+      <p style="font-size:.85rem;"><strong>影响维度：</strong></p>
+      <ul style="font-size:.82rem;">
+        <li>年级 → 脚手架起始Level</li>
+        <li>人数 → 分组策略</li>
+        <li>设备 → 功能可用性</li>
+        <li>先备知识 → 引导深度</li>
+        <li>体力 → 步行距离上限</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>故宫课程的三要素实例</h4>
+  <table>
+    <tr><th>要素</th><th>内容</th><th>对设计的约束</th></tr>
+    <tr><td>目标</td><td>排水系统知识 + 估算/实证能力 + 系统思维</td><td>任务必须围绕"发现排水智慧"设计</td></tr>
+    <tr><td>场地</td><td>故宫博物院（116.397, 39.918）· 三大殿区域</td><td>6个空间点位 → 6个角色；信号弱 → offline-first</td></tr>
+    <tr><td>学生</td><td>小学高年级—高中 · 6人一组</td><td>脚手架需覆盖3个梯度；分组策略=1人1角色</td></tr>
+  </table>
+
+  <h4>目标体系详解：三个维度</h4>
+  <div class="grid-3">
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div style="font-size:1.3rem;text-align:center;margin-bottom:8px;">📖</div>
+      <h4 style="text-align:center;color:var(--red);margin:0 0 8px;">知识领域</h4>
+      <p style="font-size:.85rem;color:var(--ink-light);text-align:center;">学生需要理解的核心知识是什么？</p>
+      <ul style="font-size:.82rem;">
+        <li>故宫排水系统构成</li>
+        <li>「因势利导」整体思路</li>
+        <li>螭首功能与礼制象征</li>
+        <li>坡度与自然排水原理</li>
+        <li>明暗沟分级系统</li>
+        <li>护城河蓄排并用</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--info);">
+      <div style="font-size:1.3rem;text-align:center;margin-bottom:8px;">🔬</div>
+      <h4 style="text-align:center;color:var(--info);margin:0 0 8px;">学科能力</h4>
+      <p style="font-size:.85rem;color:var(--ink-light);text-align:center;">跨学科方法与技能</p>
+      <ul style="font-size:.82rem;">
+        <li>估算计数（数学）</li>
+        <li>坡度测量（地理）</li>
+        <li>对照实验设计（科学）</li>
+        <li>史料实证（历史）</li>
+        <li>系统分级还原（工程）</li>
+        <li>信息整合表达（语文）</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <div style="font-size:1.3rem;text-align:center;margin-bottom:8px;">💡</div>
+      <h4 style="text-align:center;color:var(--gold);margin:0 0 8px;">核心能力</h4>
+      <p style="font-size:.85rem;color:var(--ink-light);text-align:center;">高阶思维与素养</p>
+      <ul style="font-size:.82rem;">
+        <li>证据意识</li>
+        <li>系统思维</li>
+        <li>科学精神（敬而不神化）</li>
+        <li>文化认同</li>
+        <li>协作与沟通</li>
+        <li>元认知（反思错误来源）</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>目标如何驱动一切？</h4>
+  <p>配置中的每一个元素都必须<strong>声明它服务于哪些目标</strong>：</p>
+  <table>
+    <tr><th>配置元素</th><th>与目标的关系</th><th>示例</th></tr>
+    <tr>
+      <td>B1 知识库条目</td>
+      <td>每条知识标注对应的<span class="tag tag-red">知识领域</span>目标</td>
+      <td>螭首条目 → 知识领域K1「排水系统构成」</td>
+    </tr>
+    <tr>
+      <td>任务设计</td>
+      <td>每个任务声明训练的<span class="tag tag-blue">学科能力</span></td>
+      <td>数龙官估算任务 → 学科能力「估算计数」</td>
+    </tr>
+    <tr>
+      <td>B2 引导规则</td>
+      <td>引导方向对齐<span class="tag tag-gold">核心能力</span>目标</td>
+      <td>引导学生发现规律 → 核心能力「系统思维」</td>
+    </tr>
+    <tr>
+      <td>B5 评估标准</td>
+      <td>评分维度直接映射三维目标</td>
+      <td>带边界结论 → 核心能力「证据意识」+「科学精神」</td>
+    </tr>
+    <tr>
+      <td>C类数据采集</td>
+      <td>采集项为目标评估提供证据</td>
+      <td>误差归因文本 → 核心能力「元认知」的评估依据</td>
+    </tr>
+  </table>
+
+  <h4>目标配置文件示例：<code>objectives.md</code></h4>
+  <div class="code-block">
+# 课程目标体系
+
+## 知识领域
+- K1 排水系统构成：认识故宫排水系统五大构成——千龙吐水/北高南低/明暗沟网/内金水河/护城河
+- K2 因势利导整体思路：理解明暗结合、蓄排并用的系统设计思想
+- K3 螭首功能与礼制象征：材质、造型、数量背后的工程与文化双重意义
+- K4 坡度与自然排水原理：地势高差如何驱动水流
+- K5 明暗沟分级系统：院落→干沟→支沟→内金水河→护城河
+- K6 护城河蓄排并用：防御+排水+景观三重功能
+
+## 学科能力
+- S1 估算计数（数学）：义教课标2022·数感与量感
+- S2 坡度与流向判断（地理）：义教课标2022·地理实践力
+- S3 对照实验设计（科学）：义教课标2022·科学探究
+- S4 史料实证（历史）：义教课标2022·历史学科核心素养
+- S5 系统分级还原（工程）：NGSS·工程设计
+- S6 信息整合表达（语文）：义教课标2022·语言运用
+
+## 核心能力
+- C1 证据意识：用采集的证据支撑结论，区分证据等级
+- C2 系统思维：从局部到整体还原系统，理解要素间关联
+- C3 元认知：反思自己的思考过程，识别错误来源
+- C4 科学精神：敬而不神化，带边界的结论优于绝对判断
+- C5 文化认同：在科学认知基础上建立对传统智慧的理性自豪
+  </div>
+
+  <h3>5.2 课程制作流程</h3>
+  <p>课程设计者从根基出发，按以下流程逐步完成配置：</p>
+
+  <div class="arch-diagram">
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:700px;margin:0 auto;">
+      <div style="background:#fff3e0;border:2px solid var(--gold);border-radius:10px;padding:14px;text-align:center;">
+        <strong>第一步：课程根基定义</strong><br>
+        <small>目标体系 + 场地/主题 + 学生画像 → 确定课程边界</small>
+      </div>
+      <div style="text-align:center;color:var(--gold);font-size:1rem;">▼</div>
+      <div style="background:#e8f5e9;border:2px solid #a5d6a7;border-radius:10px;padding:14px;text-align:center;">
+        <strong>第二步：骨架设计（三者互相校准、同时成型）</strong><br>
+        <div style="display:flex;justify-content:center;gap:10px;margin-top:8px;flex-wrap:wrap;">
+          <span class="tag tag-green">阶段编排</span>
+          <span style="color:#666;">←→</span>
+          <span class="tag tag-green">角色编排</span>
+          <span style="color:#666;">←→</span>
+          <span class="tag tag-green">任务设计</span>
+        </div>
+        <small style="display:block;margin-top:6px;color:var(--ink-light);">每个任务选配功能模块 + 声明目标关联 + 区分个人/小组</small>
+      </div>
+      <div style="text-align:center;color:var(--gold);font-size:1rem;">▼ 骨架确定后</div>
+      <div style="background:#e3f2fd;border:2px solid #90caf9;border-radius:10px;padding:14px;text-align:center;">
+        <strong>第三步：知识库补齐（B1—B6）</strong><br>
+        <small style="color:var(--ink-light);">B1 领域知识可与骨架并行准备；B2-B6 依赖骨架才能编写</small>
+      </div>
+      <div style="text-align:center;color:var(--gold);font-size:1rem;">▼</div>
+      <div style="background:#f3e5f5;border:2px solid #ce93d8;border-radius:10px;padding:14px;text-align:center;">
+        <strong>第四步：提交 → 引擎编译 → 智能体上线</strong>
+      </div>
+    </div>
+  </div>
+
+  <h4>各步骤的依赖关系</h4>
+  <table>
+    <tr><th>步骤</th><th>产出文件</th><th>前置依赖</th><th>说明</th></tr>
+    <tr><td>1. 根基</td><td>course.md + objectives.md</td><td>无（起点）</td><td>场地决定知识边界，目标决定能力要求</td></tr>
+    <tr><td>2a. 阶段编排</td><td>phases.md</td><td>根基</td><td>阶段受场地路线和时长约束</td></tr>
+    <tr><td>2b. 角色编排</td><td>roles/*.md（基本信息）</td><td>根基 + 阶段</td><td>角色点位依赖场地空间资源</td></tr>
+    <tr><td>2c. 任务设计</td><td>roles/*.md（任务列表）</td><td>阶段 + 角色</td><td>选配模块、定义通过条件</td></tr>
+    <tr><td>3a. B1 领域知识</td><td>knowledge/*.md</td><td>根基（可并行于骨架）</td><td>revealTiming 和 roles 标注需骨架确认</td></tr>
+    <tr><td>3b. B2 引导规则</td><td>guidance/*.md</td><td>骨架（角色+任务）</td><td>针对每角色每任务的追问策略</td></tr>
+    <tr><td>3c. B3 课程限制</td><td>restrictions.md</td><td>骨架（知道后续有什么反转）</td><td>防剧透清单</td></tr>
+    <tr><td>3d. B4 流程提示词</td><td>prompts/*.md</td><td>阶段 × 角色矩阵</td><td>每阶段每角色的 AI 主提示词</td></tr>
+    <tr><td>3e. B5 评估标准</td><td>evaluation.md</td><td>任务 + 目标</td><td>通过条件 + 评分维度</td></tr>
+    <tr><td>3f. B6 脚手架</td><td>scaffolds/*.md</td><td>任务难度已定</td><td>梯度提示序列 + 年级差异</td></tr>
+  </table>
+
+  <div class="callout callout-info">
+    <strong>🔑 关键洞察：</strong>骨架设计（阶段/角色/任务）不是严格串行的——阶段划分影响角色设计（"璇玑时刻需要全体而非分角色"），角色设计也影响阶段（"6个角色都需要独立外采，必须有分散阶段"）。三者同时成型、互相校准。
+  </div>
+
+  <h3>5.3 课程配置文件目录结构</h3>
+  <p>有了课程根基作为顶层，整个配置从上到下层层展开：</p>
+  <div class="arch-diagram">
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+        <div class="arch-box" style="min-width:360px;background:#fff3e0;border:2px solid var(--gold);color:var(--ink);"><strong>📍🎯👥 课程根基</strong><br><small>场地/主题 · 目标体系 · 学生画像</small></div>
+      </div>
+      <div style="text-align:center;color:var(--gold);font-size:1rem;">▼ 驱动</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="arch-box box-config" style="min-width:160px;"><strong>课程元数据</strong><br><small>名称·场地·时长·年级</small></div>
+        <span style="color:var(--gold);font-size:1.2rem;">→</span>
+        <div class="arch-box box-config" style="min-width:160px;"><strong>阶段编排</strong><br><small>6个阶段·顺序·条件</small></div>
+        <span style="color:var(--gold);font-size:1.2rem;">→</span>
+        <div class="arch-box box-config" style="min-width:160px;"><strong>角色定义</strong><br><small>N个角色·分组规则</small></div>
+      </div>
+      <div style="text-align:center;color:var(--gold);font-size:1rem;">▼</div>
+      <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+        <div class="arch-box box-engine" style="min-width:200px;"><strong>任务流程</strong><br><small>每角色每阶段的任务列表<br>⚡ 每个任务声明目标关联</small></div>
+      </div>
+      <div style="text-align:center;color:var(--gold);font-size:1rem;">▼</div>
+      <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+        <div class="arch-box box-client" style="min-width:140px;"><strong>A 功能选配</strong><br><small>每任务用哪些模块</small></div>
+        <div class="arch-box box-data" style="min-width:140px;"><strong>B 知识库</strong><br><small>⚡ 每条标注目标</small></div>
+        <div class="arch-box" style="min-width:140px;background:#f3e5f5;border:1px solid #ce93d8;color:#6a1b9a;"><strong>C 采集项</strong><br><small>⚡ 为目标评估取证</small></div>
+      </div>
+    </div>
+  </div>
+
+  <p>一门课程对应一个文件夹，结构如下：</p>
+  <div class="code-block">
+forbidden-city-drainage/          ← 课程根目录
+├── course.md                     ← 课程元数据 + 智能体人设
+├── objectives.md                 ← 目标体系（知识/学科/核心能力）
+├── phases.md                     ← 阶段编排与流程
+├── roles/                        ← 角色目录（每角色一个文件）
+│   ├── dragon-counter.md         ← 数龙官
+│   ├── slope-surveyor.md         ← 测坡官
+│   ├── ditch-finder.md           ← 寻沟官
+│   ├── river-guide.md            ← 引河官
+│   ├── moat-guard.md             ← 护城官
+│   └── truth-seeker.md           ← 真相官
+├── knowledge/                    ← B1 领域知识条目
+│   ├── chishou.md                ← 螭首知识条目
+│   ├── slope-design.md           ← 坡度设计知识
+│   ├── drainage-system.md        ← 明暗沟知识
+│   └── ...
+├── guidance/                     ← B2 引导规则
+│   ├── dragon-counter.md         ← 数龙官引导策略
+│   ├── slope-surveyor.md         ← 测坡官引导策略
+│   └── ...
+├── restrictions.md               ← B3 课程限制（不可剧透内容）
+├── prompts/                      ← B4 流程提示词
+│   ├── phase1-immersive.md
+│   ├── phase2-field.md
+│   └── phase3-synthesis.md
+├── evaluation.md                 ← B5 评估标准
+├── time-bank.md                  ← 时间银行（独立机制，可选开启）
+└── scaffolds/                    ← B6 自适应脚手架
+    ├── dragon-counter.md
+    └── ...
+  </div>
+
+  <h3>5.4 配置文件示例</h3>
+  <h4><code>course.md</code> — 课程元数据</h4>
+  <div class="code-block">
+# 故宫600年不积水的秘密
+
+> 故宫排水智慧 · 跨学科研学课例
+
+## 基本信息
+- 场地：故宫博物院（116.397, 39.918）
+- 时长：6小时
+- 适用年级：小学高年级 / 初中 / 高中
+- 分组：6人一组，每人一个角色
+
+## 智能体人设
+- 名字：絮絮
+- 形象：云朵精灵
+- 性格：亲切、好奇、有点调皮，像一个知识渊博的学长
+- 语气：少年感、清晰、节奏适中
+- 口头禅：「嘿，你发现了吗？」「有意思……再想想？」
+  </div>
+
+  <h4><code>roles/dragon-counter.md</code> — 角色定义</h4>
+  <div class="code-block">
+# 🐲 数龙官
+
+> 核心问题：千龙吐水的"千"是虚指还是真有一千条龙？
+
+## 基本信息
+- 地点：三大殿三台（太和殿·中和殿·保和殿）
+- 地理围栏：中心(116.3972, 39.9171) 半径100m
+- 类型：核心角色
+- 线索奖励：字母 Y（因），数据 1142
+
+## 任务列表
+
+### 任务1：观其形
+- 功能模块：A01(拍照采集), A07(扫码识别)
+- 配置：拍照最少5张，AI识别模型=chishou-detail
+- 通过条件：照片AI评分均值 ≥ 0.9
+- 目标关联：K1(排水系统构成), S4(史料实证)
+
+### 任务2：算其数
+- 功能模块：A01(拍照采集), A02(答题评测)
+- 配置：表单字段=[上层台基, 中层台基, 下层台基, 总计]
+- 真值：1142，允许误差：±10%
+- 目标关联：K3(螭首功能), S1(估算计数), C1(证据意识)
+
+### 任务3：验其差
+- 功能模块：A01(拍照采集)
+- 配置：反思文本最少50字，提示"如果再做一次，你会改变哪一步？"
+- 目标关联：C3(元认知), C4(科学精神)
+  </div>
+
+  <h4><code>guidance/dragon-counter.md</code> — 引导规则</h4>
+  <div class="code-block">
+# 数龙官 · 引导规则
+
+## 阶段：现场采证
+
+### 目标
+引导学生从逐一计数走向发现规律 + 分层估算
+
+### 引导策略
+
+**当学生说要一只只数时：**
+肯定态度，然后追问：
+- "数完一面大概要多久？三层四面全数完呢？"
+- "有没有更聪明的办法？"
+
+**当学生发现每面数量接近时：**
+- "太棒了！这就是规律。那你能用这个规律估算总数吗？"
+
+**当学生估算偏差超过20%时：**
+- "嗯……你再观察一下，三层台基每层的螭首密度一样吗？"
+- 不直接指出错误，引导他回到现场再看一次
+
+### 绝对禁止
+- ❌ 不要直接告诉学生1142这个数字
+- ❌ 不要替学生计算
+- ❌ 不要否定学生的初始方案（哪怕是逐一数）
+  </div>
+
+  <h4><code>scaffolds/dragon-counter.md</code> — 自适应脚手架</h4>
+  <div class="code-block">
+# 数龙官 · 脚手架梯度
+
+## 任务2：算其数
+
+### Level 0（默认 · 无提示）
+学生自主探索估算方法
+
+### Level 1（5分钟无进展触发）
+"你觉得每一面的螭首数量差不多吗？试着先数一面？"
+
+### Level 2（再过3分钟）
+"提示：三层台基的边长是不一样的哦，上层最小，下层最大"
+
+### Level 3（仍无进展）
+"想一想：一面有多少只 × 四面 × 三层 = ？但三层会一样多吗？"
+
+### Level 4（最终兜底）
+AI 直接引导分层计数法：先数上层一面 → ×4 → 再数中层一面 → ×4 → 下层同理 → 求和
+
+## 年级差异
+- 小学：从 Level 1 开始，跳过 Level 0
+- 高中：从 Level 0 开始，Level 3 之前增加等待时间到 8 分钟
+  </div>
+  <h3>5.5 从 .md 文件到智能体：编译流程</h3>
+  <div class="arch-diagram">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <div class="arch-box box-config" style="min-width:140px;"><strong>📁 .md 文件夹</strong><br><small>课程设计者撰写</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="arch-box box-engine" style="min-width:160px;"><strong>🔧 解析引擎</strong><br><small>Markdown → 结构化 JSON<br>校验完整性 + 目标挂靠</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="arch-box box-client" style="min-width:160px;"><strong>🤖 智能体编译</strong><br><small>Prompt 组装 + Tool 绑定<br>+ 状态机生成</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="arch-box" style="min-width:140px;background:#e8f5e9;border:1px solid #a5d6a7;color:#2e7d32;"><strong>☁️ 絮絮 上线</strong><br><small>学生可以对话了</small></div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>步骤</th><th>输入</th><th>输出</th><th>校验</th></tr>
+    <tr><td>1. 解析</td><td>.md 文件目录</td><td>课程 JSON 对象</td><td>格式正确性、必填项完整性</td></tr>
+    <tr><td>2. 目标校验</td><td>JSON + objectives</td><td>挂靠报告</td><td>每个任务/知识条目都有目标关联</td></tr>
+    <tr><td>3. Prompt 编译</td><td>平台通用规则 + 课程专属知识</td><td>完整 System Prompt</td><td>Token 数不超限</td></tr>
+    <tr><td>4. Tool 绑定</td><td>功能模块选配列表</td><td>Tool Definitions JSON</td><td>模块间无冲突</td></tr>
+    <tr><td>5. 状态机生成</td><td>阶段 + 角色 + 条件</td><td>FSM 配置</td><td>无死路径</td></tr>
+    <tr><td>6. 部署</td><td>编译产物</td><td>在线智能体实例</td><td>对话冒烟测试</td></tr>
+  </table>
+
+  <div class="callout callout-idea">
+    <strong>💡 配置即智能体：</strong>课程设计者写完 .md 文件，提交到仓库，引擎自动编译部署。学生在小程序中看到的就是一个叫「絮絮」的AI同伴——它知道螭首的一切、会用苏格拉底式追问引导估算、不会剧透1142这个数字——但学生不需要知道这一切来自几个 Markdown 文件。
+  </div>
+</section>
+
+
+<!-- ========================================== -->
+<!-- SECTION 6: 学生端设计 -->
+<!-- ========================================== -->
+<section class="section" id="s6">
+  <div class="section-num">6</div>
+  <h2>学生端小程序设计</h2>
+  <p class="lead">
+    学生端由两层构成：<strong>底层技术基座</strong>（每门课程标配的基础能力）和<strong>可配置功能模块</strong>（以对话中"工具卡片"形式按需渲染）。底层基座为 App 提供骨架和基础交互通道，功能模块则根据课程配置在对话流中动态嵌入。
+  </p>
+
+  <h3>6.1 底层技术基座（标配 · 无需配置）</h3>
+  <p>以下能力是所有研学课程共有的基础设施，由平台内置，课程设计者<strong>不需要在配置中选择或关闭</strong>它们。</p>
+
+  <div class="grid-2">
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div class="card-header">
+        <div class="card-icon icon-interact">🤖</div>
+        <h4>P01 · AI 对话引擎<small>App 的骨架与主界面</small></h4>
+      </div>
+      <div class="card-body">
+        <p><strong>地位：</strong>对话不是"功能之一"，而是整个 App 的界面范式。学生80%时间都在对话流中。</p>
+        <table>
+          <tr><th>子系统</th><th>说明</th></tr>
+          <tr><td>自然语言理解</td><td>学生输入 → 意图识别 + 上下文管理</td></tr>
+          <tr><td>知识检索（RAG）</td><td>B1 课程知识库 → AI已有认知 → 网络（标注来源级别）</td></tr>
+          <tr><td>苏格拉底追问</td><td>平台通用原则 + B2 课程引导规则 → 生成追问</td></tr>
+          <tr><td>自适应脚手架</td><td>根据 B6 配置 + 学生实时表现 → 动态调整提示深度</td></tr>
+          <tr><td>人设系统</td><td>由 course.md 配置人格/语气/口头禅，统一贯穿对话</td></tr>
+          <tr><td>限制执行</td><td>平台通用限制 + B3 课程限制 → 实时过滤 AI 输出</td></tr>
+        </table>
+        <p style="margin-top:10px"><strong>离线策略：</strong>内置离线 Prompt 缓存 + 本地小模型兜底，弱网时仍可维持基础对话。</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div class="card-header">
+        <div class="card-icon icon-capture">🎙️</div>
+        <h4>P02 · 语音通道<small>对话的自然输入/输出方式</small></h4>
+      </div>
+      <div class="card-body">
+        <p><strong>地位：</strong>研学场景中双手常被占用（拍照/记录/行走），语音是主交互通道。</p>
+        <table>
+          <tr><th>能力</th><th>说明</th></tr>
+          <tr><td>语音输入（STT）</td><td>实时语音转文字，支持中英混合、方言容错</td></tr>
+          <tr><td>语音输出（TTS）</td><td>AI回复朗读，人设匹配的语音风格</td></tr>
+          <tr><td>唤醒词</td><td>"絮絮" 唤醒免触屏对话</td></tr>
+          <tr><td>静音模式</td><td>教师端可统一设置静音（如博物馆场景）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--info);">
+      <div class="card-header">
+        <div class="card-icon icon-capture">📍</div>
+        <h4>P03 · 位置感知系统<small>研学 = 户外，位置是基础设施</small></h4>
+      </div>
+      <div class="card-body">
+        <p><strong>地位：</strong>研学必然涉及空间移动，位置是触发任务、保障安全、生成轨迹报告的基础能力。</p>
+        <table>
+          <tr><th>能力</th><th>说明</th></tr>
+          <tr><td>GPS 持续采集</td><td>后台15s间隔定位，低功耗模式</td></tr>
+          <tr><td>地理围栏</td><td>进入/离开区域自动触发：任务解锁、安全警告、阶段推进</td></tr>
+          <tr><td>轨迹记录</td><td>全程轨迹存储 → 报告中的"学习足迹地图"</td></tr>
+          <tr><td>高德地图渲染</td><td>角色目标点、实时位置、步行导航</td></tr>
+          <tr><td>安全围栏</td><td>超出安全边界 → AI提醒 + 教师端预警</td></tr>
+        </table>
+        <p style="margin-top:10px"><strong>离线策略：</strong>地图瓦片预缓存（故宫区域500m buffer），GPS 纯本地采集无需网络。</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--info);">
+      <div class="card-header">
+        <div class="card-icon icon-collab">⏱️</div>
+        <h4>P04 · 时间管理系统<small>每门课程都有时段和时限</small></h4>
+      </div>
+      <div class="card-body">
+        <p><strong>地位：</strong>研学课程受场地和安全约束，时间管理是课程运行的基本框架。</p>
+        <table>
+          <tr><th>能力</th><th>说明</th></tr>
+          <tr><td>阶段计时</td><td>每阶段倒计时，到点自动推进或提醒教师</td></tr>
+          <tr><td>时间银行联动</td><td>与课程时间银行机制对接：显示余额、接收充值通知（详见 6.5）</td></tr>
+          <tr><td>教师加时/减时</td><td>教师可实时调整某组或全体的剩余时间</td></tr>
+          <tr><td>弹性阈值</td><td>组 ≤3人 vs ＞3人 自动切换双模式</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <div class="card-header">
+        <div class="card-icon icon-nav">📡</div>
+        <h4>P05 · 师生通信通道<small>安全底线，不可关闭</small></h4>
+      </div>
+      <div class="card-body">
+        <p><strong>地位：</strong>未成年人户外活动，师生间的即时通信是<strong>安全红线</strong>，任何课程不可关闭。</p>
+        <table>
+          <tr><th>通信方向</th><th>功能</th></tr>
+          <tr><td>学生 → 教师</td><td>一键呼叫（自动附带位置 + 当前上下文）</td></tr>
+          <tr><td>教师 → 学生</td><td>定向消息推送（文字/语音）</td></tr>
+          <tr><td>教师 → 全体</td><td>紧急集合广播（全屏弹窗 + 强提醒音）</td></tr>
+          <tr><td>教师 → AI</td><td>实时调整AI行为参数（加脚手架/限制话题）</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h3>6.2 核心设计理念：对话即界面</h3>
+  <div class="callout callout-idea">
+    <strong>与传统App的区别：</strong>传统学习App是"页面驱动"——学生在不同功能页面间跳转。学习智能体是"对话驱动"——AI说"现在拍一张螭首的照片给我看看"，相机工具就在对话中弹出；拍完后AI说"很好，现在来估算一下数量"，估算表单就在对话中展开。<strong>对话流就是学习流。</strong>
+  </div>
+
+  <h3>6.3 可配置模块的渲染机制</h3>
+  <p>课程设计者在 .md 文件中为每个任务选配的功能模块（A01–A07），在学生端以<strong>"工具卡片"</strong>形式嵌入对话流：</p>
+  <div class="callout callout-info">
+    <strong>渲染规则：</strong>AI 智能体根据当前任务阶段和对话上下文，在恰当的时机发出工具卡片。学生无需自己"找功能"——AI说"拍一张给我看看"时，拍照卡片自动弹出；说"来估算一下"时，表单卡片展开。完成后结果自动作为消息回传。
+  </div>
+
+  <h3>6.4 页面结构：双 Tab + 浮动面板</h3>
+  <div class="callout callout-idea">
+    <strong>设计原则：</strong>不是5个页面跳来跳去，而是<strong>两个 Tab + 若干浮动面板</strong>。学生80%时间在"我的任务"Tab 与 AI 对话，需要看组内情况时切到"小组"Tab，时间银行和进度作为上滑面板随时可查。
+  </div>
+
+  <div style="background:var(--code-bg);color:var(--code-text);border-radius:var(--radius);padding:24px;margin:20px 0;font-family:monospace;font-size:.85rem;line-height:1.6;white-space:pre;">┌──────────────────────────────────────┐
+│ 顶栏：课程名 · 当前阶段 · 🐲角色徽章  │
+├──────────────────────────────────────┤
+│                                      │
+│    [ 👤 我的任务 ]    [ 👥 小组 ]      │
+│                                      │
+│          ┌──────────────┐            │
+│          │   主内容区域   │            │
+│          └──────────────┘            │
+│                                      │
+├──────────────────────────────────────┤
+│ 底栏：[输入框] 🎤 📷🎨📎       ⏱️ 📋 │
+└──────────────────────────────────────┘
+         ↑ 对话输入        ↑ 浮动面板入口</div>
+
+  <h4>Tab 1：我的任务（主屏 · 80%时间）</h4>
+  <div class="grid-2">
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div class="card-header">
+        <div class="card-icon icon-interact">💬</div>
+        <h4>AI 对话流<small>学习的主线</small></h4>
+      </div>
+      <div class="card-body">
+        <p>整个 Tab 就是一条对话流。AI 引导学生完成任务，工具卡片在对话中弹出，完成后结果回传为消息。</p>
+        <ul>
+          <li><strong>顶栏：</strong>课程名 + 当前阶段名 + 任务进度条</li>
+          <li><strong>主体：</strong>对话消息 + 内嵌工具卡片</li>
+          <li><strong>底栏：</strong>文字输入 + 🎤语音 + 📷🎨📎工具菜单 + ⏱️时间银行 + 📋进度</li>
+        </ul>
+      </div>
+    </div>
+    <div class="wireframe">
+      <div class="wireframe-screen">
+        <div class="wire-header">🐲 数龙官 · 观其形 ▸ 算其数</div>
+        <div class="wire-chat-bubble">
+          你好！站在月台上了吗？先用眼睛看看——这些石头雕刻有什么规律？
+        </div>
+        <div class="wire-chat-bubble user">
+          有大的和小的两种，每层好像不一样多
+        </div>
+        <div class="wire-chat-bubble">
+          好观察力！拍一张大的给我看看？
+          <div style="background:#e8f5e9;border-radius:8px;padding:10px;margin-top:8px;text-align:center;">
+            📷 拍照工具卡片<br>
+            <small style="color:#666">请拍摄螭首细节照片</small><br>
+            <span style="display:inline-block;background:var(--red);color:#fff;padding:4px 16px;border-radius:6px;margin-top:6px;font-size:.75rem;">打开相机</span>
+          </div>
+        </div>
+        <div class="wire-action-bar">
+          <div class="wire-action-btn">📷</div>
+          <div class="wire-action-btn">🎤</div>
+          <div class="wire-action-btn" style="flex:1;text-align:left;color:#999">输入消息...</div>
+          <div class="wire-action-btn" style="background:var(--red);color:#fff;">⏱️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4>Tab 2：小组（态势感知 · 20%时间）</h4>
+  <div class="card" style="border-top:3px solid var(--info);">
+    <div class="card-header">
+      <div class="card-icon icon-collab">👥</div>
+      <h4>小组态势面板<small>成员位置 · 进度 · 协作</small></h4>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr><th>区域</th><th>内容</th></tr>
+        <tr><td>小地图</td><td>高德地图显示本组全部成员实时位置，角色图标标注</td></tr>
+        <tr><td>成员状态列表</td><td>每人一行：角色图标 + 姓名 + 任务进度(2/3) + 剩余时间 + 状态色标</td></tr>
+        <tr><td>密符/集体进度</td><td>全组协作目标的可视化进度（如6/6密符收集）</td></tr>
+        <tr><td>操作区</td><td>三个按钮：💬消息（组内群聊）｜📍集合（选点通知全组）｜⏱️赠时（给时间紧张的组员）</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h4>浮动面板（从底栏上滑）</h4>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-collab">⏱️</div>
+        <h4>时间银行面板<small>详见 6.5 独立机制</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>余额概览（已赚 / 已分配 / 可用）</li>
+          <li>可做任务列表（独立小任务，不走AI）</li>
+          <li>分配操作（选组员 + 分配时间）</li>
+          <li>流转记录（赠出/收到历史）</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-assess">📋</div>
+        <h4>我的进度面板<small>任务全局视图</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>当前角色全部任务的线性进度</li>
+          <li>已收集证据/线索清单</li>
+          <li>密符收集状态</li>
+          <li>已获成就/令牌</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h4>快捷操作（始终可达）</h4>
+  <table>
+    <tr><th>操作</th><th>入口</th><th>说明</th></tr>
+    <tr><td>呼叫老师</td><td>顶栏长按角色徽章 / 底栏上滑菜单</td><td>一键发送，自动附带位置+当前对话上下文</td></tr>
+    <tr><td>发送定位</td><td>小组 Tab 内</td><td>手动分享自己位置给组员</td></tr>
+    <tr><td>静音切换</td><td>顶栏</td><td>TTS 朗读开/关（博物馆场景）</td></tr>
+  </table>
+
+  <h3>6.5 时间银行机制（课程级可配置）</h3>
+  <div class="callout callout-info">
+    <strong>定位：</strong>CM01 时间银行是<strong>独立的课程级可选激励机制</strong>，不纳入 A01–A07 活动模块或 P01–P05 平台基座。课程设计者可选择开启或关闭。开启后，学生通过完成独立小任务赚取时间，并自主分配给小组内的其他成员。
+  </div>
+
+  <h4>与底层时间管理的区别</h4>
+  <table>
+    <tr><th></th><th>时间管理系统（底层基座）</th><th>时间银行（课程机制）</th></tr>
+    <tr><td>是否标配</td><td>是，每门课都有</td><td>否，课程可选开启</td></tr>
+    <tr><td>核心功能</td><td>阶段倒计时、教师加减时</td><td>做任务赚时间 → 分配给组员</td></tr>
+    <tr><td>任务来源</td><td>无自有任务</td><td>有独立任务池（课程配置）</td></tr>
+    <tr><td>与AI对话</td><td>无关（纯系统计时）</td><td><strong>不走AI对话</strong>，独立交互 widget</td></tr>
+    <tr><td>配置文件</td><td>phases.md 中的 duration 字段</td><td>time-bank.md 独立文件</td></tr>
+  </table>
+
+  <h4>时间银行的交互设计</h4>
+  <p>学生从底栏 ⏱️ 按钮上滑打开时间银行面板，<strong>不进入AI对话流</strong>，而是直接操作独立 widget：</p>
+  <div class="grid-2">
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <div class="card-header">
+        <div class="card-icon icon-collab">💰</div>
+        <h4>赚取区<small>独立任务 → 充值时间</small></h4>
+      </div>
+      <div class="card-body">
+        <p>任务类型（课程配置）：</p>
+        <ul>
+          <li><strong>快问快答：</strong>选择题/填空题，即时判分</li>
+          <li><strong>拍照打卡：</strong>找到指定对象拍照（GPS+图像验证）</li>
+          <li><strong>定位签到：</strong>到达指定地点自动完成</li>
+          <li><strong>知识小任务：</strong>简单探索问题（如"午门有几个门洞"）</li>
+        </ul>
+        <p>每项任务标注奖励时间（如 +2min, +3min），完成后立即到账。</p>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <div class="card-header">
+        <div class="card-icon icon-collab">🤝</div>
+        <h4>分配区<small>资源分配 → 团队协作</small></h4>
+      </div>
+      <div class="card-body">
+        <p>赚到的时间是<strong>个人资源</strong>，但只能分配给<strong>组内其他成员</strong>：</p>
+        <ul>
+          <li>查看组员剩余时间（时间紧张者高亮⚠️）</li>
+          <li>选择接收人 + 输入分配数量 → 确认</li>
+          <li>流转记录：赠出/收到的完整历史</li>
+          <li>教师可配置：单次赠送上限、总赚取上限</li>
+        </ul>
+        <p><strong>设计意图：</strong>培养学生的资源规划能力和利他协作意识。</p>
+      </div>
+    </div>
+  </div>
+
+  <h4>配置文件示例：time-bank.md</h4>
+  <pre><code># 时间银行配置
+
+enabled: true
+initial_balance: 0min
+
+## 赚取规则
+max_earn_total: 15min
+max_earn_per_task: 3min
+
+## 分配规则
+max_gift_per_action: 5min
+allow_gift_to_self: false
+
+## 任务池
+- id: tb-01
+  type: quiz
+  question: "开国大典礼炮几响？"
+  options: [21, 28, 54]
+  answer: 54
+  reward: 2min
+  unlock_after: phase-1-start
+
+- id: tb-02
+  type: photo_checkpoint
+  description: "找到铜缸并拍照"
+  location: [116.397, 39.916]
+  radius: 20m
+  reward: 3min
+  unlock_after: phase-1-start
+
+- id: tb-03
+  type: location_checkin
+  description: "到达御花园入口"
+  location: [116.397, 39.920]
+  radius: 15m
+  reward: 2min
+  unlock_after: phase-2-start</code></pre>
+
+  <h3>6.6 AI对话中的工具卡片渲染</h3>
+  <p>课程配置的功能模块（A01–A07）在对话流中以<strong>四种渲染形态</strong>出现，由 AI 根据任务上下文自动选择：</p>
+
+  <h4>四种渲染形态</h4>
+  <table>
+    <tr><th>形态</th><th>触发方式</th><th>占位方式</th><th>适用模块</th></tr>
+    <tr>
+      <td><strong>内嵌卡片</strong></td>
+      <td>AI 在对话中发出</td>
+      <td>对话流内，高度自适应</td>
+      <td>A01 拍照/文字/语音、A02 答题、A07 扫码、P03 位置导航</td>
+    </tr>
+    <tr>
+      <td><strong>展开画板</strong></td>
+      <td>点击卡片中"展开"按钮</td>
+      <td>半屏上滑，可手动全屏</td>
+      <td>A01 画板草图</td>
+    </tr>
+    <tr>
+      <td><strong>全屏覆盖</strong></td>
+      <td>AI 引导进入</td>
+      <td>覆盖整屏，完成后自动返回对话</td>
+      <td>A03 拼合搭建、A04 沙盘推演、A06 沉浸媒体</td>
+    </tr>
+    <tr>
+      <td><strong>完成回传</strong></td>
+      <td>任何形态操作完成后</td>
+      <td>自动生成一条"结果消息"插入对话流</td>
+      <td>所有模块共有的收尾动作</td>
+    </tr>
+  </table>
+
+  <h4>各卡片详细说明</h4>
+  <table>
+    <tr><th>卡片</th><th>渲染形态</th><th>触发时机</th><th>卡片内容</th><th>完成回传</th></tr>
+    <tr>
+      <td>📷 拍照</td><td>内嵌卡片</td>
+      <td>AI 说"拍一张给我看看"</td>
+      <td>参考图 + 拍摄要求 + 相机按钮</td>
+      <td>照片缩略图 + AI 识别评语</td>
+    </tr>
+    <tr>
+      <td>📝 表单/估算</td><td>内嵌卡片</td>
+      <td>AI 说"来估算一下"</td>
+      <td>标签 + 输入框 + 提交</td>
+      <td>填写结果 + AI 即时反馈</td>
+    </tr>
+    <tr>
+      <td>🎨 画板</td><td>展开画板</td>
+      <td>AI 说"画一张示意图"</td>
+      <td>空白/底图画布 + 画笔工具</td>
+      <td>草图缩略图 + AI 点评</td>
+    </tr>
+    <tr>
+      <td>🧩 拼合搭建</td><td>全屏覆盖</td>
+      <td>推演阶段 AI 引导进入</td>
+      <td>可拖拽模块 + 连线画布</td>
+      <td>拼合结果截图 + AI 评价</td>
+    </tr>
+    <tr>
+      <td>🎲 沙盘推演</td><td>全屏覆盖</td>
+      <td>验证阶段 AI 引导进入</td>
+      <td>参数面板 + 模拟动画</td>
+      <td>推演结果 + AI 分析</td>
+    </tr>
+    <tr>
+      <td>❓ 答题</td><td>内嵌卡片</td>
+      <td>AI 出题或知识检验</td>
+      <td>题目 + 选项/输入框</td>
+      <td>答案 + 对错反馈</td>
+    </tr>
+    <tr>
+      <td>🎬 媒体</td><td>全屏覆盖</td>
+      <td>AI 说"看一段影片"</td>
+      <td>视频/动画播放器</td>
+      <td>播放完成 → AI 继续对话</td>
+    </tr>
+    <tr>
+      <td>📍 位置导航</td><td>内嵌卡片</td>
+      <td>AI 说"现在去…"</td>
+      <td>迷你地图 + 路线 + 距离</td>
+      <td>到达围栏后自动关闭</td>
+    </tr>
+    <tr>
+      <td>📱 扫码</td><td>内嵌卡片</td>
+      <td>AI 说"扫一下角色卡"</td>
+      <td>相机取景框 + 扫码提示</td>
+      <td>解析内容 + AI 后续引导</td>
+    </tr>
+    <tr>
+      <td>⚠️ 系统通知</td><td>内嵌卡片（强提醒）</td>
+      <td>教师广播/紧急集合</td>
+      <td>全屏弹窗 + 集合地点</td>
+      <td>学生确认收到</td>
+    </tr>
+  </table>
+
+  <h3>6.7 离线优先策略</h3>
+  <div class="callout callout-warn">
+    <strong>⚠️ 关键约束：</strong>故宫等户外场馆的WiFi/4G信号极不稳定。学生端必须在弱网甚至无网环境下仍能运行核心功能。
+  </div>
+  <table>
+    <tr><th>功能</th><th>在线</th><th>离线/弱网</th><th>策略</th></tr>
+    <tr><td>AI对话</td><td>完整LLM</td><td>预缓存脚本+规则引擎</td><td>预下载当前阶段的关键提示词和回复模板；离线时用规则匹配而非LLM</td></tr>
+    <tr><td>拍照</td><td>云端AI识别</td><td>本地拍照暂存</td><td>照片存本地队列，联网后批量上传并获取AI分析</td></tr>
+    <tr><td>GPS导航</td><td>实时定位</td><td>缓存地图+惯性定位</td><td>地图瓦片预缓存任务区域</td></tr>
+    <tr><td>表单/答题</td><td>即时提交</td><td>本地暂存</td><td>答案存本地，联网后同步</td></tr>
+    <tr><td>团队协作</td><td>实时同步</td><td>❌ 降级</td><td>显示"等待网络连接"，恢复后自动同步</td></tr>
+    <tr><td>教师通信</td><td>实时</td><td>❌ 降级</td><td>缓存未发送消息，恢复后推送</td></tr>
+  </table>
+</section>
+
+  <!-- ========================================== -->
+<!-- SECTION 7: 教师端设计 -->
+<!-- ========================================== -->
+<section class="section" id="s7">
+  <div class="section-num">7</div>
+  <h2>教师端小程序设计</h2>
+  <p class="lead">
+    教师端是课程的"指挥中心"——同样分为<strong>底层基座</strong>（实时地图、学生状态监控、通信广播、时间控制）和<strong>课程配置模块的管理/干预视图</strong>。教师在手机上实时掌握所有学生的位置、进度、状态，并可随时干预课程流程和智能体行为。
+  </p>
+
+  <h3>7.1 教师端底层基座（标配）</h3>
+  <p>以下能力为所有课程共有的教师端基础设施：</p>
+
+  <div class="grid-2">
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div class="card-header">
+        <div class="card-icon icon-nav">🗺️</div>
+        <h4>实时地图与学生监控<small>全局态势感知</small></h4>
+      </div>
+      <div class="card-body">
+        <table>
+          <tr><th>能力</th><th>说明</th></tr>
+          <tr><td>全员GPS实时标记</td><td>高德3D俯瞰图上显示所有学生位置</td></tr>
+          <tr><td>角色色标</td><td>每种角色不同颜色，一眼区分</td></tr>
+          <tr><td>三级状态</td><td>正常🟢 / 关注🟡 / 较远🔴 自动判定</td></tr>
+          <tr><td>安全围栏警报</td><td>学生超出安全边界 → 弹窗预警 + 定位跳转</td></tr>
+          <tr><td>轨迹回放</td><td>选择学生查看历史移动轨迹</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div class="card-header">
+        <div class="card-icon icon-nav">📡</div>
+        <h4>通信广播系统<small>安全保障 · 不可关闭</small></h4>
+      </div>
+      <div class="card-body">
+        <table>
+          <tr><th>能力</th><th>说明</th></tr>
+          <tr><td>接收学生呼叫</td><td>学生一键求助 → 教师端弹窗（附位置+上下文）</td></tr>
+          <tr><td>定向消息</td><td>给指定学生/组发送文字或语音消息</td></tr>
+          <tr><td>紧急集合</td><td>一键全屏广播，强制所有学生端弹窗</td></tr>
+          <tr><td>AI行为调整</td><td>给指定学生的AI发指令（加提示/限话题）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--info);">
+      <div class="card-header">
+        <div class="card-icon icon-collab">⏱️</div>
+        <h4>时间控制面板<small>全局/分组时间管理</small></h4>
+      </div>
+      <div class="card-body">
+        <table>
+          <tr><th>能力</th><th>说明</th></tr>
+          <tr><td>全局倒计时</td><td>当前阶段剩余时间可视化</td></tr>
+          <tr><td>加时/减时</td><td>为指定组或全体调整时间</td></tr>
+          <tr><td>阶段推进</td><td>手动推进课程至下一阶段</td></tr>
+          <tr><td>全局暂停</td><td>暂停所有学生的任务计时器</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--info);">
+      <div class="card-header">
+        <div class="card-icon icon-assess">📊</div>
+        <h4>进度监控看板<small>AI对话 + 任务完成状态</small></h4>
+      </div>
+      <div class="card-body">
+        <table>
+          <tr><th>能力</th><th>说明</th></tr>
+          <tr><td>任务完成率</td><td>每组/每人的任务进度百分比</td></tr>
+          <tr><td>AI对话监控</td><td>查看任意学生的对话摘要（非全文）</td></tr>
+          <tr><td>异常预警</td><td>长时间无操作/求助频繁/偏离路线 → 提醒教师</td></tr>
+          <tr><td>评分预览</td><td>AI实时评估的各维度得分趋势</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h3>7.2 课程配置模块的教师视图</h3>
+  <p>课程设计者选配的功能模块（A01–A07）在教师端呈现为<strong>只读查看 + 干预入口</strong>：</p>
+  <table>
+    <tr><th>模块</th><th>教师可见内容</th><th>可执行干预</th></tr>
+    <tr><td>A01 多模态采集</td><td>学生提交的照片/文字/草图缩略图</td><td>标记优秀作品、发送反馈评语</td></tr>
+    <tr><td>A02 答题评测</td><td>答题正确率、各题得分分布</td><td>解锁提示、调整难度</td></tr>
+    <tr><td>A03 拼合搭建</td><td>拼合结果截图、完成度</td><td>发送引导消息</td></tr>
+    <tr><td>A04 沙盘推演</td><td>各组决策序列、评分</td><td>回放/对比、AI点评触发</td></tr>
+    <tr><td>A05 团队协作</td><td>组内进度同步状态、讨论活跃度</td><td>重新分组、调整角色</td></tr>
+    <tr><td>A06 沉浸媒体</td><td>播放状态</td><td>控制全体播放/暂停</td></tr>
+    <tr><td>A07 扫码识别</td><td>识别结果、签到状态</td><td>手动确认/覆盖识别</td></tr>
+  </table>
+
+  <h3>7.3 四个核心页面</h3>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-nav">🗺️</div>
+        <h4>T1 · 实时地图<small>全员定位 + 状态一览</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li><strong>地图视图：</strong>高德地图3D俯瞰，全体学生GPS实时标记</li>
+          <li><strong>角色色标：</strong>6种角色6种颜色，一眼区分</li>
+          <li><strong>状态感知：</strong>正常🟢 / 关注🟡 / 较远🔴 三级状态</li>
+          <li><strong>快速定位：</strong>点击任意学生→地图跳转到该位置</li>
+          <li><strong>安全围栏：</strong>学生离开安全区域自动弹出预警</li>
+          <li><strong>一键回中心：</strong>快速回到任务核心区域视图</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-collab">📊</div>
+        <h4>T2 · 分组管理<small>角色组进度 + 时间监控</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li><strong>角色组卡片：</strong>每组显示成员、当前任务、完成进度、状态</li>
+          <li><strong>阶段时间：</strong>各组剩余任务时间，教师可手动加时/减时</li>
+          <li><strong>时间银行概览：</strong>各组赚取/分配情况（只读监控，不可干预）</li>
+          <li><strong>任务进度条：</strong>可视化各组在当前阶段的完成百分比</li>
+          <li><strong>排名/对比：</strong>各组完成速度对比（教师内部参考，不展示给学生）</li>
+          <li><strong>告警标记：</strong>长时间无进度的组自动标记"需关注"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-flow">🎛️</div>
+        <h4>T3 · 流程控制<small>阶段推进 + 全局状态</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li><strong>阶段切换：</strong>当前阶段指示 + 手动推进到下一阶段</li>
+          <li><strong>阶段锁定：</strong>部分阶段需教师手动解锁（如璇玑时刻）</li>
+          <li><strong>全局暂停/恢复：</strong>暂停所有学生任务倒计时</li>
+          <li><strong>课程时间线：</strong>总时间进度条 + 各阶段分段标记</li>
+          <li><strong>条件检查：</strong>显示"X组尚未完成采证"等阻断条件</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-constraint">🔧</div>
+        <h4>T4 · 干预工具<small>主动介入 + 智能体调参</small></h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li><strong>紧急集合：</strong>一键全员广播集合指令</li>
+          <li><strong>定向消息：</strong>向指定学生/小组发送文字/语音消息</li>
+          <li><strong>加时操作：</strong>为特定组追加任务时间</li>
+          <li><strong>AI行为调参：</strong>临时增强/减弱AI提示频率和深度</li>
+          <li><strong>查看AI对话：</strong>实时旁听任意学生与AI的对话记录</li>
+          <li><strong>强制触发：</strong>为卡住的学生手动触发下一步提示</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3>7.4 教师可执行的干预动作</h3>
+  <table>
+    <tr><th>干预类型</th><th>作用范围</th><th>效果</th><th>学生端表现</th></tr>
+    <tr>
+      <td>🔴 紧急集合</td><td>全体</td>
+      <td>所有学生端弹出全屏集合通知</td>
+      <td>强制弹窗 + 振动 + 集合点导航</td>
+    </tr>
+    <tr>
+      <td>📨 发送消息</td><td>个人/小组</td>
+      <td>教师消息作为系统卡片插入学生对话流</td>
+      <td>对话中出现教师消息卡片</td>
+    </tr>
+    <tr>
+      <td>⏱️ 加时</td><td>小组</td>
+      <td>增加该组的阶段剩余时间</td>
+      <td>时间倒计时增加 + "老师为你们加时了"提示</td>
+    </tr>
+    <tr>
+      <td>🪜 增强提示</td><td>个人</td>
+      <td>临时将该学生的AI脚手架降一级（给更多提示）</td>
+      <td>AI下一次回复时给出更具体的引导</td>
+    </tr>
+    <tr>
+      <td>⏭️ 强制推进</td><td>个人/小组</td>
+      <td>跳过当前任务进入下一步</td>
+      <td>AI告知"我们先往下走，这个任务稍后再回来"</td>
+    </tr>
+    <tr>
+      <td>⏸️ 全局暂停</td><td>全体</td>
+      <td>暂停所有任务倒计时</td>
+      <td>倒计时冻结 + "等待老师指令"提示</td>
+    </tr>
+    <tr>
+      <td>🔓 阶段解锁</td><td>全体</td>
+      <td>手动推进到下一课程阶段</td>
+      <td>AI发出阶段转换叙事 + 新任务展开</td>
+    </tr>
+    <tr>
+      <td>👁️ 旁听对话</td><td>个人</td>
+      <td>实时查看学生与AI对话（只读）</td>
+      <td>学生无感知</td>
+    </tr>
+  </table>
+
+  <h3>7.5 教师端 ↔ 学生端实时通信</h3>
+  <div class="arch-diagram">
+    <div class="flow-row">
+      <div class="flow-step step-client" style="min-width:140px;">
+        教师端<br>
+        <small>操作指令</small>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step step-engine" style="min-width:160px;">
+        WebSocket 服务<br>
+        <small>实时双向通道</small>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step step-client" style="min-width:140px;">
+        学生端<br>
+        <small>接收+执行</small>
+      </div>
+    </div>
+  </div>
+  <div class="grid-3">
+    <div class="card" style="text-align:center;padding:16px;">
+      <strong>教师 → 学生</strong>
+      <p style="font-size:.8rem;color:var(--ink-light)">集合/消息/加时/暂停/推进</p>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <strong>学生 → 教师</strong>
+      <p style="font-size:.8rem;color:var(--ink-light)">位置/进度/求助/完成事件</p>
+    </div>
+    <div class="card" style="text-align:center;padding:16px;">
+      <strong>智能体 → 教师</strong>
+      <p style="font-size:.8rem;color:var(--ink-light)">异常检测/脚手架使用报告/卡点预警</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 8: 配置→智能体管线 -->
+<!-- ========================================== -->
+<section class="section" id="s8">
+  <div class="section-num">8</div>
+  <h2>配置 → 智能体 生成管线</h2>
+  <p class="lead">
+    这一章揭示平台的核心魔法：一份课程配置文件如何被"编译"成一个活生生的AI学习同伴。整个过程分为 4 个编译阶段。
+  </p>
+
+  <h3>8.1 编译总览</h3>
+  <div class="arch-diagram">
+    <div class="flow-row">
+      <div class="flow-step step-config">
+        <strong>Stage 1</strong><br>
+        Prompt 编译<br>
+        <small>B1-B6 → System Prompt</small>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step step-engine">
+        <strong>Stage 2</strong><br>
+        工具绑定<br>
+        <small>A模块 → Tool Definitions</small>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step step-engine">
+        <strong>Stage 3</strong><br>
+        状态机生成<br>
+        <small>阶段+任务 → FSM</small>
+      </div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step step-client">
+        <strong>Stage 4</strong><br>
+        端侧渲染<br>
+        <small>UI Shell + 热配置</small>
+      </div>
+    </div>
+  </div>
+
+  <h3>8.2 Stage 1：Prompt 编译器</h3>
+  <div class="card">
+    <div class="card-body">
+      <p>将 B1-B6 六个知识域编译为一段完整的 System Prompt，注入到每次 LLM 调用中。</p>
+      <div class="code-block">
+<span class="cc">// 编译后的 System Prompt 结构（示意）</span>
+
+<span class="cv">[身份与人格]</span>
+你是「絮絮」，故宫治水研学的AI学习同伴。性格：亲切、好奇、
+有点调皮。你的角色是引导者而非教授者。
+
+<span class="cv">[当前上下文]</span>
+当前阶段：现场采证
+当前角色：数龙官
+学生年级：初中（进阶梯度）
+当前任务：算其数（估算螭首数量）
+
+<span class="cv">[领域知识 - 从B1注入]</span>
+- 太和殿三层台基共有螭首1142只（此数据仅供你判断
+  学生估算的准确度，不可直接告诉学生）
+- 大螭首与小螭首交替排列...
+- ...
+
+<span class="cv">[引导规则 - 从B2注入]</span>
+- 本阶段目标：引导学生从逐一计数走向分层估算
+- 如果学生说要一只只数→肯定态度，追问效率
+- 如果学生发现规律→热情确认，引导推广
+- 绝不替学生计算
+
+<span class="cv">[限制规则 - 从B3注入]</span>
+- 🚫 不可说出1142这个数字
+- 🚫 不可提及7·21积水照片或璇玑时刻
+- 🚫 不可建议学生翻越围栏
+
+<span class="cv">[脚手架 - 从B6注入]</span>
+当前梯度：进阶（初中）
+- 不主动给出具体步骤，等学生卡住30秒后再提示
+- 提示方式："如果你不想一只只数，有没有更快的方法？"
+- 如果连续两次提示后仍卡住，降级为入门梯度
+
+<span class="cv">[评估标准 - 从B5注入]</span>
+- 估算误差≤10%为优秀，≤20%为良好
+- 反思须包含至少一个具体的误差归因
+
+<span class="cv">[可用工具 - 从Stage 2注入]</span>
+你可以在对话中调用以下工具：
+- open_camera(prompt, reference_image?)
+- show_form(fields[])
+- open_sketchpad(background_image?)
+- show_quiz(question, options?)
+
+平台同时注入当前上下文、课程知识检索、位置验证、导航和呼叫教师等内置能力。
+      </div>
+    </div>
+  </div>
+
+  <h3>8.3 Stage 2：功能模块 → Tool Calls</h3>
+  <div class="card">
+    <div class="card-body">
+      <p>课程配置中选定的 A类功能模块（A01–A07）被转译为 LLM 可调用的 Tool Definitions。当AI认为需要学生拍照时，它调用 <code>open_camera</code> 工具，端侧收到调用后渲染对应的工具卡片。P01–P05 平台基座工具由系统固定注入，不由课程选配。</p>
+      <table>
+        <tr><th>功能模块</th><th>→ Tool Name</th><th>参数</th><th>端侧行为</th></tr>
+        <tr>
+          <td>A01·多模态采集</td>
+          <td><code>open_camera</code><br><code>start_recording</code><br><code>show_form</code><br><code>open_sketchpad</code></td>
+          <td>prompt, refImage, minCount, fields, backgroundImage</td>
+          <td>弹出相机/录音/文字表单/画板卡片</td>
+        </tr>
+        <tr>
+          <td>A02·答题评测</td>
+          <td><code>show_quiz</code></td>
+          <td>question, type, options, answer</td>
+          <td>弹出答题卡片</td>
+        </tr>
+        <tr>
+          <td>A03·拼合搭建</td>
+          <td><code>open_builder</code></td>
+          <td>modules[], connections[], bgImage</td>
+          <td>弹出拖拽搭建画布</td>
+        </tr>
+        <tr>
+          <td>A04·沙盘推演</td>
+          <td><code>open_simulation</code></td>
+          <td>scene, elements[], rules[], rounds, evaluation</td>
+          <td>打开全屏沙盘和规则仿真引擎</td>
+        </tr>
+        <tr>
+          <td>A05·团队协作</td>
+          <td><code>open_team_workspace</code></td>
+          <td>mode, permissions, roles[], submissionRule</td>
+          <td>打开组内讨论、分工或证据汇总视图</td>
+        </tr>
+        <tr>
+          <td>A06·沉浸媒体</td>
+          <td><code>play_media</code></td>
+          <td>url, type, autoplay</td>
+          <td>弹出视频/动画播放器</td>
+        </tr>
+        <tr>
+          <td>A07·扫码与识别</td>
+          <td><code>open_scanner</code></td>
+          <td>mode, expectedResults[], resultActions</td>
+          <td>打开扫码/身份卡/实物识别视图</td>
+        </tr>
+      </table>
+
+      <h4 style="margin-top:20px;">P01–P05 平台内置能力 → 固定 Tool Calls</h4>
+      <table>
+        <tr><th>所属基座</th><th>Tool Name</th><th>作用</th></tr>
+        <tr><td>平台运行时</td><td><code>get_runtime_context</code></td><td>获取阶段、角色、任务、位置、停留时间、剩余时间和教师指令</td></tr>
+        <tr><td>P01·AI对话引擎</td><td><code>retrieve_course_knowledge</code></td><td>检索当前课程、角色和阶段允许使用的知识</td></tr>
+        <tr><td>P01·AI对话引擎</td><td><code>search_external_knowledge</code></td><td>课程知识不足时检索外部信息，并强制标注「根据网络信息」</td></tr>
+        <tr><td>P01·AI对话引擎</td><td><code>analyze_evidence</code></td><td>对照片、语音、文字、草图和搭建结果进行多模态分析</td></tr>
+        <tr><td>P01·AI对话引擎</td><td><code>submit_task_result</code></td><td>将结果交给评估规则和状态机，返回通过、重试或教师处理</td></tr>
+        <tr><td>P02·语音通道</td><td>通道层自动处理</td><td>STT 在输入前完成，TTS 在输出后完成，不占用 Tool Call</td></tr>
+        <tr><td>P03·位置感知</td><td><code>show_navigation</code><br><code>verify_arrival</code></td><td>展示高德导航，按围栏、定位精度和停留时间验证到达</td></tr>
+        <tr><td>P04·时间管理</td><td><code>get_time_status</code></td><td>读取阶段剩余时间、暂停状态和提醒阈值</td></tr>
+        <tr><td>P05·师生通信</td><td><code>call_teacher</code></td><td>将求助原因、位置、当前任务和必要上下文发给教师端</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>8.4 Stage 3：状态机引擎</h3>
+  <div class="card">
+    <div class="card-body">
+      <p>课程的阶段编排和任务流程被编译为一个有限状态机（FSM），控制学习流程的推进、解锁和分支。</p>
+      <div class="code-block">
+<span class="cc">// 状态机示意（数龙官角色）</span>
+<span class="cv">immersive_intro</span>
+  └─ [教师触发] ─→ <span class="cv">team_forming</span>
+                      └─ [集齐6卡] ─→ <span class="cv">field:navigate</span>
+                                         └─ [到达围栏] ─→ <span class="cv">field:observe</span>
+                                                            └─ [照片≥5+AI合格] ─→ <span class="cv">field:estimate</span>
+                                                                                    └─ [提交估算] ─→ <span class="cv">field:verify</span>
+                                                                                                       └─ [提交反思] ─→ <span class="cv">synthesis</span>
+                                                                                                                          └─ [教师触发] ─→ <span class="cv">xuanji</span>
+      </div>
+      <p style="margin-top:12px">状态机负责：</p>
+      <ul>
+        <li>检查每个状态转移的前置条件（任务通过、教师授权、集齐密符等）</li>
+        <li>在状态变化时通知 Prompt 编译器更新上下文（切换 B4 流程提示词）</li>
+        <li>维护跨角色的全局状态（所有组的密符收集进度）</li>
+        <li>处理异常路径（超时、教师强制推进、跳过等）</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>8.5 Stage 4：端侧渲染</h3>
+  <div class="card">
+    <div class="card-body">
+      <p>学生端小程序是一个<strong>通用壳</strong>——它不包含任何课程特定的内容。所有差异化都来自配置的"热注入"：</p>
+      <div class="grid-2">
+        <div>
+          <h4>通用壳提供</h4>
+          <ul>
+            <li>对话UI框架（消息列表+输入框）</li>
+            <li>工具卡片渲染器（根据Tool Call类型渲染）</li>
+            <li>地图组件（高德地图封装）</li>
+            <li>团队面板组件</li>
+            <li>离线缓存管理器</li>
+            <li>数据同步管线</li>
+          </ul>
+        </div>
+        <div>
+          <h4>配置热注入</h4>
+          <ul>
+            <li>课程名称、AI同伴形象/名称</li>
+            <li>阶段列表与当前阶段</li>
+            <li>角色信息与任务流程</li>
+            <li>地图中心点与围栏坐标</li>
+            <li>主题色（故宫红 / 长城灰 / 园林绿…）</li>
+            <li>离线资源包（音频/视频/底图）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>8.6 一图总结：从配置到体验</h3>
+  <div class="arch-diagram">
+    <div style="text-align:center;padding:16px 0;">
+      <div style="display:inline-block;text-align:left;font-size:.88rem;line-height:2.2;">
+        <strong>课程设计者</strong> 在后台配置了一门「故宫治水」课程<br>
+        　　↓　配置文件 (JSON) 包含 A+B+C 全部信息<br>
+        <strong>Prompt 编译器</strong> 将 B1-B6 编译为 System Prompt<br>
+        　　↓<br>
+        <strong>工具绑定器</strong> 将当前任务选中的 A01–A07 模块转译为 Tool Definitions，并注入 P01–P05 平台工具<br>
+        　　↓<br>
+        <strong>状态机生成器</strong> 将阶段+任务编译为 FSM<br>
+        　　↓<br>
+        <strong>学生打开小程序</strong> → 通用壳加载配置 → 看到的是「絮絮」<br>
+        　　↓<br>
+        <strong>学生说</strong>："我到太和殿了"<br>
+        　　↓<br>
+        <strong>LLM</strong> 收到 System Prompt + Tool Defs + 学生消息<br>
+        　　↓<br>
+        <strong>LLM 回复</strong>："太好了！先用眼睛观察一下这些石雕……"<br>
+        　　+ 调用 <code>open_camera({prompt:"拍摄螭首"})</code><br>
+        　　↓<br>
+        <strong>端侧渲染</strong>：对话气泡 + 📷相机工具卡片<br>
+        　　↓<br>
+        <strong>学生</strong> 觉得自己在和一个叫絮絮的AI同伴聊天<br>
+        　　实际上是配置驱动的通用引擎在运行 ✨
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-idea">
+    <strong>💡 可扩展性验证：</strong>如果明天要做一门「长城防御体系」课程——只需要新建一份配置文件：替换知识库条目、定义新角色（烽火官/城墙官/关隘官…）、设置新的围栏坐标、上传新的AI形象素材——同一个小程序壳、同一个引擎、就会生成一个全新的「长城学习智能体」。
+  </div>
+</section>
+
+<!-- ===== 页脚 ===== -->
+<footer style="max-width:920px;margin:0 auto;padding:60px 40px 80px;text-align:center;color:var(--ink-light);font-size:.85rem;border-top:1px solid var(--border);">
+  <p style="font-family:'Songti SC',serif;font-size:1.1rem;color:var(--ink);margin-bottom:8px;">研学智能体平台 · 产品方案</p>
+  <p>v1.0 · 2026.07 · Generated by Claude Opus 4.6</p>
+  <p style="margin-top:16px;font-size:.78rem;opacity:.6;">本方案基于故宫治水研学课程实例设计，架构可扩展至任意研学场景</p>
+</footer>
+
+
+</div><!-- /.main -->
+
+<!-- ===== 导航高亮脚本 ===== -->
+<script>
+(function(){
+  const links = document.querySelectorAll('.nav-list a');
+  const sections = document.querySelectorAll('.section, .cover');
+  function onScroll(){
+    let cur = '';
+    sections.forEach(s=>{
+      if(s.getBoundingClientRect().top < 200) cur = s.id;
+    });
+    links.forEach(a=>{
+      a.classList.toggle('active', a.getAttribute('href')==='#'+cur);
+    });
+  }
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

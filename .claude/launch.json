@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "teacher-frontend",
+      "runtimeExecutable": "/bin/sh",
+      "runtimeArgs": ["-c", "cd '/Users/sonyal/Library/Mobile Documents/com~apple~CloudDocs/狗生5 - AICog/0-code/teacher-frontend' && npm run dev"],
+      "port": 3002,
+      "autoPort": false
+    },
+    {
+      "name": "pr-docs",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8766", "--directory", "/Users/sonyal/Library/Mobile Documents/com~apple~CloudDocs/狗生4 - SRT/27 培训学习新产品设计/6 研学/5 故宫课程/3-pr"],
+      "port": 8766
+    }
+  ]
+}

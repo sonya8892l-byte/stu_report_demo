@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1508" height="1347" viewBox="0 0 1508 1347" role="img" aria-labelledby="title desc">
+  <title id="title">学科树</title>
+  <desc id="desc">以知识树为中心的十二学科学习结构图，包含语文、数学、科学、美术及其他学科节点。</desc>
+
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffdf9"/>
+      <stop offset="0.55" stop-color="#fdfaf4"/>
+      <stop offset="1" stop-color="#fffdf8"/>
+    </linearGradient>
+    <radialGradient id="nodeRed" cx="35%" cy="25%" r="90%">
+      <stop offset="0" stop-color="#bb3031"/>
+      <stop offset="0.68" stop-color="#a62224"/>
+      <stop offset="1" stop-color="#8e181a"/>
+    </radialGradient>
+    <linearGradient id="treeFill" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ead9c5"/>
+      <stop offset="0.5" stop-color="#e1cdb6"/>
+      <stop offset="1" stop-color="#ead9c7"/>
+    </linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+      <feOffset dy="2" result="offset"/>
+      <feColorMatrix in="offset" type="matrix" values="0 0 0 0 0.50  0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 .18 0" result="shadow"/>
+      <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="openArrow" markerWidth="16" markerHeight="16" refX="13" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M2 2 L13 8 L2 14" fill="none" stroke="#e5d2bb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .font { font-family: "PingFang SC"; }
+      .label { fill: #5d493f; font-size: 25px; font-weight: 400; text-anchor: middle; dominant-baseline: middle; }
+      .subject { fill: #5b473e; font-size: 24px; font-weight: 400; text-anchor: middle; dominant-baseline: middle; }
+      .node-title { fill: #fffaf5; font-size: 37px; font-weight: 650; text-anchor: middle; }
+      .node-sub { fill: #fff8f1; font-size: 21px; font-weight: 550; text-anchor: middle; }
+      .box { fill: #fffdfa; fill-opacity: .72; stroke: #eddfcf; stroke-width: 2.5; }
+      .red-line { fill: none; stroke: #ae292b; stroke-width: 2.7; stroke-linecap: round; stroke-linejoin: round; }
+      .red-dot { fill: #aa292b; }
+      .branch-line { fill: none; stroke: #e5d2bb; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#openArrow); }
+      .subject-shape { fill: #fffdfa; fill-opacity: .66; stroke: #eadbc9; stroke-width: 2.4; }
+    </style>
+  </defs>
+
+  <!-- 暖白纸张背景 -->
+  <rect id="background" width="1508" height="1347" fill="url(#paper)"/>
+
+  <!-- 树冠与主干：各路径均可独立编辑 -->
+  <g id="tree" fill="url(#treeFill)">
+    <path id="upper-left-branch" d="M755 690 C738 548 682 424 578 337 L595 322 C706 391 758 521 771 665 Z"/>
+    <path id="upper-right-branch" d="M749 690 C762 546 816 403 904 333 L923 344 C833 422 784 550 770 694 Z"/>
+    <path id="science-branch" d="M753 831 C728 679 676 552 579 492 L597 478 C701 526 754 652 766 808 Z"/>
+    <path id="art-branch" d="M758 815 C794 660 850 548 916 489 L937 477 C831 527 776 649 768 831 Z"/>
+    <path id="small-left-twig" d="M732 596 C690 548 636 526 590 504" fill="none" stroke="#e5d2bb" stroke-width="8" stroke-linecap="round"/>
+    <path id="top-left-twig-a" d="M710 516 C675 472 634 454 594 435" fill="none" stroke="#e5d2bb" stroke-width="7" stroke-linecap="round"/>
+    <path id="top-left-twig-b" d="M673 465 L632 402" fill="none" stroke="#e5d2bb" stroke-width="6" stroke-linecap="round"/>
+    <path id="top-right-twig" d="M792 492 C849 464 889 424 904 382" fill="none" stroke="#e5d2bb" stroke-width="8" stroke-linecap="round"/>
+
+    <path id="main-trunk" d="M735 1165 C723 1062 727 955 734 842 C740 738 744 641 754 579 C764 640 772 737 778 838 C783 958 786 1061 773 1165 Z"/>
+    <path id="root-base" d="M718 1069 C721 1134 716 1184 682 1212 C652 1237 610 1245 555 1245 L953 1245 C899 1244 858 1236 827 1209 C795 1181 790 1131 792 1069 Z"/>
+  </g>
+
+  <!-- 中心向各基础学科伸展的枝条 -->
+  <g id="subject-branches">
+    <path class="branch-line" d="M681 955 C644 855 583 731 435 681"/>
+    <path class="branch-line" d="M662 985 C604 908 533 821 407 778"/>
+    <path class="branch-line" d="M657 1018 C581 957 507 874 394 872"/>
+    <path class="branch-line" d="M668 1055 C589 1011 512 961 416 970"/>
+
+    <path class="branch-line" d="M826 955 C858 825 920 706 1014 661"/>
+    <path class="branch-line" d="M843 985 C895 883 958 783 1028 758"/>
+    <path class="branch-line" d="M849 1019 C919 926 984 862 1044 846"/>
+    <path class="branch-line" d="M841 1054 C919 992 984 950 1045 948"/>
+    <path class="branch-line" d="M824 1087 C902 1042 971 1019 1034 1035"/>
+  </g>
+
+  <!-- 左侧四个基础学科 -->
+  <g id="left-subjects" class="font">
+    <circle class="subject-shape" cx="340" cy="676" r="42"/><text class="subject" x="340" y="677">英语</text>
+    <circle class="subject-shape" cx="328" cy="775" r="42"/><text class="subject" x="328" y="776">物理</text>
+    <circle class="subject-shape" cx="319" cy="873" r="42"/><text class="subject" x="319" y="874">化学</text>
+    <circle class="subject-shape" cx="333" cy="969" r="42"/><text class="subject" x="333" y="970">生物</text>
+  </g>
+
+  <!-- 右侧五个基础学科 -->
+  <g id="right-subjects" class="font">
+    <circle class="subject-shape" cx="1089" cy="655" r="42"/><text class="subject" x="1089" y="656">历史</text>
+    <circle class="subject-shape" cx="1098" cy="752" r="42"/><text class="subject" x="1098" y="753">地理</text>
+    <rect class="subject-shape" x="1063" y="805" width="180" height="76" rx="38"/><text class="subject" x="1153" y="844">道德与法治</text>
+    <circle class="subject-shape" cx="1108" cy="948" r="42"/><text class="subject" x="1108" y="949">音乐</text>
+    <circle class="subject-shape" cx="1097" cy="1041" r="42"/><text class="subject" x="1097" y="1042">体育</text>
+  </g>
+
+  <!-- 知识树中心节点 -->
+  <g id="knowledge-center" class="font">
+    <circle cx="754" cy="1002" r="96" fill="#fffdf9" stroke="#e7d6c2" stroke-width="5"/>
+    <g id="book-icon" transform="translate(718 930)" fill="#a52325">
+      <path d="M3 3 C15 3 25 7 32 13 L32 49 C23 43 14 40 3 40 Z"/>
+      <path d="M69 3 C57 3 47 7 40 13 L40 49 C49 43 58 40 69 40 Z"/>
+      <path d="M35 12 L37 12 L37 51 L35 51 Z"/>
+      <path d="M0 11 L3 11 L3 44 C16 44 27 47 35 53 L35 57 C25 51 14 48 0 48 Z"/>
+      <path d="M72 11 L69 11 L69 44 C56 44 45 47 37 53 L37 57 C47 51 58 48 72 48 Z"/>
+    </g>
+    <text x="754" y="1027" fill="#3f302a" font-size="31" font-weight="520" text-anchor="middle">知识树</text>
+    <text x="754" y="1070" fill="#5b473e" font-size="23" font-weight="450" text-anchor="middle">共 12 个学科</text>
+  </g>
+
+  <!-- 左上：语文学习方式；第二项按要求删除数字与引号 -->
+  <g id="chinese-notes" class="font">
+    <rect class="box" x="23" y="119" width="270" height="61" rx="15"/>
+    <text class="label" x="158" y="150">谈辩论赛写作</text>
+    <rect class="box" x="23" y="196" width="270" height="61" rx="15"/>
+    <text class="label" x="158" y="227">口头讲解</text>
+    <circle class="red-dot" cx="313" cy="149" r="7.5"/>
+    <circle class="red-dot" cx="313" cy="226" r="7.5"/>
+    <path class="red-line" d="M313 149 C355 149 354 273 393 273 C411 273 424 274 444 274"/>
+    <path class="red-line" d="M313 226 C354 226 357 273 393 273"/>
+  </g>
+
+  <!-- 右上：数学学习内容 -->
+  <g id="math-notes" class="font">
+    <rect class="box" x="1167" y="34" width="292" height="61" rx="15"/>
+    <text class="label" x="1313" y="65">估算与近似</text>
+    <rect class="box" x="1167" y="104" width="292" height="61" rx="15"/>
+    <text class="label" x="1313" y="135">数的运算与量感</text>
+    <rect class="box" x="1167" y="174" width="292" height="61" rx="15"/>
+    <text class="label" x="1313" y="205">数据收集与处理</text>
+    <rect class="box" x="1167" y="244" width="292" height="61" rx="15"/>
+    <text class="label" x="1313" y="275">空间与位置</text>
+    <rect class="box" x="1167" y="314" width="292" height="61" rx="15"/>
+    <text class="label" x="1313" y="345">抽样与推断</text>
+
+    <circle class="red-dot" cx="1146" cy="65" r="7.5"/>
+    <circle class="red-dot" cx="1146" cy="135" r="7.5"/>
+    <circle class="red-dot" cx="1146" cy="205" r="7.5"/>
+    <circle class="red-dot" cx="1146" cy="275" r="7.5"/>
+    <circle class="red-dot" cx="1146" cy="345" r="7.5"/>
+    <path class="red-line" d="M1030 271 C1080 271 1081 65 1146 65"/>
+    <path class="red-line" d="M1030 271 C1081 271 1094 135 1146 135"/>
+    <path class="red-line" d="M1030 271 C1085 271 1094 205 1146 205"/>
+    <path class="red-line" d="M1030 271 C1089 271 1096 275 1146 275"/>
+    <path class="red-line" d="M1030 271 C1094 271 1084 345 1146 345"/>
+  </g>
+
+  <!-- 左中：科学学习内容 -->
+  <g id="science-notes" class="font">
+    <rect class="box" x="1" y="435" width="329" height="64" rx="15"/>
+    <text class="label" x="165" y="468">感官记录与证据链</text>
+    <rect class="box" x="1" y="514" width="329" height="64" rx="15"/>
+    <text class="label" x="165" y="547">因势利导 · 物理直觉</text>
+    <circle class="red-dot" cx="350" cy="468" r="7.5"/>
+    <circle class="red-dot" cx="350" cy="547" r="7.5"/>
+    <path class="red-line" d="M350 468 C390 468 390 496 417 496 C425 496 433 496 444 496"/>
+    <path class="red-line" d="M350 547 C391 547 390 499 417 496"/>
+  </g>
+
+  <!-- 右中：美术学习内容 -->
+  <g id="art-notes" class="font">
+    <rect class="box" x="1167" y="441" width="329" height="64" rx="15"/>
+    <text class="label" x="1331" y="474">建筑装饰摄影</text>
+    <rect class="box" x="1167" y="520" width="329" height="64" rx="15"/>
+    <text class="label" x="1331" y="553">螭首 · 云纹 · 栏板</text>
+    <circle class="red-dot" cx="1146" cy="474" r="7.5"/>
+    <circle class="red-dot" cx="1146" cy="553" r="7.5"/>
+    <path class="red-line" d="M1058 496 C1089 496 1102 474 1146 474"/>
+    <path class="red-line" d="M1058 496 C1091 496 1099 553 1146 553"/>
+  </g>
+
+  <!-- 四个核心学科节点 -->
+  <g id="core-subjects" class="font" filter="url(#softShadow)">
+    <g id="chinese-node">
+      <circle cx="516" cy="274" r="79" fill="#f2e3d2"/>
+      <circle cx="516" cy="274" r="70" fill="url(#nodeRed)" stroke="#fff8ef" stroke-width="4"/>
+      <text class="node-title" x="516" y="266">语文</text>
+      <text class="node-sub" x="516" y="310">跨学科</text>
+    </g>
+    <g id="math-node">
+      <circle cx="960" cy="274" r="79" fill="#f2e3d2"/>
+      <circle cx="960" cy="274" r="70" fill="url(#nodeRed)" stroke="#fff8ef" stroke-width="4"/>
+      <text class="node-title" x="960" y="266">数学</text>
+      <text class="node-sub" x="960" y="310">主学科</text>
+    </g>
+    <g id="science-node">
+      <circle cx="516" cy="488" r="79" fill="#f2e3d2"/>
+      <circle cx="516" cy="488" r="70" fill="url(#nodeRed)" stroke="#fff8ef" stroke-width="4"/>
+      <text class="node-title" x="516" y="480">科学</text>
+      <text class="node-sub" x="516" y="524">跨学科</text>
+    </g>
+    <g id="art-node">
+      <circle cx="986" cy="488" r="79" fill="#f2e3d2"/>
+      <circle cx="986" cy="488" r="70" fill="url(#nodeRed)" stroke="#fff8ef" stroke-width="4"/>
+      <text class="node-title" x="986" y="480">美术</text>
+      <text class="node-sub" x="986" y="524">跨学科</text>
+    </g>
+  </g>
+
+  <!-- 图例 -->
+  <g id="legend" class="font">
+    <rect class="box" x="420" y="1253" width="688" height="73" rx="14"/>
+    <circle class="red-dot" cx="500" cy="1290" r="11"/>
+    <text x="535" y="1297" fill="#665147" font-size="24" font-weight="400">本次点亮（已点亮）</text>
+    <circle cx="888" cy="1290" r="11" fill="#fffdf9" stroke="#e6d2bb" stroke-width="3"/>
+    <text x="923" y="1297" fill="#665147" font-size="24" font-weight="400">待点亮</text>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+:root[data-theme="gewu"] {
+  --ink: #1a2418;
+  --ink-soft: #4a5d46;
+  --ink-faint: #6e8068;
+  --paper: #f0f4ec;
+  --surface: #f8fbf5;
+  --surface-muted: #e0e8d8;
+  --line: #c5d1bb;
+  --brand: #2d6a4f;
+  --brand-strong: #1b4332;
+  --brand-soft: #d8f3dc;
+  --gold: #9c6c28;
+  --gold-soft: #f0e4c8;
+  --teal: #7c5e3c;
+  --teal-soft: #eee3d4;
+}
