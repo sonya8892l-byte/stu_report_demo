@@ -57,6 +57,7 @@ import {
 const pageParams = new URLSearchParams(window.location.search);
 const lesson = getLesson(pageParams.get('lesson') || undefined);
 const app = document.querySelector('#studentApp');
+const standaloneMode = pageParams.get('mode') !== 'connected';
 const demoSession = {
   groupName: '第 3 小组',
   members: lesson.roles.map((role, index) => ({
@@ -109,7 +110,7 @@ const state = {
   currentPhaseId: lesson.roleSystem.phaseId,
   activeTab: 'task',
   openSheetId: null,
-  teacherReleasedRoles: pageParams.get('teacherStart') === '1',
+  teacherReleasedRoles: standaloneMode || pageParams.get('teacherStart') === '1',
   roleStates: Object.fromEntries(
     lesson.roles.map((role) => [role.id, {
       arrived: false,
@@ -300,6 +301,10 @@ function renderLaunch() {
     <span><i data-lucide="clock-3"></i>${escapeHtml(lesson.duration)}</span>
     <span><i data-lucide="users"></i>${escapeHtml(lesson.groupRule)}</span>
   `;
+  if (!standaloneMode) {
+    document.querySelector('[data-action="start-course"] span').textContent = '进入课程导入';
+    document.querySelector('.launch-note').textContent = '导入期间请观看现场内容，身份领取由老师统一开启';
+  }
   document.querySelector('#groupCode').textContent = demoSession.groupName;
   document.querySelector('#rolePickerEyebrow').textContent = courseTemplate(lesson.roleSystem.pickerEyebrow);
   document.querySelector('#rolePickerHeader').textContent = `领取${lesson.roleSystem.itemName}卡`;
@@ -347,6 +352,23 @@ async function selectRole(roleId) {
   renderLearningShell();
   showScreen('learningShell');
   closeSheet();
+  if (standaloneMode) {
+    if (!roleState.entryStarted) {
+      roleState.entryStarted = true;
+      roleState.messages = [
+        {
+          id: crypto.randomUUID(),
+          type: 'assistant',
+          text: `欢迎领取“${role.name}”角色。当前为本地体验模式，你可以直接完成任务小步并记录学习过程。`,
+          source: '本地课程包',
+        },
+        ...currentTaskRecoveryMessages(role, roleState),
+      ];
+    }
+    renderLearningShell();
+    window.setTimeout(scrollChatToBottom, 40);
+    return;
+  }
   if (!roleState.agentSessionId) {
     try {
       const session = await createAgentSession({
@@ -536,7 +558,7 @@ function taskCard(message) {
     ? activeStep.tools
     : (message.payload?.config?.tools?.length ? message.payload.config.tools : (task.tools || []));
   const stepId = activeStep?.id || `${task.id}-complete`;
-  const canCompleteStep = !['teacher_confirm', 'location_event'].includes(activeStep?.completionMode);
+  const canCompleteStep = standaloneMode || !['teacher_confirm', 'location_event'].includes(activeStep?.completionMode);
 
   return `
     <article class="tool-card" data-task-card="${task.id}">
@@ -631,6 +653,7 @@ function currentTaskRecoveryMessages(role, roleState) {
   const taskIndex = Math.min(roleState.progress, role.tasks.length - 1);
   const task = role.tasks[taskIndex];
   if (!task) return [];
+  const callId = roleState.taskCallIds?.[task.id] || (standaloneMode ? `local-${role.id}-${task.id}` : '');
   const payload = roleState.taskPayloads?.[task.id] || {
     taskId: task.id,
     taskIndex,
@@ -645,7 +668,7 @@ function currentTaskRecoveryMessages(role, roleState) {
     {
       id: crypto.randomUUID(),
       type: 'task',
-      callId: roleState.taskCallIds?.[task.id] || '',
+      callId,
       taskIndex,
       status: 'active',
       payload,
@@ -1098,6 +1121,19 @@ async function completeActivityStep(taskId, stepId) {
     return showToast(error);
   }
   evidence.validationError = '';
+  if (standaloneMode) {
+    const roleState = currentRoleState();
+    roleState.guidanceStepIndices[taskId] = context.index + 1;
+    roleState.messages.push({
+      id: crypto.randomUUID(),
+      type: 'assistant',
+      text: `第 ${context.index + 1} 个任务小步已记录，可以继续下一步。`,
+      source: '本地课程包',
+    });
+    renderLearningShell();
+    window.setTimeout(scrollChatToBottom, 20);
+    return;
+  }
   const stepImages = context.step.completionMode === 'ai_evaluation'
     ? context.tools.flatMap((tool) => {
       const value = activityValue(taskId, stepId, tool.id);
@@ -1366,6 +1402,17 @@ async function completeTaskStep(taskId) {
   });
   renderLearningShell();
   window.setTimeout(scrollChatToBottom, 20);
+  if (standaloneMode) {
+    roleState.guidanceStepIndices[taskId] = stepIndex + 1;
+    roleState.messages.push({
+      id: crypto.randomUUID(),
+      type: 'assistant',
+      text: `第 ${stepIndex + 1} 个任务小步已记录，可以继续下一步。`,
+      source: '本地课程包',
+    });
+    renderLearningShell();
+    return;
+  }
   await runAgentTurn({
     type: 'lifecycle_event',
     event: 'task_step_completed',
@@ -1430,6 +1477,24 @@ async function submitTask(taskId, toolCallId, minimumEvidence = 1) {
     type: 'user',
     text: evidence.text?.trim() || (evidence.imageUrls.length ? `我提交了 ${evidence.imageUrls.length} 张现场照片。` : '我已经完成并提交了这一阶段的工具结果。'),
   });
+  if (standaloneMode) {
+    roleState.progress = taskIndex + 1;
+    roleState.messages.push({
+      id: crypto.randomUUID(),
+      type: 'assistant',
+      text: `“${task.name}”已记录在本次体验进度中。`,
+      source: '本地课程包',
+    });
+    if (roleState.progress >= role.tasks.length) {
+      roleState.completed = true;
+      roleState.messages.push({ id: crypto.randomUUID(), type: 'token' });
+    } else {
+      roleState.messages.push(...currentTaskRecoveryMessages(role, roleState));
+    }
+    renderLearningShell();
+    window.setTimeout(scrollChatToBottom, 30);
+    return;
+  }
   try {
     await appendGeneratedEvidence(evidence, taskId);
     const uploaded = evidence.files.length ? await Promise.all(evidence.files.map(uploadEvidence)) : [];
@@ -1453,6 +1518,17 @@ async function sendMessage() {
   roleState.lastLocalActionAt = Date.now();
   roleState.messages = roleState.messages.filter((message) => message.type !== 'quick-replies');
   roleState.messages.push({ id: crypto.randomUUID(), type: 'user', text });
+  if (standaloneMode) {
+    roleState.messages.push({
+      id: crypto.randomUUID(),
+      type: 'assistant',
+      text: `你的想法已经记录。请结合“${currentTask()?.name || '当前任务'}”的任务要求继续观察和验证。`,
+      source: '本地课程包',
+    });
+    renderChat();
+    window.setTimeout(scrollChatToBottom, 30);
+    return;
+  }
   renderChat();
   window.setTimeout(scrollChatToBottom, 30);
   await runAgentTurn({ type: 'user_text', text });
@@ -1687,6 +1763,7 @@ async function giftTime(roleId, requestedAmount) {
 }
 
 async function callTeacher(addMessage = true) {
+  if (standaloneMode) return showToast('当前为本地体验模式，暂未连接教师端。');
   const sessionId = currentRoleState()?.agentSessionId;
   if (!sessionId) return showToast('请先领取角色，再呼叫老师。');
   try {
@@ -1826,7 +1903,7 @@ function startVoiceInput() {
 }
 
 const actions = {
-  'start-course': () => showScreen(state.teacherReleasedRoles ? 'roleScreen' : 'immersiveScreen'),
+  'start-course': () => showScreen(standaloneMode || state.teacherReleasedRoles ? 'roleScreen' : 'immersiveScreen'),
   'show-course-info': () => showToast(`${lesson.grades} · ${lesson.duration} · ${lesson.groupRule}`),
   'select-role': (target) => selectRole(target.dataset.roleId),
   'switch-role': (target) => selectRole(target.dataset.roleId),

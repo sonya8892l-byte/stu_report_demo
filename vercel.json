@@ -1,0 +1,33 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/student/",
+      "permanent": false
+    },
+    {
+      "source": "/4-stu-learning",
+      "destination": "/student/",
+      "permanent": false
+    },
+    {
+      "source": "/4-stu-learning/:path*",
+      "destination": "/student/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/4-tea-leading",
+      "destination": "/teacher/",
+      "permanent": false
+    },
+    {
+      "source": "/4-tea-leading/:path*",
+      "destination": "/teacher/:path*",
+      "permanent": false
+    }
+  ]
+}
